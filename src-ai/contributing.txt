@@ -1,0 +1,30 @@
+Contributing to HughAI
+======================
+
+You are more than welcome to just fork the whole thing and play as you like.
+
+Whenever you like, you can submit a patch file to me for stuff you want back in this version
+and I'll try to merge your changes back in.
+
+Please keep my copyright notices everywhere where they exist already in existing
+files.
+
+Please feel free to add your own name into the copyright  notice - without getting
+rid of mine! - maybe with some sort of history in the file
+
+If you fork this, I'd appreciate it if you give me some credit in the credits
+of your new AI.  There is no legal obligation to do this, but I'd
+appreciate it!  And then I'll be more motivated to add in new features, bug fixes
+ and so on that you can use in your own new forked AI :-)
+
+If you want to submit a patch, please try to either be consistent with the
+existing architecture where it exists, or consider how we can improve the
+architecture where it is flaky.
+
+Generally, the concept in the architecture is to try to layer things, for example
+there are several layers of controllers, and we'll gradually add in more
+layers of mapping, along similar lines.
+ 
+ Hugh
+ hughperkins@gmail.com
+ 

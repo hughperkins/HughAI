@@ -1,0 +1,47 @@
+package hughai.basictypes;
+
+import java.util.*;
+import java.util.Map;
+
+import com.springrts.ai.*;
+import com.springrts.ai.oo.*;
+
+import hughai.CSAI;
+import hughai.GameAdapter;
+import hughai.GiveOrderWrapper;
+import hughai.PlayerObjects;
+import hughai.VoiceCommandHandler;
+import hughai.utils.*;
+
+public class CachedUnit {
+   Unit unit;
+   
+   int lastframe = 0;
+   
+   // static:
+   UnitDef unitdef;
+   
+   // dynamic:
+   AIFloat3 pos;
+   
+   static PlayerObjects s_playerObjects;
+   static int s_frame;
+   public static void Init( PlayerObjects playerObjects ) {
+      s_playerObjects = playerObjects;
+   }
+   
+   public CachedUnit( Unit unit ) {
+      this.unit = unit;
+   }
+   
+   public AIFloat3 getPos() {
+     // if( lastframe !=  )
+   }
+   
+   class GameListener extends GameAdapter {
+      @Override
+      public void Tick( int frame ) {
+         s_frame = frame;
+      }
+   }
+}

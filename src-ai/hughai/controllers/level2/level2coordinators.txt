@@ -1,0 +1,4 @@
+level 2 controllers are next level in hierarchy after level1 controllers, which are themselves
+underneath some sort of higher level strategy abstraction.
+
+underneath level 2 controllers are the packcoordinators.

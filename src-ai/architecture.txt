@@ -1,0 +1,393 @@
+Brief description of architecture
+=================================
+
+by Hugh Perkins
+
+This may or may not be moved to wiki in the future, but for now it is here.  It's 
+easy for  me to update without needing internet access and so on ,
+and it's automatically versioned with the sources.
+
+Origins of the code
+===================
+
+This code was originally CSAI ("C# AI), which worked quite well, beat all working
+AIs at the time ;-)
+
+This was partially refactored and redesigned into CSAI2, which was never completed
+following the migration of spring from using Microsoft Visual C++ as its
+Windows compiler, to using mingw.
+
+CSAI was not portable to linux, although I did spend a bit of time getting
+a mono loader working, but it wasn't really as satisfactory as the .Net one,
+and so it fell into an unmaintained state.
+
+With hoijui's Java interface, hopefully there is now an opportunity to have AIs
+written in a C#-like language, which are portable across platforms, and 
+won't break constantly every time the spring engine is upgraded...
+
+The codebase of HughAI is essentially CSAI2, ported to Java.  As CSAI2 was
+never completed, HughAI initially is in a bit of a half-way state ;-) and
+not quite ready for usage yet, but hopefully it can  be fun for a developer
+to tweak and play with, and might provide some ideas, and maybe even some
+useful code!
+
+Loader architecture
+===================
+
+AIInfo.lua points to SkirmishAI.jar, which is built from src-loader directory.
+
+This is a fairly light-weight layer which is responsibility for two quite simple
+things:
+- load UnderlyingAI.jar, which is built from src-ai directory
+- pass on AI events from the engine onto UnderlyingAI.jar's AI object
+
+Of these, loading the underlyingAI.jar is probably the most in need of explanation.
+
+Why do we have two-stage loading?
+
+Simply: it means we can dynamically reload the AI whilst the game is in progress.
+
+Couldn't we just use /kill /controlai?  Possibly.  I've used this way of doing it,
+but that might work too.
+
+One advantage of doing it like this is we can provide inter-load storage,
+which is provided by TransLoadStorage.
+
+Simply, TransLoadStorage lets us store primitives and native Java types, as
+labelled "attributes", and these will be available, persistent, after reloading
+the AI.
+
+What/why would we reload the AI?
+--------------------------------
+
+So, we're developing the AI, and it takes ages for the game to restart each time,
+and also, that way we would lose the entire current game-state, which might
+be necessary in its precise current state in order to reproduce a bug we just
+noticed, or an exception.
+
+So, we tweak our AI, rebuild it, recreate UnderlyingAI.jar, and reload it.  Ploof!
+the new code is now running in Spring's AI engine, magically.
+
+How does the loader work?
+-------------------------
+
+Classes cannot be unloaded individually in Java, but their classloader can be,
+and along with it, all the classes unload too.
+
+We create our own classloader object, and use that to load the UnderlyingAI.jar
+classfile.
+
+It is important that the UnderlyingAI's classes are not available in the standard
+classpath, otherwise, they will be loaded by the system classloader, which is
+not possible to unload, without shutting down the entire jvm runtime.
+
+How do I use the loader?
+------------------------
+
+To do the reload: simply click "Reload AI" on the Swing GUI.
+
+If the AI crashed during loading, and the button is not visible, in the spring
+game screen, enter chat and say ".hughai reload", which will reload all hughais
+in the game.  (The button will only load that particular AI, no any other
+hughais in the game).
+
+How do I customize the loader?
+------------------------------
+
+The path to UnderlyingAI.jar, and the name of the underlying AI class to load
+are given in the top of HughAILoader.java:
+
+   final String underlyingJarFileName = "UnderlyingAI.jar";
+   final String underlyingClassNameToLoad = "hughai.CSAI";
+   final String reloadCommandString = ".hughai reload";
+
+You can tweak these as you wish.
+
+You'll need to restart spring to take these tweaks into account, but at that 
+point you can freely reload the UnderlyingAI.jar itself.
+
+Core highest-level class
+========================
+
+hughai.CSAI
+
+I never changed it's name from the original C# AI ;-)  It is the highest level
+anyway.
+
+It is loaded by hughai.loader.HughAILoader , and stays around until HughAILoader
+loads a new AI, on request.
+
+CSAI makes available a GameAdapter set of events, which can be subscribed to,
+see later.
+
+PlayerObjects
+=============
+
+For various reasons, I decided to try to avoid any static objects.
+
+So, everything that used to be a Singleton in CSAI/CSAI2, is now an instance
+variable in an object called "playerObjects".  PlayerObjects is created by
+the core CSAI object, and passed on in the constructor of pretty much
+any other object.
+
+Whether this is a good way of doing this is debatable.  It kind of works ok,
+but it's annoying to have to add it into every constructor...
+
+PlayerObjects has a series of "get" commands for each object instance that
+it holds, eg getMaps, getUnitController, and so on.
+
+Each of these objects is effectively a singleton, though not actually using
+the traditional singleton pattern.
+
+PlayerObject's constructor accepts a CSAI object, and checks that it hasn't
+already been constructed, by using a static list of CSAI objects for which
+it has already been constructed.  This ensures that each instance is unique
+for instance of CSAI.
+
+GUI
+===
+
+The GUI is using Swing.  It seems that Netbeans with Matisse is an appropriate
+GUI designer for this.
+
+For now, the entire GUI is automatically generated by the registerButton
+method in MainUI:
+
+public void registerButton( String buttonText, ButtonHandler buttonHandler  );
+
+To use:
+
+playerObjects.getMainUI().registerButton("My button text", myButtonHandler );
+
+This will add a new button with the text "My button text" to the gui, which
+will call myButtonHandler.go() whenever it is pressed.
+
+Voice commands
+==============
+
+CSAI can be used to register voice commands.  The command to register them
+is:
+
+playerObjects.getCSAI().RegisterVoiceCommand( "myvoicecommand", myhandler)
+
+Then, when you say, in-game, ".hughai myvoicecommand", then myhandler.commandReceived
+will be called.
+
+The commandReceived method will receive additional arguments, so you can
+add parameters to your commands.
+
+AI events
+=========
+
+CSAI provides a GameAdapter registration event system, which provides the AI
+events such as UnitCreated,  UnitDestroyed and so on.
+
+It can be subscribed to by doing:
+
+playerObjects.getCSAI().registerGameListener( mygameListener );
+
+mygamelistener will now receive the AI events.  It's an adapter class, so
+just override the events you're interested in.
+
+CSAI will catch any exceptions, and print them out, so you can just let your
+exceptions float up to the top.
+
+Logging
+=======
+
+Well, it's just a PrintWriter... if someone wants to migrate to use 
+a decent logger, could be cool.  I'm too lazy to do that, since it works just
+fine for me as is, but it would be more standard to do so.
+
+UnitController, EnemyTracker Unit caching
+=========================================
+
+unit.getPos() and unit.getUnitDef() take 200 microseconds to excecute each
+approximately, which is a lot, if you think about 200 units, running this
+once a frame, for a total of about 1200 milliseconds per game second ;-)
+
+So, we cache them, which doesn't prevent the 1200 milliseconds per game second
+hit, but means we don't exceed this time ;-)
+
+UnitController is responsible for caching the details of friendly units.
+
+EnemyTracker handles enemy units.
+
+Try to avoid calling unit.getPos() or unit.getUnitDef() directly, just go
+through these objects.
+
+Couldn't we just derive from / wrap the unit class?
+---------------------------------------------------
+
+Yes, but I felt it was marginally easier for me to do it this way for now.
+
+If you feel you can make the architecture cleaner by creating a caching-unit
+class, that could be cool....
+
+Float3
+======
+
+The standard for positions and so on in HughAI is Float3, NOT AIFloat3.
+
+AIFloat3 is only used at the point of interaction with the AI Java interface,
+and then it is converted directly into Float3s, which provide additional
+functionality, such as cross, and getDistanceSquared, and are perhaps more
+lightweight than AIFloat3, which is JNA-encumbered.
+
+You can make a Float3 from an AIFloat3 by doing:
+
+Float3.fromAIFloat3( someaifloat3 )
+
+and back again:
+
+myfloat3.toAIFloat3()
+
+DrawUtils
+=========
+
+provides functions to draw a map (from a passed in int[][] or bool[][]), draw
+a unit, and draw lines.
+
+You can also clear the whole map of previously drawn lines.
+
+There is a bug in the java interface or in spring that limits the number of lines
+you can draw without a segfault, so we limit this ourselves, to prevent the
+segfault.
+
+Clearing the map of lines resets the number of lines used back to zero.
+
+Mapping
+=======
+
+There are a bunch of map classes in hughai.mapping.  They're quite fun
+to play around with, and they can be easily drawn on the screen.
+
+losmap: the last frame number when each point on the map was seen by a friendly
+unit
+
+buildmap: each point on the map which has been built on, or has been reserved
+for future usage (eg: used for metalspot reservations, to prevent building
+other stuff over the metalspots)
+
+enemymap: dynamic and static enemies
+
+heightmap: as it says.  We load it once at the beginning of the game, and cache
+it for the rest.  Since it takes ages to load, we cache it in the transgame
+storage, so reloading the ai is really fast, after the initial load
+
+metal: calculate and manages the metal spots on the map
+
+movement maps: a very interesting and useful class. Divides the map into a series
+of connected areas.  If a unit is in area 1, and another point is also in area 1,
+then it means there is a navigable route between the two points.  If the areas
+are different, then the areas are effectively disconnected for that unit, for
+example, there may be mountains in between the two.
+- where the area is 0, a unit can't go there
+- there are maps for planes (always 1...), boats (areas underwater), for infantry
+  ( can cross steep terrain), and vehicles (only gentle terrain)
+  
+slopemap: uses the heightmap to calculate the slope at each point
+- used to calculate the movement maps above
+
+Many of these map classes add buttons to the GUI to draw the map on the game
+terrain.
+
+BuildTable
+==========
+
+Caches all the unitdefs in the current mod.
+
+WorkflowController
+==================
+
+Kind of manages everything at the moment.  Whether it should is another matter...
+
+BuildEconomy
+============
+
+Contains a list of unit to construct, with priorities, quantities, and so on.
+
+Will probably be migrated to be read from per-mod config files.
+
+Controllers, packcoordinators...
+================================
+
+There are several layers of controllers, running at different levels of
+abstraction, which are quite hazily defined at the moment.
+
+The top levels are currently:
+
+Offense
+Reconnaissance
+
+The lowest levels are xxxPackCoordinator, which manage a single pack of units,
+to do something quite specific, like move to a particular location, or 
+search the map, or attack a particular enemy.
+
+In between are TankController and ScoutControllerRaider, which switch between
+different packcoordinators as appropriate.  For example, when there is no enemy
+TankController switches to use a spreadsearch pack coordinator, or a guard
+pack coordinator.  When an enemy is sighted, it switches to an attack pack
+coordinator.
+
+packcoordinatorselector can be used to switch between different pack coordinator
+instances.  See tankcontroller for an example of how this works.
+
+Interaction between controllers, and constructors
+=================================================
+
+A little up in the air.  Do we want a centrally planned economy, or for the
+controllers to take an interest in what is being built?  Both might work, which
+works better is an open question.  Which is easier to maintain is an open
+question.
+
+Various List classes
+====================
+
+I don't think these are used at the moment, nor have they ever been used
+probably, and they be removed in the future, so you can ignore for now:
+
+UnitList
+UnitLists
+CommanderList
+HelicopterLIst
+TankList
+Levell1ConstructorList
+Level1FactoryList
+
+...essentially, these have been migrated de facto to have unitcontroller 
+manage lists that come from the config file.  So these classes will be removed
+in the near future most likely.
+
+Config
+======
+
+Config is read from a per-mod file in the AI's directory.
+
+If the config file doesn't exist, it is created.  As new values are added
+to the config class, they are added automatically into the xml file.
+
+The config file is read and written automatically, by using Reflection to
+see the names and types of the fields in the Config class. This supports
+Strings, booleans, floats, integers, and ArrayList<String>.
+
+To add new config values, simply add an appropriate field (member variable) to the
+Config class, and an appropriate getter/setter for it.  Please provide an
+appropriate default value, by giving it an initial value, eg:
+
+String mynewconfigvalue = "foo";
+
+... in this case, 'foo' is the default value for the new config value "mynewconfigvalue".
+
+ConfigHelper contains the actual reflection code, if you need to add additional
+types, or just give me a shout, since I know how it works ,and can probably add
+a new type quite quickly.
+
+Tester class
+============
+
+The Tester class can be used to run various tests, such as testing some line
+drawing and so on
+
+It provides buttons on the GUI to run these tests.
+
