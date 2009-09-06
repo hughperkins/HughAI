@@ -58,6 +58,7 @@
 	<target name="init-dependent" unless="independent">
 
 		<property file="bin/ant.${proj.dep.type}.properties"/>
+		<echo message="Spring home set to: ${spring.home}" />
 		<!--
 			The following values may be overriden in either
 			"bin/ant.dependent.properties" or any other properties file
