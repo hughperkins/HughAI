@@ -13,3 +13,5 @@ HughAI runs. It shows off lots of cool concepts that can be used in other AIs, c
 - events:
    - AI events can be subscribed to
    - more abstracted events, such as unit events, enemy tracker events, and so on
+
+More details on architecture can be found in src-ai/architecture.txt.
