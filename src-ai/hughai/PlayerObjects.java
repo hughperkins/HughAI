@@ -110,6 +110,7 @@ public class PlayerObjects {
          return config;
       }
       config = new Config( this );
+      config.init();
       return config;
    }
    

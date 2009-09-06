@@ -46,11 +46,13 @@ public class ConfigHelper<T extends ConfigHelper.IConfig> {
 
    public ConfigHelper( PlayerObjects playerObjects ) {
       this.playerObjects = playerObjects;
+      reflectionHelper = new ReflectionHelper<T>( playerObjects );
      // loadConfig();
    }
 
    public void loadConfig( T config ) {
-      reflectionHelper.loadObjectFromFile( config.getConfigPath(), config );
+      String configpath = config.getConfigPath();
+      reflectionHelper.loadObjectFromFile( configpath, config );
    }
 
    void validate() {

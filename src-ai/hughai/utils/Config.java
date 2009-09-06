@@ -107,14 +107,19 @@ public class Config implements ConfigHelper.IConfig {
 
    public Config( PlayerObjects playerObjects ) {
       this.playerObjects = playerObjects;
+   }
+   
+   public void init() {
       ConfigHelper configHelper = new ConfigHelper( playerObjects );
-      configHelper.loadConfig( this );
+      configHelper.loadConfig( this );      
    }
 
    @Override
    public String getConfigPath() {
-      return playerObjects.getCSAI().getAIDirectoryPath() + playerObjects.getAicallback()
-      .getMod().getShortName() + ".xml";
+      String configPath = playerObjects.getCSAI().getAIDirectoryPath() + playerObjects.getAicallback()
+         .getMod().getShortName() + ".xml";
+      playerObjects.getLogFile().WriteLine( "Config path: " + configPath );
+      return configPath;
    }
 
    public String getMetalspotmarkerunitname() {
