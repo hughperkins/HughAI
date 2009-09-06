@@ -1,0 +1,62 @@
+New todo
+========
+
+high, blocking publication:
+
+medium/low, suboptimal:
+- losmap needs to support los reservations otherwise scouts go same way
+- issue with metal/energy decisions
+
+done:
+- enemytracker needs to track mobile units too, otherwise tankcontroller doesn't work
+- issue with movementareaas for search etc
+
+to communicate:
+- get rid of debug and logging in java interface
+- Java AI in spring from git very slow!
+- getPos() to return null if not in los
+
+to communicate, done:
+- exact command to get linedrawer crash
+- command to crash spring, when too many lines are drawn
+- performance of getDef() and getPos()
+
+- crash with line drawer / how to draw lines that only last a few seconds? 
+   or how  to draw lines and then delete them a few seconds later? or
+   how to remove all lines on the map?
+
+
+High level methods:
+- take a group of units, say to someone "attack the enemy with these"
+- take a group of units, say to someone "attack here with this"
+- take a list of unit types, say to someone "attack the enemy with these types"
+- take a list of unit types, say to someoen "scout the enemy with these"
+- say to someone "attack the enemy, build what you need, request through me".
+   - have a priority, or a percentage allocation, or a total allocation, for this
+
+Legacy todo
+===========
+
+Short
+- scout in front of tanks and lugers
+- put tanks and lugers into formation
+- two or three packs??? fast small units for base, large units + small units for assault???
+- do area analysis "this is enemy base", "this is friendly base"
+- air scouting???
+- improve initial scouting
+- antinuke
+- add defense (guardians etc)
+- add radar
+- group sizes increase (with time?)
+
+Medium
+- add more workflow plans
+
+
+Done:
+
+Interface:
+- add map point
+
+Short
+- prevent factories jamming
