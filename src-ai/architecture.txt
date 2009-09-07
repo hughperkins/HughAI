@@ -386,9 +386,10 @@ a new type quite quickly.
 Workflows
 =========
 
-This bit (Workflows.java) is in progress, and doesn't do anything yet ;-)
+Workflows.java loads workflows from xml files in the config directory
 
-Ultimately, it should replace a lot of the stuff that is currently in BuildEconomy.java.
+It will create an initial sample.xml file if no files are found, which
+will work kind of ok in the Balanced Annihilation mod.
 
 Tester class
 ============

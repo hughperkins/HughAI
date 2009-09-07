@@ -122,7 +122,7 @@ public class Workflows {
    }
    
    void populateSampleWorkflow( Workflow workflow ) {
-      workflow.getOrders().add( new Workflow.Order(2.0f, "armcv", 1) );
+      workflow.getOrders().add( new Workflow.Order(2.0f, "armvp", 1) );
 
       workflow.getOrders().add( new Workflow.Order(2.1f, "armfav", 2) );
       workflow.getOrders().add( new Workflow.Order(2.0f, "armstump", 10) );

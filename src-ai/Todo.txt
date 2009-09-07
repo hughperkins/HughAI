@@ -4,24 +4,27 @@ New todo
 high, blocking publication:
 
 medium/low, suboptimal:
-- move buildEconomy workflow stuff into xml files
 - add mod name + version to name of buildtable cachefile
 - losmap needs to support los reservations otherwise scouts go same way
 - issue with metal/energy decisions
+- workflow stalls occasionally
 
 usability:
-- add welcome messages:
-   - supported mod (Basic Annihilation)
-   - how to enter debug mode
-   - config file
-   - (gui mode)
-   - workflow configuration
+- add parameters to welcome message, like %configfilepath, %workflowdirectory
+  %modname
 - make gui non-default, so works full-screen and / or detect full-screen
   and disactivate it
   - checked on ubuntu: it just switches to non fullscreen automatically
     - still, there is some issue it seems, to be monitored
 
 done:
+- add welcome messages:
+   - supported mod (Basic Annihilation)
+   - how to enter debug mode
+   - config file
+   - (gui mode)
+   - workflow configuration
+- move buildEconomy workflow stuff into xml files
 - enemytracker needs to track mobile units too, otherwise tankcontroller doesn't work
 - issue with movementareaas for search etc
 
