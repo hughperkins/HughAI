@@ -32,6 +32,10 @@ import hughai.*;
 import hughai.basictypes.*;
 import hughai.utils.*;
 
+// if you create a file called 'debug.flg' in the AI's directory
+// then the config will not be loaded, but simply use the default
+// values in the Config class
+// also, debug will be forced to true.
 public class ConfigHelper<T extends ConfigHelper.IConfig> {
 //   boolean overwritefileconfig = false; // overrides other stuff, and turns on debug
    
