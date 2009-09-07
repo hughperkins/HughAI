@@ -135,7 +135,10 @@ public class ReflectionHelper {
                }
                Object value = elementToFieldValue( true, field.getName(), field.getType(), field.getAnnotations(), element );
                //                     Object value = stringTofieldValue( field.getType(), stringValue );
-               field.set( object, value );
+               if( value != null ) { // prevents exceptions on primitives which don't exist
+                                     // it's not great like this, but it kind of works
+                  field.set( object, value );
+               }
 //            }
          }
       }      
@@ -319,15 +322,27 @@ public class ReflectionHelper {
    Object elementToFieldValue( boolean addsubelementforobjects, String fieldname, Class<?> fieldclass, Annotation[] annotations, Element element ) {
       try {
          if( fieldclass == String.class ) {
+            if( !element.hasAttribute( fieldname )) {
+               return null;
+            }
             return stringTofieldValue( fieldclass, element.getAttribute(fieldname) );
          }
          if( fieldclass == boolean.class ) {
+            if( !element.hasAttribute( fieldname )) {
+               return null;
+            }
             return stringTofieldValue( fieldclass, element.getAttribute(fieldname) );
          }
          if( fieldclass == int.class ) {
+            if( !element.hasAttribute( fieldname )) {
+               return null;
+            }
             return stringTofieldValue( fieldclass, element.getAttribute(fieldname) );
          }
          if( fieldclass == float.class ) {
+            if( !element.hasAttribute( fieldname )) {
+               return null;
+            }
             return stringTofieldValue( fieldclass, element.getAttribute(fieldname) );
          }
          if( List.class.isAssignableFrom( fieldclass ) ) {

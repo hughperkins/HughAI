@@ -62,6 +62,18 @@ public class Config implements ConfigHelper.IConfig {
    String basicenergyextractorunitname = "armsolar";
    String basicconstructionvehicleunitname = "armcv";
    
+   int welcomeMessageSecondsInterval = 10;
+   
+   @ListTypeInfo(String.class)
+   List<String> welcomeMessages = Arrays.asList( new String[] {
+         "Welcome to HughAI, by Hugh Perkins 2006, 2009",
+         "This AI works best with Balanced Annihilation.",
+         "You can configure HughAI within the AI/Skirmish/HughAI/v0.1 directory.",
+         "You can say '.hughai help' for text commands, or use the attached GUI panel.",
+         "For more information and questions, please don't hesitate to post in the HughAI thread in the forums, or email me at hughperkins@gmail.com."
+       }
+   );
+   
    int maxLinesOnMap = 1000; // spring, or maybe java interface, crashes with too many lines...
    
    float maxvehicleslope = 0.08f;  // maximum slope a vehicle can use. arbitrary cutoff, for simplicity
@@ -277,5 +289,25 @@ public class Config implements ConfigHelper.IConfig {
    public void setBasicconstructionvehicleunitname(
          String basicconstructionvehicleunitname ) {
       this.basicconstructionvehicleunitname = basicconstructionvehicleunitname;
+   }
+
+   public List<String> getWelcomeMessages() {
+      return welcomeMessages;
+   }
+
+   public void setWelcomeMessages( List<String> welcomeMessages ) {
+      this.welcomeMessages = welcomeMessages;
+   }
+
+   public int getWelcomeMessageSecondsInterval() {
+      return welcomeMessageSecondsInterval;
+   }
+
+   public void setWelcomeMessageSecondsInterval( int welcomeMessageSecondsInterval ) {
+      this.welcomeMessageSecondsInterval = welcomeMessageSecondsInterval;
+   }
+
+   public String getConfigVersion() {
+      return ConfigVersion;
    }
 }

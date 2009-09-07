@@ -33,7 +33,7 @@ import hughai.basictypes.*;
 import hughai.utils.*;
 
 public class ConfigHelper<T extends ConfigHelper.IConfig> {
-   boolean overwritefileconfig = true; // overrides other stuff, and turns on debug
+//   boolean overwritefileconfig = false; // overrides other stuff, and turns on debug
    
    public interface IConfig {
       public String getConfigPath();
@@ -52,7 +52,14 @@ public class ConfigHelper<T extends ConfigHelper.IConfig> {
 
    public void loadConfig( T config ) {
       String configpath = config.getConfigPath();
-      if( new File( configpath ).exists() ) {
+      boolean overwritefileconfig = false;
+      if( new File( playerObjects.getCSAI().getAIDirectoryPath() + "debug.flg" ).exists() ) {
+         overwritefileconfig = true;
+      }
+      if( overwritefileconfig ) {
+         config.setDebug( true );
+      }
+      if( !overwritefileconfig && new File( configpath ).exists() ) {
          reflectionHelper.loadObjectFromFile( configpath, config );
          validate();
       }

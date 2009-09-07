@@ -166,6 +166,9 @@ public class CSAI extends AbstractOOAI implements IHughAI
          drawingUtils = playerObjects.getDrawingUtils();
          drawingUtils.CleanDrawing();
          timeHelper = playerObjects.getTimeHelper();
+         
+         playerObjects.getWelcomeMessages();
+         
          playerObjects.getBuildEconomy();
 
          if( DebugOn ) {
