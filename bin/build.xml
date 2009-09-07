@@ -167,11 +167,11 @@ wherever you got this AI from.
 
 	<target name="compile" depends="init">
 		<echo message="${src-loader}" />
-		<javac destdir="${build-loader.classes.dir}" debug="true">
+		<javac destdir="${build-loader.classes.dir}" debug="true" nowarn="true">
 			<src refid="source-loader.path.id"/>
 			<classpath refid="class.path.id"/>
 		</javac>
-		<javac destdir="${build-ai.classes.dir}" debug="true" >
+		<javac destdir="${build-ai.classes.dir}" debug="true" nowarn="true" >
 			<src refid="source-ai.path.id"/>
 			<classpath path="${build-loader.classes.dir}" />
 			<classpath refid="class.path.id"/>
