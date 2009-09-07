@@ -30,7 +30,18 @@ public class Workflows {
             this.priority = priority;
             this.unitname = unitname;
             this.quantity = quantity;
+            int orderref = nextorderref;
+            nextorderref++;
          }
+         @ReflectionHelper.Exclude
+         static int nextorderref = 0;
+         @ReflectionHelper.Exclude
+         int orderref;
+         @Override
+         public int hashCode(){
+            return orderref;
+         }
+         
          public float priority;
          public String unitname;
          public int quantity;
@@ -64,6 +75,10 @@ public class Workflows {
 
    String modname;
    String workflowdirectory;
+   
+   public HashMap<String,Workflow> getWorkflowsByName() {
+      return workflowsByName;
+   }
 
    public Workflows( PlayerObjects playerObjects ) {
       this.playerObjects = playerObjects;
@@ -86,22 +101,63 @@ public class Workflows {
          String workflowname = filename.split("\\.")[0]; // remove extension
          logfile.WriteLine( "Workflow file found: " + filename );
          Workflow workflow = new Workflow();
-         reflectionHelper.loadObjectFromFile( filename, workflow );
+         reflectionHelper.loadObjectFromFile( workflowdirectory + filename, workflow );
          workflow.setWorkflowName( workflowname );
          workflowsByName.put( workflow.getWorkflowName(), workflow );
       }
       if( workflowsByName.size() == 0 ) {
          csai.sendTextMessage( "No workflow config files found for mod " + 
                aicallback.getMod().getHumanName() + ".  Creating one: " + this.workflowdirectory
-                  + "dummy.xml");
+                  + "sample.xml");
          Workflow workflow = new Workflow();
-         workflow.setWorkflowName( "dummy" );
-         workflow.getOrders().add( new Workflow.Order( 1.5f, "armstump", 10 ) );
-         workflow.getOrders().add( new Workflow.Order( 1.4f, "armsam", 8 ) );
+         workflow.setWorkflowName( "sample" );
+         populateSampleWorkflow( workflow );
+//         workflow.getOrders().add( new Workflow.Order( 1.5f, "armstump", 10 ) );
+//         workflow.getOrders().add( new Workflow.Order( 1.4f, "armsam", 8 ) );
          workflowsByName.put( workflow.getWorkflowName(), workflow );
       }
       for( Workflow workflow : workflowsByName.values() ) {
          reflectionHelper.saveObjectToFile( workflowdirectory + workflow.getWorkflowName() + ".xml", workflow );
       }
+   }
+   
+   void populateSampleWorkflow( Workflow workflow ) {
+      workflow.getOrders().add( new Workflow.Order(2.0f, "armcv", 1) );
+
+      workflow.getOrders().add( new Workflow.Order(2.1f, "armfav", 2) );
+      workflow.getOrders().add( new Workflow.Order(2.0f, "armstump", 10) );
+      workflow.getOrders().add( new Workflow.Order(2.0f, "armsam", 10) );
+      workflow.getOrders().add( new Workflow.Order(1.95f, "armmex", 4) );
+      workflow.getOrders().add( new Workflow.Order(1.95f, "armsolar", 4) );
+      workflow.getOrders().add( new Workflow.Order(1.9f, "armcv", 3) );
+      workflow.getOrders().add( new Workflow.Order(1.8f, "armmstor", 1) );
+      workflow.getOrders().add( new Workflow.Order(1.8f, "armavp", 1) );
+      workflow.getOrders().add( new Workflow.Order(2.0f, "armbull", 3) );
+      workflow.getOrders().add( new Workflow.Order(2.0f, "armmart", 2) );
+      workflow.getOrders().add( new Workflow.Order(1.9f, "armseer", 1) ); // experimental
+      workflow.getOrders().add( new Workflow.Order(1.7f, "armyork", 3) );
+      workflow.getOrders().add( new Workflow.Order(1.7f, "armbull", 3) );
+      workflow.getOrders().add( new Workflow.Order(1.7f, "armmart", 2) );
+      workflow.getOrders().add( new Workflow.Order(1.0f, "armmfus", 1) );
+      workflow.getOrders().add( new Workflow.Order(0.9f, "armacv", 2) );
+      workflow.getOrders().add( new Workflow.Order(0.8f, "armmmkr", 4) );
+      workflow.getOrders().add( new Workflow.Order(0.8f, "armarad", 1) );
+      workflow.getOrders().add( new Workflow.Order(0.8f, "armestor", 1) );
+      workflow.getOrders().add( new Workflow.Order(0.8f, "armmfus", 8) );
+      workflow.getOrders().add( new Workflow.Order(0.7f, "armalab", 1) );
+      workflow.getOrders().add( new Workflow.Order(0.7f, "armfark", 2) );
+
+      workflow.getOrders().add( new Workflow.Order(0.6f, "armbull", 20) );
+      workflow.getOrders().add( new Workflow.Order(0.6f, "armyork", 20) );
+      workflow.getOrders().add( new Workflow.Order(0.6f, "armmart", 20) );
+      workflow.getOrders().add( new Workflow.Order(0.5f, "armseer", 1) );
+      workflow.getOrders().add( new Workflow.Order(0.5f, "armsjam", 1) );
+
+      workflow.getOrders().add( new Workflow.Order(0.4f, "armmav", 50) ); // experimental
+      workflow.getOrders().add( new Workflow.Order(0.3f, "armfark", 4) ); // experimental
+      //   workflow.BuildUnit(0.3f, "armpeep", 3); // experimental
+      //  workflow.BuildUnit(0.3f, "armap", 1); // experimental
+      //workflow.BuildUnit(0.2f, "armbrawl", 50); // experimental
+      //workflow.BuildUnit(0.2f, "armaap", 1); // experimental      
    }
 }

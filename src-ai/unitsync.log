@@ -1,0 +1,30 @@
+LogOutput initialized.
+Spring 0.80.2.0
+Available log subsystems: VFS-detail, VFS, ArchiveScanner, unitsync
+Enabled log subsystems: unitsync
+Enable or disable log subsystems using the LogSubsystems configuration key
+  or the SPRING_LOG_SUBSYSTEMS environment variable (both comma separated).
+unitsync: loaded, 0.80.2.0
+Using read-write data directory: /home/user/profile/.spring/
+Using read-only  data directory: /usr/lib/spring/
+Using read-only  data directory: /usr/share/games/spring/
+Scanning: /usr/share/games/spring/maps
+Scanning: /usr/share/games/spring/base
+Scanning: /usr/share/games/spring/mods
+Scanning: /usr/share/games/spring/packages
+Scanning: /usr/lib/spring/maps
+Scanning: /usr/lib/spring/base
+Scanning: /usr/lib/spring/mods
+Scanning: /usr/lib/spring/packages
+Scanning: /home/user/profile/.spring/maps
+Scanning: /home/user/profile/.spring/base
+Scanning: /home/user/profile/.spring/mods
+Scanning: /home/user/profile/.spring/packages
+unitsync: initialized, 0.80.2.0
+unitsync: hosting
+unitsync: archive checksum: /home/user/profile/.spring/maps/Comet_Catcher_Redux.sd7
+unitsync: archive checksum: /home/user/profile/.spring/maps/Sands_of_War_v2.sd7
+unitsync: archive checksum: /home/user/profile/.spring/maps/Small Supreme Battlefield.sd7
+unitsync: archive checksum: /home/user/profile/.spring/maps/SmallDivide.sd7
+unitsync: archive checksum: BA696.sd7
+unitsync: deinitialized

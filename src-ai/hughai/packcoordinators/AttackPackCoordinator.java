@@ -152,7 +152,7 @@ public class AttackPackCoordinator extends PackCoordinator
       logfile.WriteLine( "AttackPackCoordinator regrouping to " + regouppos );
       if( debugon )
       {
-         csai.SendTextMsg( "AttackPackCoordinator regrouping to " + regouppos );
+//         csai.SendTextMsg( "AttackPackCoordinator regrouping to " + regouppos );
       }
       MoveTo( regouppos );
    }

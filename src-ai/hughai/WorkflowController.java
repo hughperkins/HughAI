@@ -28,6 +28,11 @@ import java.util.Map;
 import com.springrts.ai.*;
 import com.springrts.ai.oo.*;
 
+import hughai.*;
+import hughai.building.Workflows.Workflow;
+import hughai.Ownership.IOrder;
+import hughai.building.Workflows.Workflow.Order;
+import hughai.building.*;
 import hughai.basictypes.*;
 import hughai.mapping.*;
 import hughai.unitdata.*;
@@ -40,6 +45,11 @@ import hughai.controllers.level2.TankController;
 // other classes together
 // for now, it's still a bit of a hack
 // a lot of this needs to be factored out better
+//
+// The connection between this and Workflows is a bit hacky for now,
+// not least the hashmap of unitsUnderContructionByOrder
+// but it gets it working.  This bit is under transition at the moment, since
+// just finished writing the Workflows class.
 public class WorkflowController
 {
    PlayerObjects playerObjects;
@@ -71,17 +81,23 @@ public class WorkflowController
    Config config;
    Offense offense;
    Reconnaissance reconnaissance;
+   Workflows workflows;
 
    Random random = new Random();
 
    public double energymetalratio = 10.0;
 
+   HashMap<Order,ArrayList<Ownership.IOrder>> unitsUnderContructionByOrder = new HashMap<Order, ArrayList<IOrder>>();
+
    List<Unit> ActiveConstructors = new ArrayList<Unit>();
    Map<Unit, Unit> AssistingConstructors = new HashMap<Unit, Unit>(); // id of assisted keyed by id of assistor
 
+   Workflows.Workflow currentWorkflow;
+   Collection<Workflows.Workflow.Order> currentOrders;
+   
 //   int lastcheckidleframe = -1000;
 
-   List<Order> orders = new ArrayList<Order>();
+//   List<Order> orders = new ArrayList<Order>();
 
    public WorkflowController( PlayerObjects playerObjects )
    {
@@ -109,6 +125,7 @@ public class WorkflowController
       //		losmap = playerObjects.getLosMap();
       maps = playerObjects.getMaps();
       enemyTracker = playerObjects.getEnemyTracker();
+      workflows = playerObjects.getWorkflows();
       
       if (csai.DebugOn)
       {
@@ -120,7 +137,7 @@ public class WorkflowController
       public void commandReceived(String cmd, String[] split, int playe)
       {
          logfile.WriteLine("Workflow:");
-         for (Order order : orders)
+         for (Order order : currentOrders )
          {
             logfile.WriteLine(order.toString());
          }
@@ -131,6 +148,12 @@ public class WorkflowController
    {
       metal.Init();
 
+      // just pick some workflow for now...
+      for( Workflow workflow : workflows.getWorkflowsByName().values() ) {
+         currentWorkflow = workflow;
+      }
+      currentOrders = currentWorkflow.orders;
+      
 //      tankcontroller = new TankController(
 //            playerObjects,
 //            unitLists.getTankList().getUnits(), 
@@ -192,12 +215,16 @@ public class WorkflowController
          ownership.SignalConstructorIsIdle(constructor);
          double highestpriority = 0;
          List<Order> bestorders = new ArrayList<Order>();
-         for (Order order : orders)
+         for (Order order : currentOrders)
          {
             double thispriority = order.priority;
             if (thispriority >= highestpriority)
             {
-               int currentunits = order.unitsunderconstruction.size();
+               if( unitsUnderContructionByOrder.get( order) == null ) {
+                  unitsUnderContructionByOrder.put(  order, new ArrayList<IOrder>() );
+               }
+               List<IOrder> unitsunderconstruction = unitsUnderContructionByOrder.get( order);
+               int currentunits = unitsunderconstruction.size();
                if (unitController.UnitsByName.containsKey(order.unitname))
                {
                   currentunits += unitController.UnitsByName.get(order.unitname).size();
@@ -324,7 +351,10 @@ public class WorkflowController
                   constructor,
                   deftobuild, pos);
             logfile.WriteLine("building: " + ordertodo.unitname);
-            ordertodo.unitsunderconstruction.add(ownershiporder);
+            if( unitsUnderContructionByOrder.get( ordertodo ) == null ) {
+               unitsUnderContructionByOrder.put(  ordertodo, new ArrayList<IOrder>() );
+            }
+            unitsUnderContructionByOrder.get( ordertodo ).add(ownershiporder);
             if (AssistingConstructors.containsKey(constructor))
             {
                AssistingConstructors.remove(constructor);
@@ -365,38 +395,38 @@ public class WorkflowController
       }
    }
 
-   public class Order
-   {
-      public double priority;
-      public String unitname;
-      public int quantity;
-      public ArrayList<Ownership.IOrder> unitsunderconstruction = new ArrayList<Ownership.IOrder>();
-      public Order(double priority, String unitname, int quantity)
-      {
-         this.priority = priority;
-         this.unitname = unitname;
-         this.quantity = quantity;
-      }
-      @Override
-      public String toString()
-      {
-         int underconstruction = unitsunderconstruction.size();
-         int currentunits = 0;
-         if (unitController.UnitsByName.containsKey(unitname))
-         {
-            currentunits += unitController.UnitsByName.get(unitname).size();
-         }
-         return "Order priority: " + priority + " unitname: " + unitname + " quantity: " + currentunits + "(" + 
-         underconstruction + ") / " + quantity;
-      }
-   }
+//   public class Order
+//   {
+//      public double priority;
+//      public String unitname;
+//      public int quantity;
+//      public ArrayList<Ownership.IOrder> unitsunderconstruction = new ArrayList<Ownership.IOrder>();
+//      public Order(double priority, String unitname, int quantity)
+//      {
+//         this.priority = priority;
+//         this.unitname = unitname;
+//         this.quantity = quantity;
+//      }
+//      @Override
+//      public String toString()
+//      {
+//         int underconstruction = unitsunderconstruction.size();
+//         int currentunits = 0;
+//         if (unitController.UnitsByName.containsKey(unitname))
+//         {
+//            currentunits += unitController.UnitsByName.get(unitname).size();
+//         }
+//         return "Order priority: " + priority + " unitname: " + unitname + " quantity: " + currentunits + "(" + 
+//         underconstruction + ") / " + quantity;
+//      }
+//   }
 
    // note to self: need to add weighting probably
    // need to add filters/position requireemtns for radars, metal extractors
-   public void BuildUnit(double priority, String name, int quantity)
-   {
-      orders.add( new Order(priority, name, quantity));
-   }
+//   public void BuildUnit(double priority, String name, int quantity)
+//   {
+//      orders.add( new Order(priority, name, quantity));
+//   }
 
    List<String> energyunits = new ArrayList<String>();
 
@@ -568,11 +598,14 @@ public class WorkflowController
       @Override
       public void UnitFinished(Ownership.IOrder ownershiporder, Unit unit )
       {
-         for (Order order : orders)
+         for (Order order : currentOrders)
          {
-            if (order.unitsunderconstruction.contains(ownershiporder))
+            if( unitsUnderContructionByOrder.get( order ) == null ) {
+               unitsUnderContructionByOrder.put(  order, new ArrayList<IOrder>() );
+            }
+            if (unitsUnderContructionByOrder.get( order ).contains(ownershiporder))
             {
-               order.unitsunderconstruction.remove(ownershiporder);
+               unitsUnderContructionByOrder.get( order ).remove(ownershiporder);
             }
          }
          new GameListener().UnitIdle(unit);
@@ -586,11 +619,14 @@ public class WorkflowController
       @Override
       public void UnitDestroyed(Ownership.IOrder ownershiporder, Unit unit )
       {
-         for (Order order : orders)
+         for (Order order : currentOrders )
          {
-            if (order.unitsunderconstruction.contains(ownershiporder))
+            if( unitsUnderContructionByOrder.get( order ) == null ) {
+               unitsUnderContructionByOrder.put(  order, new ArrayList<IOrder>() );
+            }
+            if (unitsUnderContructionByOrder.get( order ).contains(ownershiporder))
             {
-               order.unitsunderconstruction.remove(ownershiporder);
+               unitsUnderContructionByOrder.get( order ).remove(ownershiporder);
             }
          }
       }
