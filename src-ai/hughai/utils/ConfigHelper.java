@@ -52,8 +52,10 @@ public class ConfigHelper<T extends ConfigHelper.IConfig> {
 
    public void loadConfig( T config ) {
       String configpath = config.getConfigPath();
-      reflectionHelper.loadObjectFromFile( configpath, config );
-      validate();
+      if( new File( configpath ).exists() ) {
+         reflectionHelper.loadObjectFromFile( configpath, config );
+         validate();
+      }
       reflectionHelper.saveObjectToFile( configpath, config );
    }
 

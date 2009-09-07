@@ -83,7 +83,7 @@ public class Workflows {
       ReflectionHelper reflectionHelper = new ReflectionHelper( playerObjects );
       for( File file : new File(this.workflowdirectory).listFiles() ) {
          String filename = file.getName().toLowerCase();
-         String workflowname = filename.split(".")[0]; // remove extension
+         String workflowname = filename.split("\\.")[0]; // remove extension
          logfile.WriteLine( "Workflow file found: " + filename );
          Workflow workflow = new Workflow();
          reflectionHelper.loadObjectFromFile( filename, workflow );

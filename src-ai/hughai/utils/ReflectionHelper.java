@@ -125,18 +125,18 @@ public class ReflectionHelper {
       for( Field field : object.getClass().getDeclaredFields() ) {
          Exclude exclude = field.getAnnotation( Exclude.class );
          if( exclude == null ) { // if it's not null, we've excluded it
-            Element property = XmlHelper.SelectSingleElement( element, 
-                  "property[@name='" + field.getName() + "']" );  
-            if( property != null ) {
+//            Element property = XmlHelper.SelectSingleElement( element, 
+//                  "property[@name='" + field.getName() + "']" );  
+//            if( property != null ) {
                writeDebugLine( "reading " + objectname + " property " + field.getName() );
                //                     String stringValue = property.getAttribute( "value" );
                for( Annotation annotation : field.getAnnotations() ) {
                   writeDebugLine( "- annotation: " + annotation );
                }
-               Object value = elementToFieldValue( field.getType(), field.getAnnotations(), property );
+               Object value = elementToFieldValue( true, field.getName(), field.getType(), field.getAnnotations(), element );
                //                     Object value = stringTofieldValue( field.getType(), stringValue );
                field.set( object, value );
-            }
+//            }
          }
       }      
       indent -= 3;
@@ -188,11 +188,11 @@ public class ReflectionHelper {
             writeDebugLine( "writing " + objectname + " property " + field.getName() );
             Object value = field.get( object );
             //String valueasstring = fieldValueToString( field.getType(), value  );
-            Element childelement = XmlHelper.AddChild( parentelement, "property" );
-            childelement.setAttribute("name", field.getName() );
+//            Element childelement = XmlHelper.AddChild( parentelement, "property" );
+//            childelement.setAttribute("name", field.getName() );
             //property.setAttribute("value", valueasstring );
             writeDebugLine( "SaveObjectToelement " + field.getName() + " annotations: " + field.getAnnotations().length );
-            addFieldValueToElement( childelement, field.getType(),
+            addFieldValueToElement( true, field.getName(), parentelement, field.getType(),
                  field.getAnnotations(), value );
          }
       }
@@ -223,29 +223,27 @@ public class ReflectionHelper {
       throw new RuntimeException("Config.primitiveToString: unknown field class: " + fieldclass.getName() );      
    }
 
-   void addFieldValueToElement ( Element element, Class fieldclass, Annotation[] annotations, Object value ) throws Exception {
+   void addFieldValueToElement ( boolean addsubelementforobjects, String fieldname, Element element, Class fieldclass, Annotation[] annotations, Object value ) throws Exception {
       writeDebugLine( "addFieldValueToElement " + value  + " " + fieldclass.getSimpleName() );
       if( fieldclass == String.class ) {
-         element.setAttribute("value", primitiveToString( fieldclass, value ) );
+         String primitiveasstring = primitiveToString( fieldclass, value );
+         writeDebugLine( "setting attribute " + fieldname + " to " + primitiveasstring );
+         element.setAttribute(fieldname, primitiveasstring );
          return;
       }
       if( fieldclass == boolean.class ) {
-         element.setAttribute("value", primitiveToString( fieldclass, value ) );
+         element.setAttribute(fieldname, primitiveToString( fieldclass, value ) );
          return;
       }
       if( fieldclass == int.class ) {
-         element.setAttribute("value", primitiveToString( fieldclass, value ) );
+         element.setAttribute(fieldname, primitiveToString( fieldclass, value ) );
          return;
       }
       if( fieldclass == float.class ) {
-         element.setAttribute("value", primitiveToString( fieldclass, value ) );
+         element.setAttribute(fieldname, primitiveToString( fieldclass, value ) );
          return;
       }
       if( List.class.isAssignableFrom( fieldclass ) ) {
-         if( value == null ) {
-            element.setAttribute("null","null");
-            return;
-         }
          List thislist = (List)value;
          ListTypeInfo listTypeInfo = null;
          CustomClass customclassannotation = null;
@@ -264,17 +262,23 @@ public class ReflectionHelper {
 //         if( listTypeInfo != null ) {
             Class valueType = listTypeInfo.value();
 //         }
+         Element listelement = XmlHelper.AddChild( element, "list" );
+         listelement.setAttribute("fieldname", fieldname );
+         if( value == null ) {
+            listelement.setAttribute("null","null");
+            return;
+         }
          for( Object item : thislist ) {
 //            ListTypeInfo listTypeInfo = field.getAnnotation( ListTypeInfo.class );
 //            Class valueType = String.class; // if not annotated, assume it's a String
             //String thisvalue = primitiveToString( valueType, item );
-            Element child = XmlHelper.AddChild( element, "listvalue" );
+            Element child = XmlHelper.AddChild( listelement, "listitem" );
             //child.setAttribute( "value", thisvalue );
             ArrayList<Annotation> childAnnotations = new ArrayList<Annotation>();
             if( customclassannotation != null ) {
                childAnnotations.add( customclassannotation );
             }
-            addFieldValueToElement( child, valueType, childAnnotations.toArray( new Annotation[0] ), item );
+            addFieldValueToElement( false, "value", child, valueType, childAnnotations.toArray( new Annotation[0] ), item );
          }
          return;
       }
@@ -301,6 +305,10 @@ public class ReflectionHelper {
          }
       }
       if( foundCustomClassAttribute ) {
+         if( addsubelementforobjects ) {
+            element = XmlHelper.AddChild( element, "object" );
+            element.setAttribute( "fieldname", fieldname );
+         }         
          saveObjectToElement( element, value );
          return;
       }
@@ -308,22 +316,26 @@ public class ReflectionHelper {
       throw new RuntimeException("addFieldValueToElement: unknown field class: " + fieldclass.getName() );
    }
 
-   Object elementToFieldValue( Class<?> fieldclass, Annotation[] annotations, Element element ) {
+   Object elementToFieldValue( boolean addsubelementforobjects, String fieldname, Class<?> fieldclass, Annotation[] annotations, Element element ) {
       try {
          if( fieldclass == String.class ) {
-            return stringTofieldValue( fieldclass, element.getAttribute("value") );
+            return stringTofieldValue( fieldclass, element.getAttribute(fieldname) );
          }
          if( fieldclass == boolean.class ) {
-            return stringTofieldValue( fieldclass, element.getAttribute("value") );
+            return stringTofieldValue( fieldclass, element.getAttribute(fieldname) );
          }
          if( fieldclass == int.class ) {
-            return stringTofieldValue( fieldclass, element.getAttribute("value") );
+            return stringTofieldValue( fieldclass, element.getAttribute(fieldname) );
          }
          if( fieldclass == float.class ) {
-            return stringTofieldValue( fieldclass, element.getAttribute("value") );
+            return stringTofieldValue( fieldclass, element.getAttribute(fieldname) );
          }
          if( List.class.isAssignableFrom( fieldclass ) ) {
-            if( element.getAttribute("null").equals("null") ) {
+            Element listelement = XmlHelper.SelectSingleElement( element, "list[@fieldname='" + fieldname + "']" );
+            if( listelement == null ) {
+               return null;
+            }
+            if( listelement.getAttribute("null").equals("null") ) {
                writeDebugLine( "ReflectionHelper.elementToFieldValue object field is null." );
                return null;
             }
@@ -347,12 +359,12 @@ public class ReflectionHelper {
 //               valueType = listTypeInfo.value();
 //            }
             List thislist =  new ArrayList();
-            for( Element valueelement : XmlHelper.SelectElements( element, "listvalue" ) ) {
+            for( Element valueelement : XmlHelper.SelectElements( listelement, "listitem" ) ) {
                ArrayList<Annotation> childAnnotations = new ArrayList<Annotation>();
                if( customclassannotation != null ) {
                   childAnnotations.add( customclassannotation );
                }
-               Object listitem = elementToFieldValue( valueType, childAnnotations.toArray( new Annotation[0] ), valueelement );
+               Object listitem = elementToFieldValue( false, "value", valueType, childAnnotations.toArray( new Annotation[0] ), valueelement );
                thislist.add( listitem );
                writeDebugLine( " list element " + valueelement.getAttribute("value") );
             }
@@ -380,6 +392,10 @@ public class ReflectionHelper {
             }
          }
          if( foundCustomClassAttribute ) {
+            if( addsubelementforobjects ) {
+               element = XmlHelper.SelectSingleElement( element, "object[@fieldname='" + fieldname + "']" );
+            }
+            
             if( element.getAttribute("null").equals("null") ) {
                writeDebugLine( "ReflectionHelper.elementToFieldValue object field is null." );
                return null;

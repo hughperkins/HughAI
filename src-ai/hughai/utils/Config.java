@@ -49,6 +49,9 @@ import java.lang.annotation.*;
 public class Config implements ConfigHelper.IConfig {
    @ReflectionHelper.Exclude // dont' try to save/restore playerObjects ;-)
    PlayerObjects playerObjects;
+   
+   @ReflectionHelper.Exclude
+   final String ConfigVersion = "2";
 
    String metalspotmarkerunitname = "armmex";
    String usedmetalspotmarkerunitname = "armfort";
@@ -106,7 +109,7 @@ public class Config implements ConfigHelper.IConfig {
    @Override
    public String getConfigPath() {
       String configPath = playerObjects.getCSAI().getAIDirectoryPath() + playerObjects.getAicallback()
-         .getMod().getShortName() + ".xml";
+         .getMod().getShortName() + "_" + ConfigVersion + ".xml";
       playerObjects.getLogFile().WriteLine( "Config path: " + configPath );
       return configPath;
    }
