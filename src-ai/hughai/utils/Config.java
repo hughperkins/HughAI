@@ -31,6 +31,7 @@ import hughai.PlayerObjects;
 import hughai.basictypes.*;
 import hughai.*;
 import hughai.utils.*;
+import hughai.utils.ReflectionHelper.ListTypeInfo;
 
 import java.lang.annotation.*;
 
@@ -43,25 +44,10 @@ import java.lang.annotation.*;
 // this might change in the future, but it's how it works for now
 // maybe we can have mod-config and map-config in the future?
 //
-// for now, this handles the following types:
-// - String
-// - boolean primitive
-// - int primitive
-// - ArrayList<String>
-// It's fairly easy to add other primitive types, so just ask if you need
-//
-// we could also add hashmaps, but for strings only
-// since Java uses type erasure, so we can't reflect on the collection's
-// generic type, and just have to guess basically.
-// we could probably handle this using annotations in the future if we want
-//
-// we're not going to handle objects, especially sicne hte object that
-// one might most be tempted to use would be Unit or UnitDef, which come 
-// from the JavaInterface, and would need a bit of thought before using
-//
-// we should probably split this into two parts: data in one part, and the
-// methods in a more generic class
+// For documentation on what types are supported and so on,
+// please see ReflectionHelper.java
 public class Config implements ConfigHelper.IConfig {
+   @ReflectionHelper.Exclude // dont' try to save/restore playerObjects ;-)
    PlayerObjects playerObjects;
 
    String metalspotmarkerunitname = "armmex";
@@ -93,15 +79,18 @@ public class Config implements ConfigHelper.IConfig {
    
    boolean debug = false;
 
+   @ListTypeInfo(String.class)
    List<String> reconnaissanceunitnames = Arrays.asList( 
          new String[]{
                "armfav"  
          } );
+   @ListTypeInfo(String.class)
    List<String> offensiveunitnames = Arrays.asList( 
          new String[]{
                "armsam", "armstump", "armrock", "armjeth", "armkam", "armanac", "armsfig", "armmh", "armah", 
                   "armbull", "armmart", "armmav", "armyork"  
          } );
+   @ListTypeInfo(String.class)
    List<String> scoutraiderprioritytargets = Arrays.asList(new String[] { 
          "armmex", "cormex", "armrad", "corrad" });
 

@@ -38,18 +38,23 @@ import hughai.utils.*;
 
 // this class should be instantiated early on, so it gets called early on in the tick stack
 public class FrameController {
+   PlayerObjects playerObjects;
    CSAI csai;
-   OOAICallback aicallback;
-   LogFile logfile;
+//   OOAICallback aicallback;
+  // LogFile logfile;
    
    int frame;
 
    public FrameController( PlayerObjects playerObjects ) {
+      this.playerObjects = playerObjects;
       this.csai = playerObjects.getCSAI();
-      this.aicallback = playerObjects.getAicallback();
-      this.logfile = playerObjects.getLogFile();
+//      this.aicallback = playerObjects.getAicallback();
+     // this.logfile = playerObjects.getLogFile();
       
-      csai.registerGameListener( new GameListener() );
+   }
+   
+   public void Init() {
+      csai.registerGameListener( new GameListener() );      
    }
    
    class GameListener extends GameAdapter {

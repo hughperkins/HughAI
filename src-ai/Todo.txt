@@ -7,6 +7,10 @@ medium/low, suboptimal:
 - losmap needs to support los reservations otherwise scouts go same way
 - issue with metal/energy decisions
 
+usability:
+- make gui non-default, so works full-screen and / or detect full-screen
+  and disactivate it
+
 done:
 - enemytracker needs to track mobile units too, otherwise tankcontroller doesn't work
 - issue with movementareaas for search etc

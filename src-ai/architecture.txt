@@ -383,6 +383,13 @@ ConfigHelper contains the actual reflection code, if you need to add additional
 types, or just give me a shout, since I know how it works ,and can probably add
 a new type quite quickly.
 
+Workflows
+=========
+
+This bit (Workflows.java) is in progress, and doesn't do anything yet ;-)
+
+Ultimately, it should replace a lot of the stuff that is currently in BuildEconomy.java.
+
 Tester class
 ============
 

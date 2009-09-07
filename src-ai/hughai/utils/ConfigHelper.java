@@ -42,17 +42,19 @@ public class ConfigHelper<T extends ConfigHelper.IConfig> {
    
    PlayerObjects playerObjects;
    
-   ReflectionHelper<T> reflectionHelper;
+   ReflectionHelper reflectionHelper;
 
    public ConfigHelper( PlayerObjects playerObjects ) {
       this.playerObjects = playerObjects;
-      reflectionHelper = new ReflectionHelper<T>( playerObjects );
+      reflectionHelper = new ReflectionHelper( playerObjects );
      // loadConfig();
    }
 
    public void loadConfig( T config ) {
       String configpath = config.getConfigPath();
       reflectionHelper.loadObjectFromFile( configpath, config );
+      validate();
+      reflectionHelper.saveObjectToFile( configpath, config );
    }
 
    void validate() {

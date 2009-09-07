@@ -31,6 +31,7 @@ import hughai.mapping.*;
 import hughai.unitdata.*;
 import hughai.utils.*;
 import hughai.ui.*;
+import hughai.building.*;
 
 // These could all be singletons if we weren't running multiple players...
 // I suppose another option could be to make them singletons, but passing in
@@ -73,6 +74,7 @@ public class PlayerObjects {
    Config config;
    MainUI mainUI;
    FrameController frameController;
+   Workflows workflows;
 
    static Collection<CSAI> csais = new HashSet<CSAI>();
 
@@ -82,7 +84,6 @@ public class PlayerObjects {
       }
 
       this.CSAI = CSAI;
-      this.aicallback = CSAI.aicallback;
       csais.add( CSAI );
       //this.resourceManager = new ResourceManager( CSAI.aicallback );
    }
@@ -163,6 +164,14 @@ public class PlayerObjects {
       }
       unitLists = new UnitLists(this);
       return unitLists;
+   }
+
+   public synchronized Workflows getWorkflows() {
+      if( workflows != null ){
+         return workflows;
+      }
+      workflows = new Workflows(this);
+      return workflows;
    }
 
    public synchronized EnemyTracker getEnemyTracker() {
@@ -276,7 +285,7 @@ public class PlayerObjects {
          return timeHelper;
       }
       System.out.println("Creating new timehelper");
-      timeHelper = new TimeHelper(aicallback);
+      timeHelper = new TimeHelper( this );
       return timeHelper;
    }
 
@@ -345,6 +354,10 @@ public class PlayerObjects {
    }
 
    public synchronized OOAICallback getAicallback() {
+      if( aicallback != null ) {
+         return aicallback;
+      }
+      this.aicallback = CSAI.aicallback;
       return aicallback;
    };
 }

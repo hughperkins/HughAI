@@ -107,10 +107,13 @@ public class TimeHelper
 		}
 	}
 	
-	OOAICallback aicallback;
+//	OOAICallback aicallback;
+//	FrameController frameController;
+	PlayerObjects playerObjects;
 	
-	public TimeHelper( OOAICallback aicallback ){
-		this.aicallback = aicallback;
+	public TimeHelper( PlayerObjects playerObjects ){
+//		this.aicallback = aicallback;
+	   this.playerObjects = playerObjects;
 	}
 	
 	public RealTimePoint GetRealTimePoint()
@@ -122,10 +125,10 @@ public class TimeHelper
 		return new GameTimePoint(getCurrentFrame());
 	}
 	public int getCurrentFrame(){
-		return aicallback.getGame().getCurrentFrame();
+		return playerObjects.getFrameController().getFrame();
 	}
 	public double getGameTimeSeconds(){
-		int frames = aicallback.getGame().getCurrentFrame();
+		int frames = playerObjects.getFrameController().getFrame();
 		return (double)frames / 30;		
 	}
 	

@@ -35,6 +35,7 @@ public class BuildEconomy
    CSAI csai;
    OOAICallback aicallback;
    Config config;
+   Workflows workflows;
    //LogFile logfile;
 
    public double energymetalratio = 10.0;
@@ -44,6 +45,7 @@ public class BuildEconomy
    public BuildEconomy(PlayerObjects playerObjects)
    {
       config = playerObjects.getConfig();
+      workflows = playerObjects.getWorkflows();
 
       WorkflowController workflowController = new WorkflowController(playerObjects);
       //mobile = new MobileFusionController();

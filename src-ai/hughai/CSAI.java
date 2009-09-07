@@ -161,7 +161,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
 
          logfile.WriteLine("Is game paused? : " + aicallback.getGame().isPaused());
          
-         playerObjects.getFrameController();
+         playerObjects.getFrameController().Init();
 
          drawingUtils = playerObjects.getDrawingUtils();
          drawingUtils.CleanDrawing();
