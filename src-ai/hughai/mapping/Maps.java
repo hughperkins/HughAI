@@ -34,6 +34,7 @@ public class Maps {
    HeightMap heightMap;
    MovementMaps movementMaps;
    SlopeMap slopeMap;
+   ThreatMap threatMap;
    LogFile logfile;
 
    public Maps( PlayerObjects playerObjects ) {
@@ -50,6 +51,8 @@ public class Maps {
       movementMaps = new MovementMaps(playerObjects);
       logfile.WriteLine( "playerobjects instantiating new SlopeMap" );
       slopeMap = new SlopeMap(playerObjects);
+      logfile.WriteLine( "playerobjects instantiating new ThreatMap" );
+      threatMap = new ThreatMap(playerObjects);
       logfile.WriteLine( " ... maps done." );
    }
    

@@ -225,6 +225,8 @@ public class EnemyTracker
           */
          //logfile.WriteLine("EnemyController running static enemy clean" );
 
+         logfile.WriteLine( "enemytracker maphack: " + playerObjects.getConfig().isMapHack() 
+                 + " cheating: " + aicallback.getCheats().isEnabled() );
          if( playerObjects.getConfig().isMapHack() ) { // so we cheat ;-)
             if( ! aicallback.getCheats().isEnabled() ) {
                csai.sendTextMessage( "Maphack enabled.  Very alpha ;-)" );

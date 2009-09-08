@@ -72,6 +72,8 @@ public class Config implements ConfigHelper.IConfig {
    @ReflectionHelper.Exclude
    final String ConfigVersion = "2";
    
+   int maxTimeToConserveMobileEnemyOnThreatMapGameSeconds = 30;
+   
    String defaultWorkflowName = "default";
 
    String metalspotmarkerunitname = "armmex";
@@ -89,7 +91,7 @@ public class Config implements ConfigHelper.IConfig {
    List<String> welcomeMessages = Arrays.asList( new String[] {
          "Welcome to HughAI, by Hugh Perkins 2006, 2009",
          "This AI works best with Balanced Annihilation.",
-         "You can configure HughAI within the AI/Skirmish/HughAI/v0.1 directory.",
+         "You can configure HughAI from the attached gui, and in workflow files in the xxx_workflows directory.",
          "You can say '.hughai help' for text commands, or use the attached GUI panel.",
          "For more information and questions, please don't hesitate to post in the HughAI thread in the forums, or email me at hughperkins@gmail.com."
        }
@@ -358,5 +360,12 @@ public class Config implements ConfigHelper.IConfig {
 
    public void setMapHack( boolean mapHack ) {
       this.mapHack = mapHack;
+   }
+   public int getMaxTimeToConserveMobileEnemyOnThreatMapGameSeconds() {
+      return maxTimeToConserveMobileEnemyOnThreatMapGameSeconds;
+   }
+   public void setMaxTimeToConserveMobileEnemyOnThreatMapGameSeconds(
+         int maxTimeToConserveMobileEnemyOnThreatMapGameSeconds ) {
+      this.maxTimeToConserveMobileEnemyOnThreatMapGameSeconds = maxTimeToConserveMobileEnemyOnThreatMapGameSeconds;
    }
 }

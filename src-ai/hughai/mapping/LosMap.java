@@ -191,6 +191,11 @@ public class LosMap
       UnitDef unitdef = unit.getDef();
 //      int seenmapx = (int)( pos.x / 16 );
 //      int seenmapy = (int)( pos.z / 16 );
+      if( unitdef == null ) {
+         PosAtLastRefreshByUnit.remove(unit);
+         this.LastLosRefreshFrameCountByUnit.remove(unit);
+         return;
+      }
       int radius = (int)unitdef.getLosRadius();
       if( csai.DebugOn )
       {

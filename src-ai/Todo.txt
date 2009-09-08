@@ -2,6 +2,7 @@ New todo
 ========
 
 high, blocking publication:
+- nothing
 
 medium/low, suboptimal:
 - losmap needs to support los reservations otherwise scouts go same way
@@ -9,6 +10,9 @@ medium/low, suboptimal:
 - workflow stalls occasionally
 - add workflow configuration dialog to gui
 - add lists to config dialog
+
+in order to beat e323:
+- add threatmap + pathing
 
 low:
 - make config dialog easier to read somehow, group stuff together?
