@@ -4,11 +4,9 @@ New todo
 high, blocking publication:
 
 medium/low, suboptimal:
-- add mod name + version to name of buildtable cachefile
 - losmap needs to support los reservations otherwise scouts go same way
 - issue with metal/energy decisions
 - workflow stalls occasionally
-- add cheating option
 - add workflow configuration dialog to gui
 - add lists to config dialog
 
@@ -24,6 +22,7 @@ usability:
     - still, there is some issue it seems, to be monitored
 
 done:
+- add cheating option
 - add config dialog to gui
 - test cheating works with java interface 0.1 -> done, ok, can see enemy units ok.
 - add default workflow name to config
@@ -36,6 +35,10 @@ done:
 - move buildEconomy workflow stuff into xml files
 - enemytracker needs to track mobile units too, otherwise tankcontroller doesn't work
 - issue with movementareaas for search etc
+
+abandoned:
+- add mod name + version to name of buildtable cachefile => there isn't a buildtable
+  cache, so it's irrelevant ;-)
 
 to communicate:
 - get rid of debug and logging in java interface
