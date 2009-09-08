@@ -57,6 +57,7 @@ public class PlayerObjects {
    //	TimeHelper timeHelper;
    //	HeightMap heightMap;
    //	SlopeMap slopeMap;
+   ConfigDialog configDialog;
    UnitCommandCache unitCommandCache;
    BuildPlanner buildPlanner;
    Ownership ownership;
@@ -237,6 +238,14 @@ public class PlayerObjects {
       }
       metal = new Metal(this);
       return metal;
+   }
+
+   public synchronized ConfigDialog getConfigDialog() {
+      if( configDialog != null ){
+         return configDialog;
+      }
+      configDialog = new ConfigDialog(this);
+      return configDialog;
    }
 
    public synchronized BuildPlanner getBuildPlanner() {
