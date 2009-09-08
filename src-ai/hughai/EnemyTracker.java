@@ -224,28 +224,52 @@ public class EnemyTracker
 	                }
           */
          //logfile.WriteLine("EnemyController running static enemy clean" );
-         for( Unit ourunit : unitcontroller.units ) {
-            Float3 friendlypos = unitcontroller.getPos( ourunit );
-            UnitDef friendlydef = ourunit.getDef();
-            ArrayList< Unit > enemiestoclean = new ArrayList< Unit >();
-            for( Unit enemy : EnemyPosByStaticUnit.keySet() )
-            {
-               Float3 enemypos = EnemyPosByStaticUnit.get( enemy );
-               if (enemypos.GetSquaredDistance( friendlypos)
-                     < friendlydef.getLosRadius() * friendlydef.getLosRadius()
-                     * 16 * 16 ) // because this map is different scale
-               {
-                  enemiestoclean.add( enemy );
+
+         if( playerObjects.getConfig().isMapHack() ) { // so we cheat ;-)
+            if( ! aicallback.getCheats().isEnabled() ) {
+               csai.sendTextMessage( "Maphack enabled.  Very alpha ;-)" );
+               aicallback.getCheats().setEnabled( true );
+            }
+            // add all enemy units
+            List<Unit> enemyunits = aicallback.getEnemyUnits();
+            for( Unit enemy : enemyunits ) {
+               AddEnemy( enemy );
+            }
+            // remove destroyed ones
+            for( Unit enemy : EnemyUnits ) {
+               if( !enemyunits.contains( enemy ) ) {
+                  RemoveEnemy( enemy );
                }
             }
-            for( Unit enemy : enemiestoclean )
-            {
-               RemoveEnemy( enemy );
+         } else { // not cheating
+            if( aicallback.getCheats().isEnabled() ) {
+               csai.sendTextMessage( "Maphack disabled." );
+               aicallback.getCheats().setEnabled( false );
             }
-         }
-         if( csai.DebugOn )
-         {
-            ShowEnemies();
+
+            for( Unit ourunit : unitcontroller.units ) {
+               Float3 friendlypos = unitcontroller.getPos( ourunit );
+               UnitDef friendlydef = ourunit.getDef();
+               ArrayList< Unit > enemiestoclean = new ArrayList< Unit >();
+               for( Unit enemy : EnemyPosByStaticUnit.keySet() )
+               {
+                  Float3 enemypos = EnemyPosByStaticUnit.get( enemy );
+                  if (enemypos.GetSquaredDistance( friendlypos)
+                        < friendlydef.getLosRadius() * friendlydef.getLosRadius()
+                        * 16 * 16 ) // because this map is different scale
+                  {
+                     enemiestoclean.add( enemy );
+                  }
+               }
+               for( Unit enemy : enemiestoclean )
+               {
+                  RemoveEnemy( enemy );
+               }
+            }
+            if( csai.DebugOn )
+            {
+               ShowEnemies();
+            }
          }
       }
       //		}

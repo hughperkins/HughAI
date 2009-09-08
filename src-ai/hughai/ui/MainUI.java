@@ -369,6 +369,7 @@ public class MainUI {
       }
       revertConfig(); // in case some parses and stuff didn't work, so 
                       // user can see what is actually being read.
+      JOptionPane.showMessageDialog( frame, "Config updated.  Note that most changes require an AI restart.  You can click on 'reloadAI' in 'Actions' tab to do so." );
    }
 
    class ConfigSave implements ActionListener {

@@ -48,6 +48,24 @@ import java.lang.annotation.*;
 // For documentation on what types are supported and so on,
 // please see ReflectionHelper.java
 public class Config implements ConfigHelper.IConfig {
+   public interface ConfigListener {
+      public void configUpdated();
+   }
+   
+   @Exclude
+   List<ConfigListener> listeners = new ArrayList<ConfigListener>();
+   public void registerListener( ConfigListener listener ) {
+      listeners.add( listener );
+   }
+   public void configUpdated() { // this assumes anything that will
+                                 // modify the config will tell us,
+                                 // which is fairly reasnoable,
+                                 // since it's just the gui that will do so
+      for( ConfigListener listener : listeners ) {
+         listener.configUpdated();
+      }
+   }
+   
    @ReflectionHelper.Exclude // dont' try to save/restore playerObjects ;-)
    PlayerObjects playerObjects;
    
@@ -96,6 +114,7 @@ public class Config implements ConfigHelper.IConfig {
    String typicallevel1tankunitdefname = "armstump";
    
    boolean debug = false;
+   boolean mapHack = false;
 
    @ListTypeInfo(String.class)
    List<String> reconnaissanceunitnames = Arrays.asList( 
@@ -331,5 +350,13 @@ public class Config implements ConfigHelper.IConfig {
 
    public void setDefaultWorkflowName( String defaultWorkflowName ) {
       this.defaultWorkflowName = defaultWorkflowName;
+   }
+
+   public boolean isMapHack() {
+      return mapHack;
+   }
+
+   public void setMapHack( boolean mapHack ) {
+      this.mapHack = mapHack;
    }
 }
