@@ -70,6 +70,7 @@ public class Workflows {
    LogFile logfile;
    CSAI csai;
    OOAICallback aicallback;
+   Config config;
 
    //ReflectionHelper<Workflow> reflectionHelper;
 
@@ -85,6 +86,7 @@ public class Workflows {
       this.logfile = playerObjects.getLogFile();
       this.csai = playerObjects.getCSAI();
       this.aicallback = playerObjects.getAicallback();
+      this.config = playerObjects.getConfig();
 
       this.modname = aicallback.getMod().getShortName().toLowerCase();
       this.workflowdirectory = csai.getAIDirectoryPath() + aicallback.getMod().getShortName() + "_workflows" 
@@ -94,6 +96,7 @@ public class Workflows {
    }
 
    void Init () {
+      String defaultWorkflowName = config.getDefaultWorkflowName();
       logfile.WriteLine( "workflows.init()" );
       ReflectionHelper reflectionHelper = new ReflectionHelper( playerObjects );
       for( File file : new File(this.workflowdirectory).listFiles() ) {
@@ -108,9 +111,9 @@ public class Workflows {
       if( workflowsByName.size() == 0 ) {
          csai.sendTextMessage( "No workflow config files found for mod " + 
                aicallback.getMod().getHumanName() + ".  Creating one: " + this.workflowdirectory
-                  + "sample.xml");
+                  + defaultWorkflowName + ".xml");
          Workflow workflow = new Workflow();
-         workflow.setWorkflowName( "sample" );
+         workflow.setWorkflowName( defaultWorkflowName );
          populateSampleWorkflow( workflow );
 //         workflow.getOrders().add( new Workflow.Order( 1.5f, "armstump", 10 ) );
 //         workflow.getOrders().add( new Workflow.Order( 1.4f, "armsam", 8 ) );

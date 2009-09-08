@@ -31,6 +31,7 @@ import hughai.PlayerObjects;
 import hughai.basictypes.*;
 import hughai.*;
 import hughai.utils.*;
+import hughai.utils.ReflectionHelper.Exclude;
 import hughai.utils.ReflectionHelper.ListTypeInfo;
 
 import java.lang.annotation.*;
@@ -52,6 +53,8 @@ public class Config implements ConfigHelper.IConfig {
    
    @ReflectionHelper.Exclude
    final String ConfigVersion = "2";
+   
+   String defaultWorkflowName = "default";
 
    String metalspotmarkerunitname = "armmex";
    String usedmetalspotmarkerunitname = "armfort";
@@ -113,9 +116,20 @@ public class Config implements ConfigHelper.IConfig {
       this.playerObjects = playerObjects;
    }
    
+   @Exclude
+   ConfigHelper<Config> configHelper;
+   
    public void init() {
-      ConfigHelper<Config> configHelper = new ConfigHelper<Config>( playerObjects );
+      configHelper = new ConfigHelper<Config>( playerObjects );
       configHelper.loadConfig( this );      
+   }
+   
+   public void reload(){
+      configHelper.loadConfig( this );            
+   }
+   
+   public void save() {
+      configHelper.saveConfig( this );                  
    }
 
    @Override
@@ -309,5 +323,13 @@ public class Config implements ConfigHelper.IConfig {
 
    public String getConfigVersion() {
       return ConfigVersion;
+   }
+
+   public String getDefaultWorkflowName() {
+      return defaultWorkflowName;
+   }
+
+   public void setDefaultWorkflowName( String defaultWorkflowName ) {
+      this.defaultWorkflowName = defaultWorkflowName;
    }
 }

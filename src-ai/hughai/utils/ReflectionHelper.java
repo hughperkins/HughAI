@@ -173,7 +173,7 @@ public class ReflectionHelper {
    
    void writeDebugLine( String message ) {
       // uncomment for debugging, you'll need it most likely ;-) :-D
-      playerObjects.getLogFile().WriteLine( padLeft( "", " ", indent ) + message );
+//      playerObjects.getLogFile().WriteLine( padLeft( "", " ", indent ) + message );
    }
    
    public void saveObjectToElement ( Element parentelement, Object object ) throws Exception {

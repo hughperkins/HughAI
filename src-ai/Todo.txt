@@ -8,6 +8,12 @@ medium/low, suboptimal:
 - losmap needs to support los reservations otherwise scouts go same way
 - issue with metal/energy decisions
 - workflow stalls occasionally
+- add cheating option
+- add workflow configuration dialog to gui
+- add lists to config dialog
+
+low:
+- make config dialog easier to read somehow, group stuff together?
 
 usability:
 - add parameters to welcome message, like %configfilepath, %workflowdirectory
@@ -18,6 +24,9 @@ usability:
     - still, there is some issue it seems, to be monitored
 
 done:
+- add config dialog to gui
+- test cheating works with java interface 0.1 -> done, ok, can see enemy units ok.
+- add default workflow name to config
 - add welcome messages:
    - supported mod (Basic Annihilation)
    - how to enter debug mode

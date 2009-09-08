@@ -200,16 +200,41 @@ public class Tester {
    }
 
    void runTests() {
-      testgetmilliseconds();
-      testgetunitdefs();
-      testgetfriendlyunits();
-      testgetpos();      
-      testgetunitdef();     
-      testgetsquareddistance();
-      testismobile();
-      testunithash();
-      testgethumanname();
-      testgetspeed();
+//      testgetmilliseconds();
+//      testgetunitdefs();
+//      testgetfriendlyunits();
+//      testgetpos();      
+//      testgetunitdef();     
+//      testgetsquareddistance();
+//      testismobile();
+//      testunithash();
+//      testgethumanname();
+//      testgetspeed();
+      testCheats();
+   }
+   
+   void debug( Object message ) {
+      logfile.WriteLine( "" + message );      
+   }
+   
+   void dumpEnemyUnits() {
+      debug("num units: " + aicallback.getEnemyUnits().size() );
+      for( Unit unit : aicallback.getEnemyUnits() ) {
+         debug( unit.getUnitId() + " " + unit.getDef().getHumanName() + " " + unit.getPos() );
+      }      
+   }
+   
+   void testCheats() {
+      boolean previousCheatState = aicallback.getCheats().isEnabled();
+      
+      logfile.WriteLine( "Enemy units with cheating off:" );
+      aicallback.getCheats().setEnabled( false );
+      dumpEnemyUnits();
+      logfile.WriteLine( "Enemy units with cheating ON:" );
+      aicallback.getCheats().setEnabled( true );
+      dumpEnemyUnits();
+      
+      aicallback.getCheats().setEnabled( previousCheatState );
    }
 
    // control test: no test can go faster than this one

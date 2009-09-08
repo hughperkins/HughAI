@@ -149,8 +149,12 @@ public class WorkflowController
       metal.Init();
 
       // just pick some workflow for now...
-      for( Workflow workflow : workflows.getWorkflowsByName().values() ) {
-         currentWorkflow = workflow;
+      currentWorkflow = workflows.getWorkflowsByName().get(
+            config.getDefaultWorkflowName() );
+      if( currentWorkflow == null ) {
+         for( Workflow workflow : workflows.getWorkflowsByName().values() ) {
+            currentWorkflow = workflow;
+         }
       }
       currentOrders = currentWorkflow.orders;
       
