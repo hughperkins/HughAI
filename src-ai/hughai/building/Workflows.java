@@ -108,10 +108,14 @@ public class Workflows {
          workflow.setWorkflowName( workflowname );
          workflowsByName.put( workflow.getWorkflowName(), workflow );
       }
-      if( workflowsByName.size() == 0 ) {
-         csai.sendTextMessage( "No workflow config files found for mod " + 
+//      if( workflowsByName.size() == 0 ) {
+//         csai.sendTextMessage( "No workflow config files found for mod " + 
+//               aicallback.getMod().getHumanName() + ".  Creating one: " + this.workflowdirectory
+//                  + defaultWorkflowName + ".xml");
+      if( workflowsByName.get( defaultWorkflowName ) == null ) {
+         csai.sendTextMessage( "No default workflow config files found for mod " + 
                aicallback.getMod().getHumanName() + ".  Creating one: " + this.workflowdirectory
-                  + defaultWorkflowName + ".xml");
+               + defaultWorkflowName + ".xml");
          Workflow workflow = new Workflow();
          workflow.setWorkflowName( defaultWorkflowName );
          populateSampleWorkflow( workflow );
