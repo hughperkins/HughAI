@@ -1,0 +1,34 @@
+Welcome to HughAI, by Hugh Perkins 2009
+
+Installation
+============
+
+First things first, how to install it?
+
+If you're reading this, you've already downloaded and extracted HughAI.
+
+Now, to complete installation, you simply need to make sure it is 
+extracted into Spring's AI/Skirmish directory, so you should have the following
+directory structure:
+
+AI/
+   Skirmish/
+      HughAI/
+         0.1/
+            SkirmishAI.jar
+            ... other files ... 
+
+Note:
+- you'll need hoijui's Java Interface v0.1.  This comes by default in
+  the Windows and Ubuntu installations.  Check in Spring chat if you're 
+  not sure, or with hoijui, or myself, but I'm rarely on line, and 
+  I won't know anyway.  hoijui is the man ;-)
+
+How to use?
+===========
+
+Start springlobby, create a single player game, select a map, a mod, and click 
+"Add bot...", select "HughAI".
+
+You can also use tasclient or your favorite Spring lobby client, as long
+as it supports modern Spring AIs (check with hoijui if you're not sure).
