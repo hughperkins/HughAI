@@ -81,7 +81,7 @@ public class LosHelper
 		Float3 bestpos = null;
 		int unitmapx = (int)(currentpos.x / 16);
 		int unitmapy = (int)(currentpos.y / 16);
-		int thisframecount = aicallback.getGame().getCurrentFrame();
+		int thisframecount = playerObjects.getFrameController().getFrame();
 		// step around in unitlosradius steps
 		for (int radiuslosunits = unitlosradius * 2; 
 			radiuslosunits <= maxradius; 
@@ -150,7 +150,7 @@ public class LosHelper
 	// the points are all integer points that lie in this circle
 	Int2[] CreateCirclePoints(int radius)
 	{
-		ArrayList pointsal = new ArrayList();
+		ArrayList<Int2> pointsal = new ArrayList<Int2>();
 		for (int y = -radius; y <= radius; y++)
 		{
 			int xextent = (int)Math.sqrt(radius * radius - y * y);

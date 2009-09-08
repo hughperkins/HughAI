@@ -50,6 +50,7 @@ import hughai.ui.*;
 // holds the last seen frame-time of each part of the map, in a 2d array
 public class LosMap
 {
+   PlayerObjects playerObjects;
    CSAI csai;
    OOAICallback aicallback;
    LogFile logfile;
@@ -68,6 +69,7 @@ public class LosMap
 
    public LosMap( PlayerObjects playerObjects )
    {
+      this.playerObjects = playerObjects;
       csai = playerObjects.getCSAI();
       aicallback = csai.aicallback;
       logfile = playerObjects.getLogFile();
@@ -125,7 +127,7 @@ public class LosMap
    void showLosMap(int maxageseconds) {
       int granularity = config.getMapDrawGranularity() / 2;
       boolean[][]losmap = new boolean[mapwidth / 2 / granularity ][ mapheight/ 2 / granularity ];
-      int frame = aicallback.getGame().getCurrentFrame();
+      int frame = playerObjects.getFrameController().getFrame();
       for( int y = 0; y < mapheight / 2 / granularity; y += 1 )
       {
          for( int x = 0; x < mapwidth / 2 / granularity; x  += 1 )
@@ -183,7 +185,7 @@ public class LosMap
    void UpdateLosForUnit( Unit unit )
    {
       //      logfile.WriteLine( "Updating los for unit " + unit.getUnitId() + " " + unit.getDef().getHumanName() );
-      int frame = aicallback.getGame().getCurrentFrame();
+      int frame = playerObjects.getFrameController().getFrame();
       Float3 pos = unitcontroller.getPos( unit );
       Float3 lastpos = PosAtLastRefreshByUnit.get( unit );
       UnitDef unitdef = unit.getDef();

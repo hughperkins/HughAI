@@ -49,6 +49,8 @@ public class GuardPackCoordinator extends PackCoordinator
    
    HashMap<Unit,Integer> LastOrderTimeByUnit = new HashMap<Unit, Integer>();
    HashSet<Unit> idlingunits = new HashSet<Unit>();
+   
+   PlayerObjects playerObjects;
 
    // can pass in pointer to a hashtable in another class if we want
    // ie other class can directly modify our hashtable
@@ -56,6 +58,7 @@ public class GuardPackCoordinator extends PackCoordinator
          PlayerObjects playerObjects )
    {
       super( playerObjects );
+      this.playerObjects = playerObjects;
 
       csai.registerGameListener( new GameListenerHandler() );
    }
@@ -100,7 +103,8 @@ public class GuardPackCoordinator extends PackCoordinator
       if( restartedfrompause 
             || target != lasttarget )
       {
-         int frame = aicallback.getGame().getCurrentFrame();
+//         int frame = aicallback.getGame().getCurrentFrame();
+         int frame = playerObjects.getFrameController().getFrame();
          for( Unit unit : unitsControlled )
          {
             //int deployedid = (int)de.Key;
@@ -128,7 +132,8 @@ public class GuardPackCoordinator extends PackCoordinator
          {
             if( unitsControlled.contains( unit ) )
             {
-               int frame = aicallback.getGame().getCurrentFrame();
+//               int frame = aicallback.getGame().getCurrentFrame();
+               int frame = playerObjects.getFrameController().getFrame();
                Integer lastordertime = LastOrderTimeByUnit.get( unit );
                if( ( lastordertime == null ) || ( lastordertime < ( frame - 30 ) ) ) {
                   SetGuard( unit );

@@ -45,12 +45,14 @@ public class StartPosition extends GameAdapter
 	CSAI csai;
 	OOAICallback aicallback;
 	UnitController unitController;
+	FrameController frameController;
 	
 	StartPosition( PlayerObjects playerObjects )
 	{
 		csai = playerObjects.getCSAI();
 		aicallback = playerObjects.getAicallback();
 		this.unitController = playerObjects.getUnitController();
+		this.frameController = playerObjects.getFrameController();
 	
 		csai.registerGameListener(this);
 		//CSAI.GetInstance().UnitCreatedEvent += new CSAI.UnitCreatedHandler(UnitCreatedEvent);
@@ -61,8 +63,9 @@ public class StartPosition extends GameAdapter
 	@Override
 	public void UnitCreated(Unit unit, Unit builder)
 	{
-		if (aicallback.getGame().getCurrentFrame() <= 1)
-		{
+	   if( frameController.getFrame() <= 1 ) {
+//		if (aicallback.getGame().getCurrentFrame() <= 1)
+//		{
 			if (unit.getDef().isCommander())
 			{
 				startposition = unitController.getPos( unit );

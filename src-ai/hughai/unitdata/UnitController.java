@@ -74,7 +74,7 @@ public class UnitController
 
 	// wipe these each frame:
 	HashMap<Unit,Float3> posbyunit = new HashMap<Unit,Float3>();
-    List<Map> mapstowipeeachframe = Arrays.asList( new Map[]{
+    List<Map<?,?>> mapstowipeeachframe = Arrays.asList( new Map<?,?>[]{
        posbyunit } ); 
 
 	public UnitDef getUnitDef( Unit unit ) {
@@ -154,7 +154,7 @@ public class UnitController
 		public void Tick( int frame ) {
 //			csai.sendTextMessage("unitcontroller.tick");
 			//units = aicallback.getTeamUnits();
-           for( Map map : mapstowipeeachframe ) {
+           for( Map<?,?> map : mapstowipeeachframe ) {
               map.clear();
            }
 		}

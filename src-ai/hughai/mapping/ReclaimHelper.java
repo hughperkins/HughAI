@@ -38,97 +38,99 @@ import hughai.utils.*;
 
 public class ReclaimHelper
 {
-	final int maxreclaimradius = 500;
-	final int reclaimradiusperonehundredmetal = 150;
-	
-	LogFile logfile;
-	OOAICallback aicallback;
-	UnitController unitController;
-	UnitDefHelp unitDefHelp;
-	ResourceManager resourceManager;
-	DrawingUtils drawingUtils;
-//	MovementMaps movementMaps;
-	CSAI csai;
-	Maps maps;
+   final int maxreclaimradius = 500;
+   final int reclaimradiusperonehundredmetal = 150;
 
-	public ReclaimHelper( PlayerObjects playerObjects )
-	{
-		logfile = playerObjects.getLogFile();
-		aicallback = playerObjects.getAicallback();
-		unitController = playerObjects.getUnitController();
-		unitDefHelp = playerObjects.getUnitDefHelp();
-		resourceManager = playerObjects.getResourceManager();
-		drawingUtils = playerObjects.getDrawingUtils();
-//		movementMaps = playerObjects.getMovementMaps();
-		csai = playerObjects.getCSAI();
-		maps = playerObjects.getMaps();
-	}
+   PlayerObjects playerObjects;
+   LogFile logfile;
+   OOAICallback aicallback;
+   UnitController unitController;
+   UnitDefHelp unitDefHelp;
+   ResourceManager resourceManager;
+   DrawingUtils drawingUtils;
+   //	MovementMaps movementMaps;
+   CSAI csai;
+   Maps maps;
 
-	public Float3 GetNearestReclaim(Unit constructor)
-	{
-		Float3 mypos = unitController.getPos( constructor );
-		if( aicallback.getGame().getCurrentFrame() == 0 )// check ticks first, beacuse metal shows as zero at start
-		{
-			return null;
-		}
-		UnitDef unitdef = constructor.getDef();
-		if (!unitDefHelp.IsMobile(unitdef))
-		{
-			return null;
-		}
-		//Float3 mypos = aicallback.GetUnitPos( constructorid );
-		int currentarea = maps.getMovementMaps().GetArea( unitdef, mypos );
-		//double nearestreclaimdistancesquared = 1000000;
-		//Float3 nearestreclaimpos = null;
-		float bestmetaldistanceratio = 0;
-		Feature bestreclaim = null;
-		int metalspace = (int)( resourceManager.getMetalStorage() 
-				- resourceManager.getCurrentMetal() );
-		logfile.WriteLine( "available space in metal storage: " + metalspace );
-		List<Feature> nearbyfeatures = aicallback.getFeaturesIn(
-				mypos.toAIFloat3(), maxreclaimradius );
-		boolean reclaimfound = false;
-		for( Feature feature : nearbyfeatures )
-		{
-			FeatureDef featuredef = feature.getDef();
-			float containedMetal = featuredef.getContainedResource(resourceManager.getMetalResource()); 
-			if( containedMetal > 0
-					&& containedMetal <= metalspace  )
-			{
-				Float3 thisfeaturepos = Float3.fromAIFloat3( feature.getPosition() );
-				float thisdistance = (float) Math.sqrt( 
-						thisfeaturepos.GetSquaredDistance( mypos ) );
-				float thismetaldistanceratio = containedMetal / thisdistance;
-				if( thismetaldistanceratio > bestmetaldistanceratio 
-						&& maps.getMovementMaps().GetArea( unitdef, thisfeaturepos ) == currentarea )
-				{
-					logfile.WriteLine( "Potential reclaim, distance = " + thisdistance + " metal = " + containedMetal + " ratio = " + thismetaldistanceratio );
-					bestmetaldistanceratio = thismetaldistanceratio;
-					bestreclaim = feature;
-					//         nearestreclaimpo
-					reclaimfound = true;
-				}
-			}
-		}
-		if( reclaimfound 
-				&& ( bestmetaldistanceratio > ( 1.0 / ( 100 * reclaimradiusperonehundredmetal ) ) ) )
-		{
-			Float3 reclaimpos = Float3.fromAIFloat3( bestreclaim.getPosition() );
-			logfile.WriteLine( "Reclaim found, pos " + reclaimpos.toString() );
-			if( csai.DebugOn )
-			{
-				drawingUtils.DrawUnit( "ARMMEX", reclaimpos, 0.0f, 200, aicallback.getTeamId(), true, true);
-			}
-			return reclaimpos;
-			//aicallback.GiveOrder( constructorid, new Command( Command.CMD_RECLAIM, 
-			//    new double[]{ reclaimpos.x, reclaimpos.y, reclaimpos.z, 10 } ) );
-		}
-		else
-		{
-			//logfile.WriteLine( "No reclaim within parameters" );
-			return null;
-		}
-	}
+   public ReclaimHelper( PlayerObjects playerObjects )
+   {
+      this.playerObjects = playerObjects;
+      logfile = playerObjects.getLogFile();
+      aicallback = playerObjects.getAicallback();
+      unitController = playerObjects.getUnitController();
+      unitDefHelp = playerObjects.getUnitDefHelp();
+      resourceManager = playerObjects.getResourceManager();
+      drawingUtils = playerObjects.getDrawingUtils();
+      //		movementMaps = playerObjects.getMovementMaps();
+      csai = playerObjects.getCSAI();
+      maps = playerObjects.getMaps();
+   }
+
+   public Float3 GetNearestReclaim(Unit constructor)
+   {
+      Float3 mypos = unitController.getPos( constructor );
+      if( playerObjects.getFrameController().getFrame() == 0 )// check ticks first, beacuse metal shows as zero at start
+      {
+         return null;
+      }
+      UnitDef unitdef = constructor.getDef();
+      if (!unitDefHelp.IsMobile(unitdef))
+      {
+         return null;
+      }
+      //Float3 mypos = aicallback.GetUnitPos( constructorid );
+      int currentarea = maps.getMovementMaps().GetArea( unitdef, mypos );
+      //double nearestreclaimdistancesquared = 1000000;
+      //Float3 nearestreclaimpos = null;
+      float bestmetaldistanceratio = 0;
+      Feature bestreclaim = null;
+      int metalspace = (int)( resourceManager.getMetalStorage() 
+            - resourceManager.getCurrentMetal() );
+      logfile.WriteLine( "available space in metal storage: " + metalspace );
+      List<Feature> nearbyfeatures = aicallback.getFeaturesIn(
+            mypos.toAIFloat3(), maxreclaimradius );
+      boolean reclaimfound = false;
+      for( Feature feature : nearbyfeatures )
+      {
+         FeatureDef featuredef = feature.getDef();
+         float containedMetal = featuredef.getContainedResource(resourceManager.getMetalResource()); 
+         if( containedMetal > 0
+               && containedMetal <= metalspace  )
+         {
+            Float3 thisfeaturepos = Float3.fromAIFloat3( feature.getPosition() );
+            float thisdistance = (float) Math.sqrt( 
+                  thisfeaturepos.GetSquaredDistance( mypos ) );
+            float thismetaldistanceratio = containedMetal / thisdistance;
+            if( thismetaldistanceratio > bestmetaldistanceratio 
+                  && maps.getMovementMaps().GetArea( unitdef, thisfeaturepos ) == currentarea )
+            {
+               logfile.WriteLine( "Potential reclaim, distance = " + thisdistance + " metal = " + containedMetal + " ratio = " + thismetaldistanceratio );
+               bestmetaldistanceratio = thismetaldistanceratio;
+               bestreclaim = feature;
+               //         nearestreclaimpo
+               reclaimfound = true;
+            }
+         }
+      }
+      if( reclaimfound 
+            && ( bestmetaldistanceratio > ( 1.0 / ( 100 * reclaimradiusperonehundredmetal ) ) ) )
+      {
+         Float3 reclaimpos = Float3.fromAIFloat3( bestreclaim.getPosition() );
+         logfile.WriteLine( "Reclaim found, pos " + reclaimpos.toString() );
+         if( csai.DebugOn )
+         {
+            drawingUtils.DrawUnit( "ARMMEX", reclaimpos, 0.0f, 200, aicallback.getTeamId(), true, true);
+         }
+         return reclaimpos;
+         //aicallback.GiveOrder( constructorid, new Command( Command.CMD_RECLAIM, 
+         //    new double[]{ reclaimpos.x, reclaimpos.y, reclaimpos.z, 10 } ) );
+      }
+      else
+      {
+         //logfile.WriteLine( "No reclaim within parameters" );
+         return null;
+      }
+   }
 }
 
 

@@ -49,6 +49,7 @@ public class SpreadSearchPackCoordinatorWithSearchGrid extends PackCoordinator
    HashMap<Unit, Integer> stuckCountByUnit = new HashMap<Unit, Integer>();
    Cache<Unit> unitsinselfdestruct = new Cache<Unit>( 180 );
 
+   PlayerObjects playerObjects;
    UnitController unitController;
    Config config;
 
@@ -64,6 +65,7 @@ public class SpreadSearchPackCoordinatorWithSearchGrid extends PackCoordinator
    {
       super( playerObjects );
 
+      this.playerObjects = playerObjects;
       this.unitController = playerObjects.getUnitController();
       config = playerObjects.getConfig();
 
@@ -116,7 +118,8 @@ public class SpreadSearchPackCoordinatorWithSearchGrid extends PackCoordinator
       }
 //      logfile.WriteLine("SpreadSearchPackCoordinatorWithSearchGrid.Recoordinate() restartedfrompause " + restartedfrompause );
 
-      int frame = aicallback.getGame().getCurrentFrame();
+//      int frame = aicallback.getGame().getCurrentFrame();
+      int frame = playerObjects.getFrameController().getFrame();
       
       // just send each unit to random destination
       // in unit onidle, we send each unit to a new place
@@ -180,7 +183,7 @@ public class SpreadSearchPackCoordinatorWithSearchGrid extends PackCoordinator
    {
 //      forcerandomdestination = true;
       if (lastexploretime.containsKey(unit) &&
-            aicallback.getGame().getCurrentFrame() - lastexploretime.get( unit ) < 30)
+            playerObjects.getFrameController().getFrame() - lastexploretime.get( unit ) < 30)
       {
          return;
       }
@@ -233,7 +236,7 @@ public class SpreadSearchPackCoordinatorWithSearchGrid extends PackCoordinator
       {
          nextpoint = GetRandomDestination(currentarea);
       }
-      lastexploretime.put(unit, aicallback.getGame().getCurrentFrame());
+      lastexploretime.put(unit, playerObjects.getFrameController().getFrame());
       giveOrderWrapper.MoveTo(unit, nextpoint );
       if( config.isDebug() ) {
          drawingUtils.AddLine( currentpos, nextpoint );

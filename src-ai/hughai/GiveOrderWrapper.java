@@ -98,7 +98,7 @@ public class GiveOrderWrapper
          logfile.WriteLine("Command history:");
          synchronized (allcommands)
          {
-            HashMap<Class, Integer> CountByType = new HashMap<Class, Integer>();
+            HashMap<Class<?>, Integer> CountByType = new HashMap<Class<?>, Integer>();
             for (CommandInfo commandinfo : allcommands)
             {
                logfile.WriteLine( "" + commandinfo.datetime + ": " + commandinfo.command.toString());
@@ -115,7 +115,7 @@ public class GiveOrderWrapper
             }
 
             logfile.WriteLine("Command stats");
-            for( Class thisclass : CountByType.keySet() )
+            for( Class<?> thisclass : CountByType.keySet() )
                //foreach (KeyValuePair<Type, int> kvp in CountByType)
             {
                logfile.WriteLine( "" + thisclass + ": " + CountByType.get(thisclass) );

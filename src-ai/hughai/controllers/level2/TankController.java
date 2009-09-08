@@ -85,7 +85,7 @@ public class TankController
       enemyTracker = playerObjects.getEnemyTracker();
       unitcontroller = playerObjects.getUnitController();
 
-      this.unitsToControl = unitsToControl;
+//      this.unitsToControl = unitsToControl;
       this.typicalunitdef = typicalunitdef;
 
       enemyselector = new EnemySelector2( playerObjects, typicalunitdef.getSpeed() * 2, typicalunitdef );
@@ -143,12 +143,7 @@ public class TankController
       if( Active )
       {
          enemyTracker.unregisterGameListener( new EnemyTrackerHandler() );
-         //			enemyTracker.NewEnemyAddedEvent -= new EnemyController.NewEnemyAddedHandler( EnemyAdded );
-         //			enemyTracker.EnemyRemovedEvent -= new EnemyController.EnemyRemovedHandler( EnemyRemoved );
-
          csai.unregisterGameListener(new GameListenerHandler());
-         //			csai.TickEvent -= new CSAI.TickHandler( Tick );
-         //			csai.UnitIdleEvent -= new CSAI.UnitIdleHandler( UnitIdle );
 
          csai.UnregisterVoiceCommand( "tankscount" );
          csai.UnregisterVoiceCommand( "tanksmoveto" );

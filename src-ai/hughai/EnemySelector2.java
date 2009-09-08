@@ -72,8 +72,8 @@ public class EnemySelector2
       //		unitdefhelp = new UnitDefHelp(aicallback);
 
       this.maxenemyspeed = maxenemyspeed;
-      this.WaterOk = WaterOk;
-      this.BadTerrainOk = BadTerrainOk;
+//      this.WaterOk = WaterOk;
+//      this.BadTerrainOk = BadTerrainOk;
 
       this.typicalunitdef = typicalunitdef;
 

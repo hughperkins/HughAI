@@ -78,14 +78,14 @@ public class ReflectionHelper {
    @Target(ElementType.FIELD)
    @Retention(RetentionPolicy.RUNTIME)
    public @interface ListTypeInfo {
-      Class value();
+      Class<?>value();
    }
    
    @Target(ElementType.FIELD)
    @Retention(RetentionPolicy.RUNTIME)
    public @interface MapTypeInfo {
-      Class keyType();
-      Class valueType();
+      Class<?> keyType();
+      Class<?> valueType();
    }
    
    @Target(ElementType.FIELD)
@@ -205,7 +205,7 @@ public class ReflectionHelper {
    
    int indent = 0;
 
-   String primitiveToString( Class fieldclass, Object value ) {
+   String primitiveToString( Class<?> fieldclass, Object value ) {
       //Class fieldclass = value.getClass();
       if( fieldclass == String.class ) {
          return (String)value;
@@ -226,7 +226,7 @@ public class ReflectionHelper {
       throw new RuntimeException("Config.primitiveToString: unknown field class: " + fieldclass.getName() );      
    }
 
-   void addFieldValueToElement ( boolean addsubelementforobjects, String fieldname, Element element, Class fieldclass, Annotation[] annotations, Object value ) throws Exception {
+   void addFieldValueToElement ( boolean addsubelementforobjects, String fieldname, Element element, Class<?> fieldclass, Annotation[] annotations, Object value ) throws Exception {
       writeDebugLine( "addFieldValueToElement " + value  + " " + fieldclass.getSimpleName() );
       if( fieldclass == String.class ) {
          String primitiveasstring = primitiveToString( fieldclass, value );
@@ -247,7 +247,7 @@ public class ReflectionHelper {
          return;
       }
       if( List.class.isAssignableFrom( fieldclass ) ) {
-         List thislist = (List)value;
+         List<?> thislist = (List<?>)value;
          ListTypeInfo listTypeInfo = null;
          CustomClass customclassannotation = null;
          for( Annotation annotation : annotations ) {
@@ -263,7 +263,7 @@ public class ReflectionHelper {
          }
          writeDebugLine( "List type: " + listTypeInfo.value().getSimpleName() );
 //         if( listTypeInfo != null ) {
-            Class valueType = listTypeInfo.value();
+            Class<?> valueType = listTypeInfo.value();
 //         }
          Element listelement = XmlHelper.AddChild( element, "list" );
          listelement.setAttribute("fieldname", fieldname );
@@ -369,11 +369,11 @@ public class ReflectionHelper {
             if( listTypeInfo == null ) {
                throw new RuntimeException("ReflectionHelper: error: arraylist used without ListTypeInfo annotation type." );
             }
-            Class valueType = listTypeInfo.value();
+            Class<?> valueType = listTypeInfo.value();
 //            if( listTypeInfo != null ) {
 //               valueType = listTypeInfo.value();
 //            }
-            List thislist =  new ArrayList();
+            List<Object> thislist =  new ArrayList<Object>();
             for( Element valueelement : XmlHelper.SelectElements( listelement, "listitem" ) ) {
                ArrayList<Annotation> childAnnotations = new ArrayList<Annotation>();
                if( customclassannotation != null ) {
@@ -429,7 +429,7 @@ public class ReflectionHelper {
       throw new RuntimeException("elementToFieldValue: unknown field class: " + fieldclass.getName() );
    }
 
-   Object stringTofieldValue( Class fieldclass, String stringValue ) {
+   Object stringTofieldValue( Class<?> fieldclass, String stringValue ) {
       if( fieldclass == String.class ) {
          return stringValue;
       }

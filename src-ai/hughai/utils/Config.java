@@ -114,7 +114,7 @@ public class Config implements ConfigHelper.IConfig {
    }
    
    public void init() {
-      ConfigHelper configHelper = new ConfigHelper( playerObjects );
+      ConfigHelper<Config> configHelper = new ConfigHelper<Config>( playerObjects );
       configHelper.loadConfig( this );      
    }
 

@@ -35,7 +35,6 @@ import hughai.utils.*;
 // a unit taht builds something tells Ownership what it built and roughly where
 // this class assigns the first unit that matches to that unit
 // this class follows units until they are finished or destroyed
-@SuppressWarnings( "unused" )
 public class Ownership
 {
    int maxdistanceconsideredsame = 500;
