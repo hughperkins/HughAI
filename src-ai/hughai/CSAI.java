@@ -169,7 +169,8 @@ public class CSAI extends AbstractOOAI implements IHughAI
          
          playerObjects.getMainUI();
          playerObjects.getConfigDialog();
-         playerObjects.getConsole();
+         playerObjects.getConsoleJava();
+         playerObjects.getConsoleEcma();
          
          playerObjects.getWelcomeMessages();
          

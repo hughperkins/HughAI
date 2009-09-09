@@ -77,7 +77,8 @@ public class PlayerObjects {
    FrameController frameController;
    Workflows workflows;
    WelcomeMessages welcomeMessages;
-   Console console;
+   ConsoleJava consoleJava;
+   ConsoleEcma consoleEcma;
 
    static Collection<CSAI> csais = new HashSet<CSAI>();
 
@@ -126,12 +127,20 @@ public class PlayerObjects {
       return welcomeMessages;
    }
    
-   public Console getConsole() {
-      if( console != null ) {
-         return console;
+   public ConsoleJava getConsoleJava() {
+      if( consoleJava != null ) {
+         return consoleJava;
       }
-      console = new Console( this );
-      return console;
+      consoleJava = new ConsoleJava( this );
+      return consoleJava;
+   }
+   
+   public ConsoleEcma getConsoleEcma() {
+      if( consoleEcma != null ) {
+         return consoleEcma;
+      }
+      consoleEcma = new ConsoleEcma( this );
+      return consoleEcma;
    }
    
    public synchronized BuildEconomy getBuildEconomy() {

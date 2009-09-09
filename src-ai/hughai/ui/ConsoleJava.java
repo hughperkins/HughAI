@@ -46,10 +46,10 @@ import hughai.utils.LogFile;
 // provides a console tab to the gui that lets us execute code
 // on the fly!
 // is that wicked or wot! :-D
-public class Console {
+public class ConsoleJava {
    final String classdir = "console-classes";
    final String jarfilename = "Console.jar";
-   final String consoletemplatefilename = "ConsoleTemplate.txt";
+   final String consoletemplatefilename = "JavaConsoleTemplate.txt";
    
 //   final String classpath="$aidir/SkirmishAI.jar:$aidir/UnderlyingAI.jar:$aidir/../../Interfaces/Java/0.1/AIInterface.jar"; 
 
@@ -64,7 +64,7 @@ public class Console {
    
    PlayerObjects playerObjects;
    
-   public Console( PlayerObjects playerObjects ) {
+   public ConsoleJava( PlayerObjects playerObjects ) {
       this.playerObjects = playerObjects;
       
       init();
@@ -111,7 +111,7 @@ public class Console {
       buttonpanel.add( gobutton );
       buttonpanel.add( quitbutton );
 
-      playerObjects.getMainUI().addPanelToTabbedPanel( "Console", outerpanel );
+      playerObjects.getMainUI().addPanelToTabbedPanel( "Java Console", outerpanel );
 //      frame.validate();
 //      frame.setVisible( true );
       } catch( Exception e ) {
@@ -241,7 +241,7 @@ public class Console {
             // this should be moved to some generic class really
             URL[] locations = new URL[] { new File( ourdir + jarfilename )
             .toURI().toURL()};
-            ClassLoader baseClassLoader = Console.class.getClassLoader();
+            ClassLoader baseClassLoader = ConsoleJava.class.getClassLoader();
             if( baseClassLoader == null ) {
                System.out.println("using system classloader as base");
                baseClassLoader = ClassLoader.getSystemClassLoader();

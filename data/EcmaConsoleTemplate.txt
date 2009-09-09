@@ -1,0 +1,6 @@
+
+function go( playerObjects ) {
+   playerObjects.getMainUI().showInfo('hello from ecma!');
+   return "Message from ecma";
+}
+
