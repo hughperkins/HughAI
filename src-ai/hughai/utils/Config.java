@@ -72,7 +72,10 @@ public class Config implements ConfigHelper.IConfig {
    @ReflectionHelper.Exclude
    final String ConfigVersion = "2";
    
-   String consoleclasspath="$aidir/SkirmishAI.jar:$aidir/UnderlyingAI.jar:$aidir/../../../Interfaces/Java/0.1/AIInterface.jar"; 
+   String consoleclasspath="$aidir/SkirmishAI.jar:$aidir/UnderlyingAI.jar"
+        + ":$aidir/../../../Interfaces/Java/0.1/AIInterface.jar"
+        + ":$aidir/../../../Interfaces/Java/0.1/jlib/jna.jar" 
+        + ":$aidir/../../../Interfaces/Java/0.1/jlib/vecmath.jar"; 
 
    int maxTimeToConserveMobileEnemyOnThreatMapGameSeconds = 30;
    
