@@ -2,16 +2,7 @@ Java AI for Spring, HughAI
 
 Spring can be found at http://springrts.com
 
-HughAI runs. It shows off lots of cool concepts that can be used in other AIs, copy and pasted, forked, and so on:
-- GUI, using Swing, with registration pattern, so classes can register a button, and a handler method, with the GUI, and this will automatically add a button to the GUI
-- lots of maps:
-   - losmap: updated during exploration, showing which areas have been explored
-   - metal spot map
-   - enemy map
-   - movement area map: very interesting map: if two points have the same area number, then a unit can move between them freely: there are no obstructions, such as mountains. There are movement area maps for infantry, vehicles, and boats
-   - the maps each have a GUI button to draw them onto the terrain
-- events:
-   - AI events can be subscribed to
-   - more abstracted events, such as unit events, enemy tracker events, and so on
+More details on HughAI:
 
-More details on architecture can be found in src-ai/architecture.txt.
+http://springrts.com/wiki/AI:HughAI
+
