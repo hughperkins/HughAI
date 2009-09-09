@@ -23,9 +23,12 @@
 
 package hughai.utils;
 
+import java.util.*;
+
 import com.springrts.ai.*;
 import com.springrts.ai.command.*;
 import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.Map;
 
 import hughai.CSAI;
 import hughai.GameAdapter;
@@ -105,6 +108,8 @@ public class DrawingUtils
 
    public void CleanDrawing() {
       csai.sendTextMessage( "cleaning map..." );
+      pushCheating();
+      setCheating( false );
       int squaresize = playerObjects.getMaps().getMovementMaps().SQUARE_SIZE;
       int mapwidth = aicallback.getMap().getWidth() * squaresize;
       int mapheight = aicallback.getMap().getHeight() * squaresize;
@@ -117,6 +122,7 @@ public class DrawingUtils
          }
 
       }
+      popCheating();
       csai.sendTextMessage( " ... done" );
       linesDrawn = 0;
    }
@@ -145,9 +151,32 @@ public class DrawingUtils
             return;
             //         throw new RuntimeException("DrawingUtils.AddLine: too many lines drawn.  drawing more would crash Spring..." );
          }
+         pushCheating();
+         setCheating( false );
          csai.handleEngineCommand(
                new AddLineDrawAICommand(startpos.toAIFloat3(), endpos.toAIFloat3()));
          linesDrawn++;
+         popCheating();
+   }
+   
+   Stack<Boolean> cheatingStack = new Stack<Boolean>(); 
+   void pushCheating() {
+      cheatingStack.push( isCheating() );
+   }
+   
+   boolean isCheating() {
+      return playerObjects.getAicallback().getCheats().isEnabled();
+   }
+   
+   void setCheating( boolean cheating ) {
+      if( isCheating() != cheating ) {
+         playerObjects.getAicallback().getCheats().setEnabled( cheating );
+      }
+   }
+   
+   void popCheating() {
+      boolean oldCheating = cheatingStack.pop(); 
+      setCheating( oldCheating );
    }
 
    //   public void AddLine(Float3 startpos, Float3 endpos ) {
@@ -174,8 +203,11 @@ public class DrawingUtils
    }
 
    public void drawText( Float3 pos, String text ) {
+      pushCheating();
+      setCheating( false );
       csai.handleEngineCommand(
-            new AddPointDrawAICommand( pos.toAIFloat3(), text ) );           
+            new AddPointDrawAICommand( pos.toAIFloat3(), text ) );
+      popCheating();
    }
 
    public void DrawRectangle(Float3 pos, int width, int height )
