@@ -61,8 +61,8 @@ public class LosHelper
 
       int currentunitarea = playerObjects.getMaps().getMovementMaps().GetArea(unitdef, currentpos);
       LosMap losMap = playerObjects.getMaps().getLosMap();
-      int losmapwidth = losMap.losmapwidth;
-      int losmapheight = losMap.losmapheight;
+      int losmapwidth = LosMap.losmapwidth;
+      int losmapheight = LosMap.losmapheight;
       int maxradius = (int)Math.sqrt(losmapheight * losmapheight + losmapwidth * losmapwidth);
       int unitlosradius = (int)unitdef.getLosRadius(); // this is in map / 2 units, so it's ok
       LosMapPos[] circlepoints = CreateCirclePoints(unitlosradius);
