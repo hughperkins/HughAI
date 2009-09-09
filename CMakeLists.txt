@@ -35,7 +35,7 @@
 		set(myJavaLoaderBuildDir  "${myBuildDir}/classes/loader")
 		set(myJavaAiBuildDir  "${myBuildDir}/classes/ai")
 		set(myLoaderJarFile       "SkirmishAI")
-		set(myAiJarFile       "Underlying")
+		set(myAiJarFile       "UnderlyingAI")
 		set(myLoaderBinJarFile    "${myLoaderJarFile}.jar")
 		set(myAiBinJarFile    "${myAiJarFile}.jar")
 		set(myLoaderSrcJarFile    "${myLoaderJarFile}-src.jar")
