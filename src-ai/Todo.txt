@@ -12,10 +12,10 @@ medium/low, suboptimal:
 - add lists to config dialog
 
 in order to beat e323:
-- add threatmap + pathing
+- make enemy targeting threatmap dependent 
+- add pathing
 
 low:
-- make decently typed Float3 classes, like terrainpos, metalpos, threatmappos etc
 - make config dialog easier to read somehow, group stuff together?
 - speed up getheighttmap somehow?  replicate spring's internal getelevation algo?
 
@@ -29,6 +29,8 @@ usability:
     - still, there is some issue it seems, to be monitored
 
 done:
+- add threatmap
+- make decently typed Float3 classes, like terrainpos, metalpos, threatmappos etc
 - add cheating option
 - add config dialog to gui
 - test cheating works with java interface 0.1 -> done, ok, can see enemy units ok.
