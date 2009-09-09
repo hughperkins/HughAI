@@ -141,14 +141,14 @@ public class Tester {
             if (x < (thismapwidth - 1) &&
                   map[x][z] != map[x + 1][z] )
             {
-               drawingUtils.AddLine(new Float3((x + 1) * multiplier, elevation, z * multiplier),
-                     new Float3((x + 1) * multiplier, elevation, (z + 1) * multiplier) );
+               drawingUtils.AddLine(new TerrainPos((x + 1) * multiplier, elevation, z * multiplier),
+                     new TerrainPos((x + 1) * multiplier, elevation, (z + 1) * multiplier) );
             }
             if (z < (thismapheight - 1) &&
                   map[x][z] != map[x][z + 1] )
             {
-               drawingUtils.AddLine(new Float3(x * multiplier, elevation, (z + 1) * multiplier),
-                     new Float3((x + 1) * multiplier, elevation, (z + 1) * multiplier) );
+               drawingUtils.AddLine(new TerrainPos(x * multiplier, elevation, (z + 1) * multiplier),
+                     new TerrainPos((x + 1) * multiplier, elevation, (z + 1) * multiplier) );
             }
          }
       }
@@ -162,8 +162,8 @@ public class Tester {
       int mapheight = gamemap.getHeight();
       DrawingUtils drawingUtils = playerObjects.getDrawingUtils();
       for( int i = 0; i < 8193; i++ ) {
-         drawingUtils.AddLine( new Float3( 100, 100, 100 ), 
-               new Float3( 200, 100, 100 ) );
+         drawingUtils.AddLine( new TerrainPos( 100, 100, 100 ), 
+               new TerrainPos( 200, 100, 100 ) );
       }
    }
    
@@ -172,23 +172,23 @@ public class Tester {
       int mapwidth = gamemap.getWidth();
       int mapheight = gamemap.getHeight();
       DrawingUtils drawingUtils = playerObjects.getDrawingUtils();
-      drawingUtils.AddLine( new Float3( -100, 100, -100 ), 
-            new Float3( 5000, 100, 5000 ) );
+      drawingUtils.AddLine( new TerrainPos( -100, 100, -100 ), 
+            new TerrainPos( 5000, 100, 5000 ) );
       for( int z = 0; z < mapheight; z++ ) {
-         drawingUtils.AddLine( new Float3( 0, 100, z * 8 ), 
-               new Float3( 100, 100, z * 8 ) );         
-         drawingUtils.AddLine( new Float3( (mapwidth - 10 ) * 8, 100, z * 8 ), 
-               new Float3( mapwidth * 8, 100, z * 8 ) );         
-         drawingUtils.AddLine( new Float3( 0, 100, z * 8 ), 
-               new Float3( mapwidth * 8, 100, z * 8 ) );         
+         drawingUtils.AddLine( new TerrainPos( 0, 100, z * 8 ), 
+               new TerrainPos( 100, 100, z * 8 ) );         
+         drawingUtils.AddLine( new TerrainPos( (mapwidth - 10 ) * 8, 100, z * 8 ), 
+               new TerrainPos( mapwidth * 8, 100, z * 8 ) );         
+         drawingUtils.AddLine( new TerrainPos( 0, 100, z * 8 ), 
+               new TerrainPos( mapwidth * 8, 100, z * 8 ) );         
       }
       for( int x = 0; x < mapheight; x++ ) {
-         drawingUtils.AddLine( new Float3( x * 8, 100, 0 ), 
-               new Float3( x * 8, 100, 1000 ) );         
-         drawingUtils.AddLine( new Float3( x * 8, 100, (mapheight - 10 ) * 8 ), 
-               new Float3( x * 8, 100, (mapheight - 0 ) * 8 ) );         
-         drawingUtils.AddLine( new Float3( x * 8, 100, 0 ), 
-               new Float3( x * 8, 100, (mapheight - 0 ) * 8 ) );         
+         drawingUtils.AddLine( new TerrainPos( x * 8, 100, 0 ), 
+               new TerrainPos( x * 8, 100, 1000 ) );         
+         drawingUtils.AddLine( new TerrainPos( x * 8, 100, (mapheight - 10 ) * 8 ), 
+               new TerrainPos( x * 8, 100, (mapheight - 0 ) * 8 ) );         
+         drawingUtils.AddLine( new TerrainPos( x * 8, 100, 0 ), 
+               new TerrainPos( x * 8, 100, (mapheight - 0 ) * 8 ) );         
       }
    }
 

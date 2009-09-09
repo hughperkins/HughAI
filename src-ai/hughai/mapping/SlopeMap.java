@@ -32,11 +32,38 @@ import com.springrts.ai.oo.Map;
 
 import hughai.basictypes.*;
 import hughai.*;
+import hughai.mapping.HeightMap.HeightMapPos;
 import hughai.utils.*;
 import hughai.ui.*; 
 
 public class SlopeMap
 {
+   public static final int granularity = 2;
+   
+   public static class SlopeMapPos extends Int2 {
+      public SlopeMapPos() {
+         
+      }
+      public SlopeMapPos( Int2 int2 ) {
+         x = int2.x;
+         y = int2.y;
+      }
+      public SlopeMapPos( int x, int y ) {
+         super( x, y );
+      }
+      public TerrainPos toTerrainPos() {
+         return new TerrainPos( x * 8 * granularity, 0, y * 8 * granularity );
+      }
+      public static SlopeMapPos fromTerrainPos( TerrainPos terrainPos ) {
+         return new SlopeMapPos( (int)terrainPos.x / 8 / granularity,
+               (int)terrainPos.z / 8 / granularity );
+      }
+      public static SlopeMapPos fromHeightMapPos( HeightMapPos heightMapPos ) {
+         return new SlopeMapPos( (int)heightMapPos.x / granularity,
+               (int)heightMapPos.y / granularity );
+      }
+   }
+   
    CSAI csai;
    OOAICallback aicallback;
    LogFile logfile;
@@ -46,7 +73,7 @@ public class SlopeMap
    //	Maps playerObjects.getMaps();
    PlayerObjects playerObjects;
 
-   float[][] SlopeMap;
+   private float[][] SlopeMap;
 
    public SlopeMap( PlayerObjects playerObjects )
    {
@@ -71,9 +98,14 @@ public class SlopeMap
          new MapHelper( playerObjects ).DumpMapDistribution( slopemap );
       }
    }
+   
+   public float getSlopeAt( SlopeMapPos slopeMapPos ) {
+      GetSlopeMap();
+      return SlopeMap[slopeMapPos.x][slopeMapPos.y];
+   }
 
    // ported from Spring's ReadMap.cpp by Hugh Perkins
-   public float[][]GetSlopeMap()
+   private float[][]GetSlopeMap()
    {
       if( SlopeMap != null ) {
          return SlopeMap;
@@ -81,12 +113,13 @@ public class SlopeMap
       int mapwidth = gameMap.getWidth();
       int mapheight = gameMap.getHeight();
 
-      int slopemapwidth = mapwidth / 2;
-      int slopemapheight = mapheight / 2;
+      int slopemapwidth = mapwidth / granularity;
+      int slopemapheight = mapheight / granularity;
 
       int squaresize = playerObjects.getMaps().getMovementMaps().SQUARE_SIZE; // jsut to save typing...
 
-      float[][] heightmap = playerObjects.getMaps().getHeightMap().GetHeightMap();
+//      float[][] heightmap = playerObjects.getMaps().getHeightMap().GetHeightMap();
+      HeightMap heightMap = playerObjects.getMaps().getHeightMap();
       logfile.WriteLine( "Getting heightmap, this could take a while... " );            
 
       // ArrayIndexer heightmapindexer = new ArrayIndexer( mapwidth + 1, mapheight + 1 );
@@ -98,20 +131,41 @@ public class SlopeMap
       {
          for(int x = 2; x < mapwidth - 2; x+= 2)
          {
-            Float3 e1 = new Float3(-squaresize * 4, heightmap[x - 1][ y - 1] - heightmap[x + 3][ y - 1], 0);
-            Float3 e2 = new Float3(0, heightmap[x - 1][ y - 1] - heightmap[x - 1][ y + 3], -squaresize * 4);
+//            HeightMapPos heightMapPos = new HeightMapPos( x, y );
+            Float3 e1 = new Float3(
+                  -squaresize * 4,
+                  heightMap.getElevationAt( new HeightMapPos( x - 1, y - 1 ) )
+                      - heightMap.getElevationAt( new HeightMapPos( x + 3, y - 1) ),
+//                  heightmap[x - 1][ y - 1] - heightmap[x + 3][ y - 1]
+                  0);
+            Float3 e2 = new Float3(
+                  0,
+                  heightMap.getElevationAt( new HeightMapPos( x - 1, y - 1 ) )
+                  - heightMap.getElevationAt( new HeightMapPos( x - 1, y + 3) ),
+//                  heightmap[x - 1][ y - 1] - heightmap[x - 1][ y + 3],
+                  -squaresize * 4);
 
             Float3 n=e2.Cross( e1 );
 
             n.Normalize();
 
-            e1 = new Float3(squaresize * 4, heightmap[x + 3][ y + 3] - heightmap[x - 1][ y + 3], 0);
-            e2 = new Float3(0, heightmap[x + 3][ y + 3] - heightmap[x + 3][ y - 1], squaresize * 4);
+            e1 = new Float3(
+                  squaresize * 4,
+                  heightMap.getElevationAt( new HeightMapPos( x + 3, y + 3 ) )
+                  - heightMap.getElevationAt( new HeightMapPos( x - 1, y + 3) ),
+//                  heightmap[x + 3][ y + 3] - heightmap[x - 1][ y + 3],
+                  0);
+            e2 = new Float3(
+                  0,
+                  heightMap.getElevationAt( new HeightMapPos( x + 3, y + 3 ) )
+                  - heightMap.getElevationAt( new HeightMapPos( x + 3, y - 1 ) ),
+//                  heightmap[x + 3][ y + 3] - heightmap[x + 3][ y - 1],
+                  squaresize * 4);
 
             Float3 n2 = e2.Cross(e1);
             n2.Normalize();
 
-            SlopeMap[ x / 2][ y / 2 ]= 1 - ( n.y + n2.y ) * 0.5f;
+            SlopeMap[ x / granularity][ y / granularity ]= 1 - ( n.y + n2.y ) * 0.5f;
          }
       }
       logfile.WriteLine("... slopes calculated" );

@@ -42,10 +42,10 @@ import hughai.basictypes.*;
 public class SpreadSearchPackCoordinatorWithSearchGrid extends PackCoordinator
 {
    //	HashMap< Integer, UnitDef> UnitDefListByDeployedId;
-   Float3 targetpos;
+   TerrainPos targetpos;
 
    HashSet<Unit> moveFailed = new HashSet<Unit>();
-   HashMap<Unit, Float3> lastPosByUnit = new HashMap<Unit, Float3>(); // to check the thing is not stuck...
+   HashMap<Unit, TerrainPos> lastPosByUnit = new HashMap<Unit, TerrainPos>(); // to check the thing is not stuck...
    HashMap<Unit, Integer> stuckCountByUnit = new HashMap<Unit, Integer>();
    Cache<Unit> unitsinselfdestruct = new Cache<Unit>( 180 );
 
@@ -77,7 +77,7 @@ public class SpreadSearchPackCoordinatorWithSearchGrid extends PackCoordinator
 
    // does NOT imply Activate()
    @Override
-   public void SetTarget( Float3 newtarget )
+   public void SetTarget( TerrainPos newtarget )
    {
       this.targetpos = newtarget;
       //Activate();
@@ -188,7 +188,7 @@ public class SpreadSearchPackCoordinatorWithSearchGrid extends PackCoordinator
          return;
       }
       boolean destinationfound = false;
-      Float3 currentpos = unitController.getPos( unit );
+      TerrainPos currentpos = unitController.getPos( unit );
       MovementMaps movementmaps = maps.getMovementMaps();
       UnitDef unitdef = unitController.getUnitDef( unit );
       int currentarea = movementmaps.GetArea( unitdef, currentpos );
@@ -228,7 +228,7 @@ public class SpreadSearchPackCoordinatorWithSearchGrid extends PackCoordinator
       // find nearest, area that hasnt had los recently
       //int maxradius = Math.Max( aicallback.getMap().getWidth()(), aicallback.getMap().getHeight()() ) / 2;
       //for( int radius = 
-      Float3 nextpoint = null;
+      TerrainPos nextpoint = null;
       if( !forcerandomdestination ) {
          nextpoint = losHelper.GetNearestUnseen(currentpos, unitdef, 12000 );
       }
@@ -246,11 +246,11 @@ public class SpreadSearchPackCoordinatorWithSearchGrid extends PackCoordinator
    }
 
    // note: this needs to know whether we are a vehicle, or whatever
-   Float3 GetRandomDestination( int currentarea )
+   TerrainPos GetRandomDestination( int currentarea )
    {
       int attempts = 20;
       while( attempts > 0 ) {
-         Float3 destination = new Float3();
+         TerrainPos destination = new TerrainPos();
          destination.x = random.nextFloat() * aicallback.getMap().getWidth() * maps.getMovementMaps().SQUARE_SIZE;
          destination.z = random.nextFloat() * aicallback.getMap().getHeight() * maps.getMovementMaps().SQUARE_SIZE;
          destination.y = aicallback.getMap().getElevationAt( destination.x, destination.y );

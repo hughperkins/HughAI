@@ -47,7 +47,7 @@ public class AttackPackCoordinator extends PackCoordinator
    public float AttackDistance = 50;
 
    //	HashMap< Integer,UnitDef> UnitDefListByDeployedId;
-   Float3 targetpos;
+   TerrainPos targetpos;
 
    UnitController unitController;
 
@@ -68,13 +68,13 @@ public class AttackPackCoordinator extends PackCoordinator
 
    // does NOT imply Activate()
    @Override
-   public void SetTarget( Float3 newtarget )
+   public void SetTarget( TerrainPos newtarget )
    {
       this.targetpos = newtarget;
       //Activate();
    }
 
-   Float3 lasttargetpos = null;
+   TerrainPos lasttargetpos = null;
 
    @Override
    void Recoordinate()
@@ -98,8 +98,8 @@ public class AttackPackCoordinator extends PackCoordinator
       logfile.WriteLine( this.getClass().getSimpleName() + " recoordinate" );
       int packsize = Math.min(MaxPackToConsider, unitsControlled.size());
       UnitInfo[] closestunits = GetClosestUnits(targetpos, packsize);
-      Float3 packheadpos = closestunits[0].pos;
-      Float3 packtailpos = closestunits[packsize - 1].pos;
+      TerrainPos packheadpos = closestunits[0].pos;
+      TerrainPos packtailpos = closestunits[packsize - 1].pos;
       double packsquareddiameter = packheadpos.GetSquaredDistance( packtailpos );
       csai.DebugSay("packsize: " + packsize + " packdiameter: " + Math.sqrt(packsquareddiameter));
       // logfile.WriteLine( "AttackPackCoordinator packheadpos " + packheadpos.toString() + " packtailpos " + packtailpos.toString() + " packsquareddiamter " + packsquareddiameter );
@@ -140,14 +140,14 @@ public class AttackPackCoordinator extends PackCoordinator
 
       // get vector from head unit to target
       // pick point a bit behind target, backwards along vector
-      Float3 vectortargettohead = 
+      TerrainPos vectortargettohead = 
          targetpos.subtract( closestunits[0].pos );
       vectortargettohead.Normalize();
       //vectortargettohead = vectortargettohead * AttackDistance;
       MoveTo( targetpos.add( vectortargettohead.multiply( AttackDistance ) ) );
    }
 
-   void Regroup( Float3 regouppos )
+   void Regroup( TerrainPos regouppos )
    {
       logfile.WriteLine( "AttackPackCoordinator regrouping to " + regouppos );
       if( debugon )
@@ -157,7 +157,7 @@ public class AttackPackCoordinator extends PackCoordinator
       MoveTo( regouppos );
    }
 
-   void MoveTo( Float3 pos )
+   void MoveTo( TerrainPos pos )
    {
       // check whether we really need to do anything or if order is roughly same as last one
       if( csai.DebugOn )
@@ -196,11 +196,11 @@ public class AttackPackCoordinator extends PackCoordinator
    class UnitInfo
    {
       public Unit unit;
-      public Float3 pos;
+      public TerrainPos pos;
       public UnitDef unitdef;
       public double squareddistance;
       public UnitInfo(){}
-      public UnitInfo( Unit unit, Float3 pos, UnitDef unitdef, double squareddistance )
+      public UnitInfo( Unit unit, TerrainPos pos, UnitDef unitdef, double squareddistance )
       {
          this.unit = unit;
          this.pos = pos;
@@ -209,13 +209,13 @@ public class AttackPackCoordinator extends PackCoordinator
       }
    }
 
-   UnitInfo[] GetClosestUnits( Float3 targetpos, int numclosestunits )
+   UnitInfo[] GetClosestUnits( TerrainPos targetpos, int numclosestunits )
    {
       UnitInfo[] closestunits = new UnitInfo[ numclosestunits ];
       double worsttopfivesquareddistance = 0; // got to get better than this to enter the list
       int numclosestunitsfound = 0;
       for( Unit unit : unitsControlled ) {
-         Float3 unitpos = unitController.getPos( unit );
+         TerrainPos unitpos = unitController.getPos( unit );
          UnitDef unitdef = unit.getDef();
          double unitsquareddistance = unitpos.GetSquaredDistance( targetpos );
          if( numclosestunitsfound < numclosestunits )

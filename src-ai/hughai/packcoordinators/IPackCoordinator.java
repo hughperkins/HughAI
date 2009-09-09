@@ -35,7 +35,7 @@ import hughai.basictypes.*;
 // A PackCoordinatorSelector object can switch between them arbitrarily
 public interface IPackCoordinator
 {
-	void SetTarget( Float3 targetpos );  // does NOT imply Activate ***
+	void SetTarget( TerrainPos targetpos );  // does NOT imply Activate ***
 	void Activate();
 	void Disactivate();
 	void AssignUnits( Collection<Unit> units );

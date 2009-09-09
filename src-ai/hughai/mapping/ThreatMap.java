@@ -39,16 +39,32 @@ import hughai.unitdata.UnitDefHelp;
 import hughai.utils.*;
 
 public class ThreatMap {
+   public static class ThreatMapPos extends Int2 {
+      public ThreatMapPos() {}
+      public ThreatMapPos( int x, int y ) {
+         super( x, y );
+      }
+      public static ThreatMapPos fromTerrainPos( TerrainPos terrainPos ) {
+         return new ThreatMapPos( (int)terrainPos.x / 8 / granularity,
+               (int)terrainPos.z / 8 / granularity );
+      }
+      public TerrainPos toTerrainPos() {
+         return new TerrainPos( x * 8 * granularity, 
+               0,
+               y * 8 * granularity );
+      }
+   }
+   
    PlayerObjects playerObjects;
    EnemyTracker enemyTracker;
    Config config;
    
-   final int terrainmapgranularity = 2; // do it at half size.  why?  I dont know...  If it doesn't work out, I'll change it!
+   public static final int granularity = 2; // do it at half size.  why?  I dont know...  If it doesn't work out, I'll change it!
    // maybe because ideally it should match with MovementMaps?
    
    int threatmapwidth;
    int threatmapheight;   
-   float[][]damagePerSecond; // ok, so this is going to store the damage
+   private float[][]damagePerSecond; // ok, so this is going to store the damage
    // per second that one unit would sustain if
    // was in this location on its own
    // sounds like a good place to start?
@@ -61,13 +77,22 @@ public class ThreatMap {
       init();
    }
    
+   public float getThreatAt( ThreatMapPos threatMapPos ) {
+      return damagePerSecond[threatMapPos.x][threatMapPos.y];
+   }
+   
+   public float getThreatAt( TerrainPos terrainpos ) {
+      ThreatMapPos threatMapPos = ThreatMapPos.fromTerrainPos( terrainpos );
+      return getThreatAt( threatMapPos );
+   }
+   
    void init() {
       Map gamemap = playerObjects.getAicallback().getMap();
       int gamemapwidth = gamemap.getWidth();
       int gamemapheight = gamemap.getHeight();
       
-      threatmapwidth = gamemapwidth / terrainmapgranularity; 
-      threatmapheight = gamemapheight / terrainmapgranularity;
+      threatmapwidth = gamemapwidth / granularity; 
+      threatmapheight = gamemapheight / granularity;
       damagePerSecond = new float[threatmapwidth][threatmapheight];
       
       buildThreatMap();
@@ -141,15 +166,15 @@ public class ThreatMap {
 //         debug( enemyUnitDef.getHumanName() + " has no weapon mounts?");
       }
 
-      int threatmapposx = (int)pos.x / 8 / terrainmapgranularity;
-      int threatmapposz = (int)pos.z / 8 / terrainmapgranularity;
+      int threatmapposx = (int)pos.x / 8 / granularity;
+      int threatmapposz = (int)pos.z / 8 / granularity;
       debug(" ... threatmappos: " + threatmapposx + " " + threatmapposz );
       
       // use of power heavily influenced by E323's CThreatMap.cpp class
       // I'm not quite sure what 'power' means, but the weapondef itself
       // looks .... formidable...
       float power = enemyUnitDef.getPower();
-      int threatmaprange = terrainrange / 8 / terrainmapgranularity;
+      int threatmaprange = terrainrange / 8 / granularity;
       debug(" ... power: " + power + " range: " + threatmaprange );
       for( int deltaz = -threatmaprange; deltaz <= threatmaprange; deltaz++ ){
          for( int deltax = -threatmaprange; deltax <= threatmaprange; deltax++ ){

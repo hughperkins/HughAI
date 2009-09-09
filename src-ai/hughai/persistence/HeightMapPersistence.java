@@ -113,8 +113,8 @@ public class HeightMapPersistence
 		@Override
 		public void commandReceived(String cmd, String[]args, int player)
 		{
-			float[][]mesh = maps.getHeightMap().GetHeightMap();
-			Save(args[2], mesh);
+//			float[][]mesh = maps.getHeightMap().GetHeightMap();
+//			Save(args[2], mesh);
 		}
 	}
 }

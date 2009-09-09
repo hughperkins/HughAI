@@ -29,6 +29,7 @@ import com.springrts.ai.*;
 import com.springrts.ai.oo.*;
 
 import hughai.basictypes.*;
+import hughai.basictypes.Float3.*;
 import hughai.ui.MainUI;
 import hughai.unitdata.*;
 import hughai.utils.*;
@@ -49,8 +50,8 @@ public class EnemyTracker
    public static interface EnemyListener {
       public void AcquiredEnemy( Unit enemy );
       public void AcquiredEnemyUnitDef( Unit enemy, UnitDef unitdef );
-      public void AcquiredEnemyPos( Unit enemy, Float3 pos );
-      public void AcquiredStaticEnemy( Unit enemy, UnitDef unitdef, Float3 pos );
+      public void AcquiredEnemyPos( Unit enemy, TerrainPos pos );
+      public void AcquiredStaticEnemy( Unit enemy, UnitDef unitdef, TerrainPos pos );
       public void EnemyDestroyed( Unit enemy );		
    }
    public static class EnemyAdapter implements EnemyListener {
@@ -59,9 +60,9 @@ public class EnemyTracker
       @Override
       public void AcquiredEnemyUnitDef( Unit enemy, UnitDef unitdef ){}
       @Override
-      public void AcquiredEnemyPos( Unit enemy, Float3 pos ){}
+      public void AcquiredEnemyPos( Unit enemy, TerrainPos pos ){}
       @Override
-      public void AcquiredStaticEnemy( Unit enemy, UnitDef unitdef, Float3 pos ){}
+      public void AcquiredStaticEnemy( Unit enemy, UnitDef unitdef, TerrainPos pos ){}
       @Override
       public void EnemyDestroyed( Unit enemy ){}		
    }
@@ -69,10 +70,10 @@ public class EnemyTracker
    List<EnemyListener> listeners = new ArrayList<EnemyListener>();
 
    HashSet<Unit> EnemyUnits = new HashSet<Unit>();
-   HashMap<Unit,Float3> EnemyPosByStaticUnit = new HashMap<Unit, Float3>();
+   HashMap<Unit,TerrainPos> EnemyPosByStaticUnit = new HashMap<Unit, TerrainPos>();
    HashMap<Unit,UnitDef> EnemyUnitDefByUnit = new HashMap<Unit, UnitDef>();
 
-   HashMap<Unit,Float3> DynamicEnemyLastSeenPos = new HashMap<Unit, Float3>();
+   HashMap<Unit,TerrainPos> DynamicEnemyLastSeenPos = new HashMap<Unit, TerrainPos>();
    HashMap<Unit,Integer> DynamicEnemyLastSeenFrame = new HashMap<Unit, Integer>();
 
    //	public HashMap< Integer, UnitDef> EnemyUnitDefByDeployedId = new HashMap< Integer, UnitDef>();
@@ -250,12 +251,12 @@ public class EnemyTracker
             }
 
             for( Unit ourunit : unitcontroller.units ) {
-               Float3 friendlypos = unitcontroller.getPos( ourunit );
+               TerrainPos friendlypos = unitcontroller.getPos( ourunit );
                UnitDef friendlydef = ourunit.getDef();
                ArrayList< Unit > enemiestoclean = new ArrayList< Unit >();
                for( Unit enemy : EnemyPosByStaticUnit.keySet() )
                {
-                  Float3 enemypos = EnemyPosByStaticUnit.get( enemy );
+                  TerrainPos enemypos = EnemyPosByStaticUnit.get( enemy );
                   if (enemypos.GetSquaredDistance( friendlypos)
                         < friendlydef.getLosRadius() * friendlydef.getLosRadius()
                         * 16 * 16 ) // because this map is different scale
@@ -327,12 +328,12 @@ public class EnemyTracker
       int dynamicenemieswithpos = 0;
       int otherenemies = 0;
       for( Unit enemy : DynamicEnemyLastSeenPos.keySet() ) {
-         Float3 staticpos = EnemyPosByStaticUnit.get( enemy );
+         TerrainPos staticpos = EnemyPosByStaticUnit.get( enemy );
          if( staticpos != null ) {
             drawingUtils.DrawUnit("ARMAMD", staticpos, 0.0f, 1, aicallback.getTeamId(), true, true);
             drawingUtils.drawText( staticpos, "" + enemy.getUnitId() );
          } else {
-            Float3 dynamicpos = DynamicEnemyLastSeenPos.get( enemy );
+            TerrainPos dynamicpos = DynamicEnemyLastSeenPos.get( enemy );
             if( dynamicpos != null ) {
                drawingUtils.DrawUnit("ARMSAM", dynamicpos, 0.0f, 1, aicallback.getTeamId(), true, true);
                drawingUtils.drawText( dynamicpos, "" + enemy.getUnitId() );
@@ -390,7 +391,7 @@ public class EnemyTracker
          }
       }
 
-      Float3 enemypos = Float3.fromAIFloat3( enemy.getPos() );
+      TerrainPos enemypos = TerrainPos.fromAIFloat3( enemy.getPos() );
       if( enemypos.equals( new Float3() ) ) {
          enemypos = null; // make null if equals (0,0,0), because makes life easier
       }
@@ -451,11 +452,11 @@ public class EnemyTracker
       return EnemyUnits;
    }
 
-   public HashMap<Unit, Float3> getEnemyPosByStaticUnit() {
+   public HashMap<Unit, TerrainPos> getEnemyPosByStaticUnit() {
       return EnemyPosByStaticUnit;
    }
 
-   public Float3 getPos( Unit enemyUnit ) {
+   public TerrainPos getPos( Unit enemyUnit ) {
       return DynamicEnemyLastSeenPos.get( enemyUnit );
    }
 

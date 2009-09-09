@@ -64,7 +64,7 @@ public class MobileFusionController
          for (Unit mobile : mobileunits)
          {
             // move them to nearest mex?
-            Float3 targetpos = unitController.getPos( unitController.UnitsByName
+            TerrainPos targetpos = unitController.getPos( unitController.UnitsByName
                   .get("armmex").get(0) );                //aicallback.GiveOrder(mob, new Command(Command.CMD_PATROL, targetpos.ToDoubleArray()));
             giveOrderWrapper.MoveTo(mobile, targetpos);
          }

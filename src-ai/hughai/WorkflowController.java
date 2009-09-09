@@ -314,7 +314,7 @@ public class WorkflowController
             }
             if (metalneeded || resourceManager.getCurrentMetal() < resourceManager.getMetalStorage() / 5 )
             {
-               Float3 reclaimpos = reclaimHelper.GetNearestReclaim( constructor );
+               TerrainPos reclaimpos = reclaimHelper.GetNearestReclaim( constructor );
                if( reclaimpos != null )
                {
                   giveOrderWrapper.Reclaim( constructor, reclaimpos, 100 );
@@ -349,7 +349,7 @@ public class WorkflowController
          {
             //ordertodo.unitsunderconstruction += 1;
             deftobuild = buildTable.UnitDefByName.get(ordertodo.unitname);
-            Float3 pos = BuildUnit(constructor, ordertodo.unitname);
+            TerrainPos pos = BuildUnit(constructor, ordertodo.unitname);
             Ownership.IOrder ownershiporder = ownership.RegisterBuildingOrder(
                   new BuildListener(),
                   constructor,
@@ -454,10 +454,10 @@ public class WorkflowController
      // if( constructor.)
       Unit bestconstructor = null;
       double bestsquareddistance = 1000000000;
-      Float3 constructorpos = unitController.getPos( constructor );
+      TerrainPos constructorpos = unitController.getPos( constructor );
       for (Unit activeconstructor : ActiveConstructors)
       {
-         Float3 activeconstructorpos = unitController.getPos( activeconstructor );
+         TerrainPos activeconstructorpos = unitController.getPos( activeconstructor );
          if (activeconstructorpos != null)
          {
             float thissquareddistance = constructorpos.GetSquaredDistance( activeconstructorpos);
@@ -501,7 +501,7 @@ public class WorkflowController
       {
          return false;
       }
-      Float3 pos = BuildUnit(constructor, deftobuild.getName().toLowerCase());
+      TerrainPos pos = BuildUnit(constructor, deftobuild.getName().toLowerCase());
       Ownership.IOrder ownershiporder = ownership.RegisterBuildingOrder(
             new BuildListener(),
             constructor,
@@ -515,7 +515,7 @@ public class WorkflowController
       return true;
    }
 
-   Float3 BuildUnit(Unit constructor, String targetunitname)
+   TerrainPos BuildUnit(Unit constructor, String targetunitname)
    {
       csai.DebugSay("workflow, building " + targetunitname);
       UnitDef targetunitdef = buildTable.UnitDefByName.get(targetunitname);
@@ -523,11 +523,11 @@ public class WorkflowController
       if (unitDefHelp.IsMobile(constructordef))
       {
          logfile.WriteLine("constructor is mobile");
-         Float3 constructorpos = unitController.getPos( constructor );
-         Float3 buildsite = buildPlanner.ClosestBuildSite(targetunitdef,
+         TerrainPos constructorpos = unitController.getPos( constructor );
+         TerrainPos buildsite = buildPlanner.ClosestBuildSite(targetunitdef,
                constructorpos,
                3000, 2);
-         buildsite = Float3.fromAIFloat3( aicallback.getMap().findClosestBuildSite(
+         buildsite = TerrainPos.fromAIFloat3( aicallback.getMap().findClosestBuildSite(
                targetunitdef, buildsite.toAIFloat3(), 1400, 0, 0) );
          logfile.WriteLine("constructor location: " + constructorpos + " Buildsite: " + buildsite + " target item: " + targetunitdef.getHumanName());
          if (!ActiveConstructors.contains(constructor))
@@ -540,7 +540,7 @@ public class WorkflowController
       }
       else
       {
-         Float3 factorypos = unitController.getPos( constructor );
+         TerrainPos factorypos = unitController.getPos( constructor );
          logfile.WriteLine("factory location: " + factorypos + " target item: " + targetunitdef.getHumanName());
          if (!ActiveConstructors.contains(constructor))
          {
@@ -561,9 +561,9 @@ public class WorkflowController
          return false;
       }
       UnitDef unitdef = buildTable.UnitDefByName.get(metalextractorname);
-      Float3 buildsitefrommetal = metal.GetNearestMetalSpot(
+      TerrainPos buildsitefrommetal = metal.GetNearestMetalSpot(
             unitController.getPos( constructor ) );
-      Float3 buildsite = Float3.fromAIFloat3( aicallback.getMap().findClosestBuildSite(
+      TerrainPos buildsite = TerrainPos.fromAIFloat3( aicallback.getMap().findClosestBuildSite(
             unitdef, buildsitefrommetal.toAIFloat3(), 100, 0, 0) );
       logfile.WriteLine( "Workflow.buildmex, metal says build at " + buildsitefrommetal + " map changes this to: " + buildsite );
       if (!ActiveConstructors.contains(constructor))
@@ -584,10 +584,10 @@ public class WorkflowController
          return false;
       }
       UnitDef unitdef = buildTable.UnitDefByName.get(energyextractorunitname);
-      Float3 buildsite = buildPlanner.ClosestBuildSite(unitdef,
+      TerrainPos buildsite = buildPlanner.ClosestBuildSite(unitdef,
             unitController.getPos( constructor ),
             3000, 2);
-      buildsite = Float3.fromAIFloat3( aicallback.getMap().findClosestBuildSite(
+      buildsite = TerrainPos.fromAIFloat3( aicallback.getMap().findClosestBuildSite(
             unitdef, buildsite.toAIFloat3(), 100, 0, 0) );
       if (!ActiveConstructors.contains(constructor))
       {

@@ -33,6 +33,7 @@ import com.springrts.ai.oo.Map;
 
 import hughai.basictypes.*;
 import hughai.*;
+import hughai.mapping.BuildMap.BuildMapPos;
 import hughai.ui.MainUI;
 import hughai.unitdata.*;
 import hughai.utils.*;
@@ -51,6 +52,28 @@ public class Metal
    //They are still perfectly valid and will generate metal mind you!
    public int MaxSpots = 5000; //If more spots than that are found the map is considered a metalmap, tweak this as needed        
    //int MaxSpots = 3;
+   
+   public static final int granularity = 2;
+   
+   public static class MetalPos extends Int2 {
+      public MetalPos() {
+         
+      }
+      public MetalPos( Int2 int2 ) {
+         x = int2.x;
+         y = int2.y;
+      }
+      public MetalPos( int x, int y ) {
+         super( x, y );
+      }
+      public TerrainPos toTerrainPos() {
+         return new TerrainPos( x * 8 * granularity, 0, y * 8 * granularity );
+      }
+      public static MetalPos fromTerrainPos( TerrainPos terrainPos ) {
+         return new MetalPos( (int)terrainPos.x / 8 / granularity,
+               (int)terrainPos.z / 8 / granularity );
+      }
+   }
 
    public MetalSpot[] MetalSpots;
    public ArrayList<MetalSpot> MetalSpotsUsed = new ArrayList<MetalSpot>(); // arraylist of MetalSpots
@@ -139,7 +162,8 @@ public class Metal
       for( MetalSpot metalspot : MetalSpots )
       {
          //			logfile.WriteLine("reserving space for " + metalspot.Pos.toString() );
-         maps.getBuildMap().ReserveSpace( this, (int)( metalspot.Pos.x / 8 ), (int)( metalspot.Pos.z / 8 ), 6, 6 );
+         BuildMapPos buildMapPos = BuildMapPos.fromTerrainPos( metalspot.Pos );
+         maps.getBuildMap().ReserveSpace( this, buildMapPos, 6, 6 );
       }
    }
 
@@ -156,7 +180,7 @@ public class Metal
             if( !Extractors.containsKey( newunit ) 
                   && ismex )
             {
-               Float3 mexpos = unitcontroller.getPos( newunit );
+               TerrainPos mexpos = unitcontroller.getPos( newunit );
                logfile.WriteLine( "Metal.UnitAdded new extractor finished, pos " + mexpos.toString() );
                Extractors.put( newunit, mexpos );
                double squareextractorradius = ExtractorRadius * ExtractorRadius;
@@ -181,7 +205,7 @@ public class Metal
          {
             if( Extractors.containsKey( removedunit ) )
             {
-               Float3 mexpos = unitcontroller.getPos( removedunit );
+               TerrainPos mexpos = unitcontroller.getPos( removedunit );
                logfile.WriteLine( "Metal.UnitRemoved, pos " + mexpos.toString() );
                double squareextractorradius = ExtractorRadius * ExtractorRadius;
                for( MetalSpot metalspot : MetalSpots )
@@ -201,12 +225,12 @@ public class Metal
       }
    }
 
-   public Float3 GetNearestMetalSpot( Float3 mypos )
+   public TerrainPos GetNearestMetalSpot( TerrainPos mypos )
    {
       if( !isMetalMap )
       {
          double closestdistancesquared = 1000000000000d;
-         Float3 bestpos = null;
+         TerrainPos bestpos = null;
          MetalSpot bestspot = null;
          for( MetalSpot metalspot : MetalSpots )
          {
@@ -245,16 +269,16 @@ public class Metal
    public class MetalSpot
    {
       public int Amount;
-      public Float3 Pos = new Float3();
+      public TerrainPos Pos = new TerrainPos();
       public boolean IsOccupied = false;
 
       public MetalSpot(){}
-      public MetalSpot( int amount, Float3 pos )
+      public MetalSpot( int amount, TerrainPos pos )
       {
          Amount = amount;
          Pos = pos;
       }
-      public MetalSpot( int amount, Float3 pos, boolean isoccupied )
+      public MetalSpot( int amount, TerrainPos pos, boolean isoccupied )
       {
          Amount = amount;
          IsOccupied = isoccupied;
@@ -331,7 +355,7 @@ public class Metal
       ArrayList<MetalSpot> metalspotsal = new ArrayList<MetalSpot>();
       for( Element metalspot : XmlHelper.SelectElements( metalspots, "metalspot" ) ) {
          int amount = Integer.parseInt( metalspot.getAttribute("amount") );
-         Float3 pos = new Float3();
+         TerrainPos pos = new TerrainPos();
          pos.readFromXmlElement( metalspot );
          //pos.LoadCsv( metalspot.GetAttribute("pos") );
          MetalSpot newmetalspot = new MetalSpot( amount, pos );
@@ -444,8 +468,8 @@ public class Metal
       ArrayList<MetalSpot> metalspotsal = new ArrayList<MetalSpot>();
 
       Map map = aicallback.getMap();
-      int mapheight = map.getHeight() / 2; //metal map has 1/2 resolution of normal map
-      int mapwidth = map.getWidth() / 2;
+      int mapheight = map.getHeight() / granularity; //metal map has 1/2 resolution of normal map
+      int mapwidth = map.getWidth() / granularity;
       double mapmaxmetal = map.getMaxResource(resourceManager.getMetalResource());
       int totalcells = mapheight * mapwidth;
 
@@ -539,15 +563,14 @@ public class Metal
 
          if( !Stopme )
          {
-            Float3 pos = new Float3();
-            pos.x = bestspotx * 2 * maps.getMovementMaps().SQUARE_SIZE;
-            pos.z = bestspoty * 2 * maps.getMovementMaps().SQUARE_SIZE;
-            pos.y = map.getElevationAt( pos.x, pos.z );
+            MetalPos metalPos = new MetalPos( bestspotx, bestspoty );
+            TerrainPos terrainpos = metalPos.toTerrainPos();
+            terrainpos.y = maps.getHeightMap().getElevationAt( terrainpos );
 
             //pos = Map.PosToFinalBuildPos( pos, biggestmex );
 
             //				logfile.WriteLine( "Metal spot: " + pos + " " + BestNormalizedAvailableSpotAmount );
-            MetalSpot thismetalspot = new MetalSpot( (int)( ( BestNormalizedAvailableSpotAmount  * mapmaxmetal * maxmetalspotamount ) / 255 ), pos );
+            MetalSpot thismetalspot = new MetalSpot( (int)( ( BestNormalizedAvailableSpotAmount  * mapmaxmetal * maxmetalspotamount ) / 255 ), terrainpos );
 
             //    if (aicallback.CanBuildAt(biggestmex, pos) )
             //  {

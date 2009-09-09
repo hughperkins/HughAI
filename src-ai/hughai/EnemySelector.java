@@ -73,7 +73,7 @@ public class EnemySelector
       //    startarea = maps.getMovementMaps().GetArea(typicalunitdef, startpos);
    }
 
-   public void InitStartPos(Float3 startpos)
+   public void InitStartPos(TerrainPos startpos)
    {
       startarea = maps.getMovementMaps().GetArea(typicalunitdef, startpos);
    }
@@ -81,7 +81,7 @@ public class EnemySelector
    // this is going to have to interact with all sorts of stuff in the future
    // for now keep it simple
    // for now we look for nearby buildings, then nearby enemy units with low speed, then anything
-   public Float3 ChooseAttackPoint( Float3 friendlypos )
+   public TerrainPos ChooseAttackPoint( TerrainPos friendlypos )
    {
       boolean gotbuilding = false;
       boolean gotknownunit = false;
@@ -89,17 +89,17 @@ public class EnemySelector
 
       Unit besttarget = null;
       UnitDef defforbestid = null;
-      Float3 posforbestid = null;
+      TerrainPos posforbestid = null;
       //   logfile.WriteLine( "EnemySelector: checking mobile... " );
       // mobile units first:
       for( Unit enemy : enemyTracker.getEnemyUnits() ) {
          UnitDef enemyunitdef = enemyTracker.getEnemyUnitDefByUnit().get( enemy );
-         Float3 enemypos = Float3.fromAIFloat3( enemy.getPos() );
+         TerrainPos enemypos = TerrainPos.fromAIFloat3( enemy.getPos() );
          //Float3 enemypos = EnemyMap.GetInstance().
          // logfile.WriteLine( "Found building " + 
          if (maps.getMovementMaps().GetArea(typicalunitdef, enemypos) == startarea)
          {
-            if (enemypos.GetSquaredDistance(new Float3() ) > 1)
+            if (enemypos.GetSquaredDistance(new TerrainPos() ) > 1)
             {
                float thissquareddistance = friendlypos.GetSquaredDistance( enemypos);
                //   logfile.WriteLine( "EnemySelector: Potential enemy at " + enemypos.toString() + " squareddistance: " + thissquareddistance );
@@ -160,7 +160,7 @@ public class EnemySelector
 
       // static now
       for( Unit enemy : enemyTracker.getEnemyPosByStaticUnit().keySet() ) {
-         Float3 enemypos = enemyTracker.getEnemyPosByStaticUnit().get( enemy );
+         TerrainPos enemypos = enemyTracker.getEnemyPosByStaticUnit().get( enemy );
          float thissquareddistance = friendlypos.GetSquaredDistance( enemypos );
          //  logfile.WriteLine( "EnemySelector: Potential enemy at " + enemypos.toString() + " squareddistance: " + thissquareddistance );
          if( thissquareddistance < BestSquaredDistance )

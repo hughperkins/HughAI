@@ -151,10 +151,10 @@ public class ScoutControllerRaider
 
    void ExploreWith( Unit unit )
    {
-      Float3 destination = new Float3();
+      TerrainPos destination = new TerrainPos();
       destination.x = random.nextFloat() * aicallback.getMap().getWidth() * maps.getMovementMaps().SQUARE_SIZE;
       destination.z = random.nextFloat() * aicallback.getMap().getHeight() * maps.getMovementMaps().SQUARE_SIZE;
-      destination.y = aicallback.getMap().getElevationAt( destination.x, destination.y );
+      destination.y = maps.getHeightMap().getElevationAt( destination ); // aicallback.getMap().getElevationAt( destination.x, destination.y );
       logfile.WriteLine( "mapwidth: " + aicallback.getMap().getWidth() + " squaresize: " + maps.getMovementMaps().SQUARE_SIZE );
       logfile.WriteLine( "ScoutController sending scout " + unit.getUnitId() + " to " + destination.toString() );
       giveOrderWrapper.MoveTo(unit, destination );
@@ -171,9 +171,9 @@ public class ScoutControllerRaider
    {
       //  logfile.WriteLine("reappraise>>>");
       for( Unit scout : ScoutUnits ) {
-         Float3 scoutpos = unitController.getPos( scout );
+         TerrainPos scoutpos = unitController.getPos( scout );
 
-         Float3 nearestpos = null;
+         TerrainPos nearestpos = null;
          float bestsquareddistance = 100000000;
          Unit targetenemy = null;
 
@@ -187,7 +187,7 @@ public class ScoutControllerRaider
                if( IsPriorityTarget( enemyunitdef ) )
                {
                   logfile.WriteLine("considering unit " + enemy.getUnitId() + " " + enemyunitdef.getName());
-                  Float3 enemypos = Float3.fromAIFloat3( enemy.getPos() );
+                  TerrainPos enemypos = TerrainPos.fromAIFloat3( enemy.getPos() );
                   float thissquareddistance = scoutpos.GetSquaredDistance( enemypos);
                   if( thissquareddistance < bestsquareddistance )
                   {
@@ -198,7 +198,7 @@ public class ScoutControllerRaider
                         //								{
                         if( IsLaserTower( potentialtowerunitdef ) )
                         {
-                           Float3 lasertowerpos = enemyTracker.getEnemyPosByStaticUnit().get(potentiallasertower);
+                           TerrainPos lasertowerpos = enemyTracker.getEnemyPosByStaticUnit().get(potentiallasertower);
                            if( enemypos.GetSquaredDistance( lasertowerpos ) < nearbyforenemiesmeans * nearbyforenemiesmeans )
                            {
                               nolasertowersnear = false;

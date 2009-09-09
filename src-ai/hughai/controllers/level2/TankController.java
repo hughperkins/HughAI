@@ -57,6 +57,7 @@ public class TankController
    OOAICallback aicallback;
    LogFile logfile;
 
+   PlayerObjects playerObjects;
    UnitController unitcontroller;
    EnemyTracker enemyTracker;
    EnemySelector2 enemyselector;
@@ -71,13 +72,15 @@ public class TankController
    Config config;
 
 //   boolean forceattacking = false; // for debugging
-   Float3 LastAttackPos = null;
+   TerrainPos LastAttackPos = null;
 
    Random random = new Random();
 
    public TankController( PlayerObjects playerObjects, 
          UnitDef typicalunitdef)
    {
+      this.playerObjects = playerObjects;
+      
       config = playerObjects.getConfig();
       csai = playerObjects.getCSAI();
       aicallback = csai.aicallback;
@@ -203,10 +206,10 @@ public class TankController
          //   int targetteam = Convert.ToInt32( splitchatString[2] );
          //if( targetteam == csai.Team )
          // {
-         Float3 targetpos = new Float3();
+         TerrainPos targetpos = new TerrainPos();
          targetpos.x = Float.parseFloat( splitchatString[2] );
          targetpos.z = Float.parseFloat( splitchatString[3] );
-         targetpos.y =  aicallback.getMap().getElevationAt( targetpos.x, targetpos.z );
+         targetpos.y = playerObjects.getMaps().getHeightMap().getElevationAt( targetpos ); // aicallback.getMap().getElevationAt( targetpos.x, targetpos.z );
 
          //  GotoPos( targetpos );
          movetopackcoordinator.SetTarget( targetpos );
@@ -351,11 +354,11 @@ public class TankController
          // ok, so first, we're going to figure out roughly where
          // our units are, or where we were attacking before
          // then we'll ask for some enemies near that
-         Float3 approximateattackpos = LastAttackPos;
+         TerrainPos approximateattackpos = LastAttackPos;
          if( approximateattackpos == null ) {
             for( Unit unit : unitsToControl )
             {
-               Float3 thispos = unitcontroller.getPos( unit );
+               TerrainPos thispos = unitcontroller.getPos( unit );
                if (thispos != null)
                {
                   approximateattackpos = thispos;
@@ -365,7 +368,7 @@ public class TankController
          }
          logfile.WriteLine("tankcontroller approximateattackpos: " + approximateattackpos);
          // now we ask for an enemy: 
-         Float3 nearestenemypos = enemyselector.ChooseAttackPoint( approximateattackpos );
+         TerrainPos nearestenemypos = enemyselector.ChooseAttackPoint( approximateattackpos );
          if( nearestenemypos != null )
          {
             // we got an enemy, so attack...

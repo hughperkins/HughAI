@@ -15,6 +15,7 @@ in order to beat e323:
 - add threatmap + pathing
 
 low:
+- make decently typed Float3 classes, like terrainpos, metalpos, threatmappos etc
 - make config dialog easier to read somehow, group stuff together?
 - speed up getheighttmap somehow?  replicate spring's internal getelevation algo?
 

@@ -43,6 +43,7 @@ import com.springrts.ai.oo.Map;
 
 import hughai.*;
 import hughai.basictypes.*;
+import hughai.mapping.EnemyMap.EnemyMapPos;
 import hughai.unitdata.*;
 import hughai.utils.*;
 import hughai.ui.*;
@@ -50,6 +51,34 @@ import hughai.ui.*;
 // holds the last seen frame-time of each part of the map, in a 2d array
 public class LosMap
 {
+   public static final int granularity = 2;
+   
+   public static class LosMapPos extends Int2 {
+      public LosMapPos() {
+
+      }
+      public LosMapPos( Int2 int2 ) {
+         x = int2.x;
+         y = int2.y;
+      }
+      public LosMapPos( int x, int y ) {
+         super( x, y );
+      }
+      public TerrainPos toTerrainPos() {
+         return new TerrainPos( x * 8 * granularity, 0, y * 8 * granularity );
+      }
+      public static LosMapPos fromTerrainPos( TerrainPos terrainPos ) {
+         return new LosMapPos( (int)terrainPos.x / 8 / granularity,
+               (int)terrainPos.z / 8 / granularity );
+      }
+      public LosMapPos add( LosMapPos second ) {
+         return new LosMapPos( super.add(  second ) );
+      }
+      public boolean validate(){
+         return x >= 0 && y >= 0 && x < losmapwidth && y < losmapheight;
+      }
+   }
+
    PlayerObjects playerObjects;
    CSAI csai;
    OOAICallback aicallback;
@@ -60,10 +89,16 @@ public class LosMap
    Config config;
 
    public HashMap<Unit,Integer> LastLosRefreshFrameCountByUnit = new HashMap<Unit,Integer>(); // all units here, just dont update static ones very often
-   public HashMap<Unit,Float3> PosAtLastRefreshByUnit = new HashMap<Unit,Float3>();
-   public int[][] LastSeenFrameCount; // map, mapwidth / 2 by mapheight / 2
+   public HashMap<Unit,TerrainPos> PosAtLastRefreshByUnit = new HashMap<Unit,TerrainPos>();
+   private int[][] LastSeenFrameCount; // map, mapwidth / 2 by mapheight / 2
    int lasttotalrefresh = -100000;
 
+   static int losmapwidth;
+   static int losmapheight;
+   
+   public int getLosMapWidth(){ return losmapwidth; }
+   public int getLosMapHeight(){ return losmapheight; }
+   
    int mapwidth;
    int mapheight;
 
@@ -85,13 +120,16 @@ public class LosMap
       Map map = aicallback.getMap();
       mapwidth = map.getWidth();
       mapheight = map.getHeight();
+      
+      losmapwidth = mapwidth / granularity;
+      losmapheight = mapheight / granularity;
 
       logfile.WriteLine( "LosMap, create losarray" );
-      LastSeenFrameCount = new int[ mapwidth / 2][ mapheight / 2 ];
+      LastSeenFrameCount = new int[ mapwidth / granularity][ mapheight / granularity ];
       logfile.WriteLine( "losarray created, initializing..." );
-      for( int y = 0; y < mapheight / 2; y++ )
+      for( int y = 0; y < mapheight / granularity; y++ )
       {
-         for( int x = 0; x < mapwidth / 2; x++ )
+         for( int x = 0; x < mapwidth / granularity; x++ )
          {
             LastSeenFrameCount[ x][ y ] = -1000000;
          }
@@ -103,6 +141,10 @@ public class LosMap
 //         csai.RegisterVoiceCommand("showlosmap", new DumpLosMapHandler());
       }
       playerObjects.getMainUI().registerButton( "Show los map", new ShowLosMapButton() );
+   }
+   
+   public int getLastSeenFrameCount( LosMapPos losMapPos ) {
+      return LastSeenFrameCount[losMapPos.x][losMapPos.y];
    }
    
    class ShowLosMapButton implements MainUI.ButtonHandler {
@@ -125,14 +167,14 @@ public class LosMap
    }
    
    void showLosMap(int maxageseconds) {
-      int granularity = config.getMapDrawGranularity() / 2;
-      boolean[][]losmap = new boolean[mapwidth / 2 / granularity ][ mapheight/ 2 / granularity ];
+      int mapdrawgranularity = config.getMapDrawGranularity() / granularity;
+      boolean[][]losmap = new boolean[mapwidth / granularity / mapdrawgranularity ][ mapheight/ 2 / mapdrawgranularity ];
       int frame = playerObjects.getFrameController().getFrame();
-      for( int y = 0; y < mapheight / 2 / granularity; y += 1 )
+      for( int y = 0; y < mapheight / granularity / mapdrawgranularity; y += 1 )
       {
-         for( int x = 0; x < mapwidth / 2 / granularity; x  += 1 )
+         for( int x = 0; x < mapwidth / granularity / mapdrawgranularity; x  += 1 )
          {
-            losmap[x][y] = ( frame - LastSeenFrameCount[ x * granularity][ y * granularity ] < maxageseconds * 30 );
+            losmap[x][y] = ( frame - LastSeenFrameCount[ x * mapdrawgranularity][ y * mapdrawgranularity ] < maxageseconds * 30 );
          }
       }
       drawingUtils.DrawMap(losmap);
@@ -149,8 +191,8 @@ public class LosMap
       {
          UnitDef unitdef = unitcontroller.getUnitDef( unit );
          if( unitDefHelp.IsMobile( unitdef ) ) {
-            Float3 currentpos = unitcontroller.getPos(unit);
-            Float3 lastpos = PosAtLastRefreshByUnit.get( unit );
+            TerrainPos currentpos = unitcontroller.getPos(unit);
+            TerrainPos lastpos = PosAtLastRefreshByUnit.get( unit );
             boolean doUpdate = false;
             if( lastpos == null ) {
                doUpdate = true;
@@ -167,7 +209,7 @@ public class LosMap
                numupdates++;
             }
          } else { // if static unit, we still  need to handle the los ;-)
-            Float3 lastpos = PosAtLastRefreshByUnit.get( unit );
+            TerrainPos lastpos = PosAtLastRefreshByUnit.get( unit );
             if( lastpos == null ) {
                UpdateLosForUnit( unit );
                numupdates++;
@@ -186,8 +228,8 @@ public class LosMap
    {
       //      logfile.WriteLine( "Updating los for unit " + unit.getUnitId() + " " + unit.getDef().getHumanName() );
       int frame = playerObjects.getFrameController().getFrame();
-      Float3 pos = unitcontroller.getPos( unit );
-      Float3 lastpos = PosAtLastRefreshByUnit.get( unit );
+      TerrainPos pos = unitcontroller.getPos( unit );
+      TerrainPos lastpos = PosAtLastRefreshByUnit.get( unit );
       UnitDef unitdef = unit.getDef();
 //      int seenmapx = (int)( pos.x / 16 );
 //      int seenmapy = (int)( pos.z / 16 );
@@ -219,8 +261,8 @@ public class LosMap
          // distancefromlastpoint > losmapinterpolationinterval: number = 2
          // distancefromlastpoint >> losmapinterpolationinterval: number > 2 
 
-         Float3 interpolationVector = ( pos.subtract( lastpos ) )
-         .divide( numberInterpolations );
+         TerrainPos interpolationVector = ( pos.subtract( lastpos ) )
+            .divide( numberInterpolations );
 
          //      logfile.WriteLine( "number interpolations: " + numberInterpolations + " interpolationvector: " + interpolationVector );
 
@@ -229,7 +271,7 @@ public class LosMap
          // interpolation = 0 was already handled by last refresh
          // so we just start from interpolation = 1
          for( int interpolation = 1; interpolation < numberInterpolations; interpolation++ ) {
-            Float3 thispos = lastpos.add( 
+            TerrainPos thispos = lastpos.add( 
                   interpolationVector.multiply( interpolation ) );
             MarkInCurrentLos( frame, thispos, radius );
             //         logfile.WriteLine( "    interpolations " + interpolation + " " + thispos );
@@ -247,17 +289,16 @@ public class LosMap
    }
 
    // go line by line, determine positive and negative extent of line, mark lostime
-   void MarkInCurrentLos( int frame, Float3 pos, int radius ) {
-      int seenmapx = (int)( pos.x / 16 );
-      int seenmapy = (int)( pos.z / 16 );
+   void MarkInCurrentLos( int frame, TerrainPos pos, int radius ) {
+      LosMapPos losMapPos = LosMapPos.fromTerrainPos( pos );
       for( int deltay = -radius; deltay <= radius; deltay++ )
       {
          int xextent = (int)Math.sqrt( radius * radius - deltay * deltay );
          for( int deltax = -xextent; deltax <= xextent; deltax++ )
          {
-            int thisx = seenmapx + deltax;
-            int thisy = seenmapy + deltay;
-            if( thisx >= 0 && thisx < mapwidth / 2 && thisy >= 0 && thisy < mapheight / 2 )
+            int thisx = losMapPos.x + deltax;
+            int thisy = losMapPos.y + deltay;
+            if( thisx >= 0 && thisx < mapwidth / granularity && thisy >= 0 && thisy < mapheight / granularity )
             {
                LastSeenFrameCount[ thisx][ thisy ] = frame;
             }

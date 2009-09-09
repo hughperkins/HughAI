@@ -57,7 +57,7 @@ public class SpreadSearchPackCoordinator extends PackCoordinator
 	}
 
 	// does NOT imply Activate()
-	public void SetTarget( Float3 newtarget )
+	public void SetTarget( TerrainPos newtarget )
 	{
 		this.targetpos = newtarget;
 		//Activate();
@@ -85,7 +85,7 @@ public class SpreadSearchPackCoordinator extends PackCoordinator
 		}
 	}
 
-	Float3 lasttargetpos = null;
+	TerrainPos lasttargetpos = null;
 
 	@Override
 	void Recoordinate()
@@ -107,13 +107,13 @@ public class SpreadSearchPackCoordinator extends PackCoordinator
 
 	void ExploreWith( Unit unit )
 	{
-		Float3 destination = GetRandomDestination();
+	   TerrainPos destination = GetRandomDestination();
 		giveOrderWrapper.MoveTo(unit, destination);
 	}
 
-	Float3 GetRandomDestination()
+	TerrainPos GetRandomDestination()
 	{
-		Float3 destination = new Float3();
+	   TerrainPos destination = new TerrainPos();
 		destination.x = random.nextFloat() * aicallback.getMap().getWidth() * maps.getMovementMaps().SQUARE_SIZE;
 		destination.z = random.nextFloat() * aicallback.getMap().getHeight() * maps.getMovementMaps().SQUARE_SIZE;
 		destination.y = aicallback.getMap().getElevationAt( destination.x, destination.y );

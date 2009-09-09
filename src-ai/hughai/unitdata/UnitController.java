@@ -32,6 +32,7 @@ import com.springrts.ai.oo.*;
 import hughai.*;
 import hughai.utils.*;
 import hughai.basictypes.*;
+import hughai.basictypes.Float3.*;
 import hughai.ui.*;
 
 // The role of UnitController is to keep track of what units we have
@@ -73,7 +74,7 @@ public class UnitController
 	HashMap<Unit,UnitDef> unitdefbyunit = new HashMap<Unit, UnitDef>(); // because unit.getDef() is f**king slow.
 
 	// wipe these each frame:
-	HashMap<Unit,Float3> posbyunit = new HashMap<Unit,Float3>();
+	HashMap<Unit,TerrainPos> posbyunit = new HashMap<Unit,TerrainPos>();
     List<Map<?,?>> mapstowipeeachframe = Arrays.asList( new Map<?,?>[]{
        posbyunit } ); 
 
@@ -82,14 +83,14 @@ public class UnitController
 	}
 	
 	// retrieves cached pos if exists, or gets it, and caches it.
-	public Float3 getPos( Unit unit ) {
+	public TerrainPos getPos( Unit unit ) {
 	   // we assume that mostly the pos will already exist, so check this first
 	   if( posbyunit.containsKey( unit ) ) {
 	      return posbyunit.get( unit );
 	   }
 	   // store it in variable, so we don't have to do a fetch from the collection after the put
-	   Float3 thispos = Float3.fromAIFloat3( unit.getPos() );
-	   if( thispos.equals( new Float3() ) ) { // if the pos is zero, just make it null, it makes life simpler...
+	   TerrainPos thispos = TerrainPos.fromAIFloat3( unit.getPos() );
+	   if( thispos.equals( new TerrainPos() ) ) { // if the pos is zero, just make it null, it makes life simpler...
 	      thispos = null;
 	   }
        posbyunit.put( unit, thispos );

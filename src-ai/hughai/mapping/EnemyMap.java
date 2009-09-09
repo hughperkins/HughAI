@@ -34,6 +34,7 @@ import hughai.EnemyTracker;
 import hughai.PlayerObjects;
 import hughai.basictypes.*;
 import hughai.*;
+import hughai.mapping.BuildMap.BuildMapPos;
 import hughai.unitdata.UnitDefHelp;
 import hughai.utils.*;
 
@@ -41,91 +42,112 @@ import hughai.utils.*;
 // 2d index of enemies
 public class EnemyMap
 {
-	CSAI csai;
-	OOAICallback aicallback;
-	LogFile logfile;
-	UnitDefHelp unitdefhelp;
-	//UnitController unitcontroller;
-	EnemyTracker enemyTracker;
+   public static final int granularity = 2;
 
-	public HashMap<Unit, Int2> MapPosByStaticEnemy = new HashMap<Unit, Int2>();
-	public Unit[][] enemyMap; // value is 0 or id of enemy;  this is the position of the centre of the enemy; (its only an index, not a build map)
+   public static class EnemyMapPos extends Int2 {
+      public EnemyMapPos() {
 
-	public int mapwidth;
-	public int mapheight;
+      }
+      public EnemyMapPos( Int2 int2 ) {
+         x = int2.x;
+         y = int2.y;
+      }
+      public EnemyMapPos( int x, int y ) {
+         super( x, y );
+      }
+      public TerrainPos toTerrainPos() {
+         return new TerrainPos( x * 8 * granularity, 0, y * 8 * granularity );
+      }
+      public static EnemyMapPos fromTerrainPos( TerrainPos terrainPos ) {
+         return new EnemyMapPos( (int)terrainPos.x / 8 / granularity,
+               (int)terrainPos.z / 8 / granularity );
+      }
+   }
 
-	public EnemyMap( PlayerObjects playerObjects )
-	{
-		csai = playerObjects.getCSAI();
-		aicallback = playerObjects.getAicallback();
-		logfile = playerObjects.getLogFile();
-		unitdefhelp = playerObjects.getUnitDefHelp();
-		//unitcontroller = UnitController.GetInstance();
-		enemyTracker = playerObjects.getEnemyTracker();
+   CSAI csai;
+   OOAICallback aicallback;
+   LogFile logfile;
+   UnitDefHelp unitdefhelp;
+   //UnitController unitcontroller;
+   EnemyTracker enemyTracker;
 
-		this.mapwidth = aicallback.getMap().getWidth();
-        this.mapheight = aicallback.getMap().getHeight();
-		
-		enemyMap = new Unit[ mapwidth / 2 ][ mapheight / 2 ];
+   public HashMap<Unit, EnemyMapPos> MapPosByStaticEnemy = new HashMap<Unit, EnemyMapPos>();
+   private Unit[][] enemyMap; // value is 0 or id of enemy;  this is the position of the centre of the enemy; (its only an index, not a build map)
 
-		enemyTracker.registerListener( new EnemyControllerHandler() );
+   public int mapwidth;
+   public int mapheight;
 
-		Init();
-	}
-	
-	public static interface EnemyMapListener {
-		public void EnemyMapped( Unit enemy, Int2 mapPos );
-		public void EnemyRemoved( Unit enemy, Int2 mapPos );
-	}
-	public static class EnemyMapAdapter implements EnemyMapListener {
-		@Override
-		public void EnemyMapped( Unit enemy, Int2 mapPos ){}
-		@Override
-		public void EnemyRemoved( Unit enemy, Int2 mapPos ){}		
-	}
-	ArrayList<EnemyMapListener> listeners = new ArrayList<EnemyMapListener>();
-	public void registerListener( EnemyMapListener listener ) {
-		listeners.add(listener);
-	}
+   public EnemyMap( PlayerObjects playerObjects )
+   {
+      csai = playerObjects.getCSAI();
+      aicallback = playerObjects.getAicallback();
+      logfile = playerObjects.getLogFile();
+      unitdefhelp = playerObjects.getUnitDefHelp();
+      //unitcontroller = UnitController.GetInstance();
+      enemyTracker = playerObjects.getEnemyTracker();
 
-	public void Init()
-	{
-		Map map = aicallback.getMap();
-		mapwidth = map.getWidth();
-		mapheight = map.getHeight();
+      this.mapwidth = aicallback.getMap().getWidth();
+      this.mapheight = aicallback.getMap().getHeight();
 
-		logfile.WriteLine( "EnemyMap.Init finished()" );
-	}
+      enemyMap = new Unit[ mapwidth / granularity ][ mapheight / granularity ];
 
-	class EnemyControllerHandler extends EnemyTracker.EnemyAdapter {
-		@Override
-		public void AcquiredStaticEnemy( Unit enemy, UnitDef unitdef, Float3 pos )
-		{
-			if( !MapPosByStaticEnemy.containsKey( enemy ) )
-			{
-				int mapx = (int)( pos.x / 16 );
-				int mapy = (int)( pos.y / 16 );
-				enemyMap[ mapx][ mapy ] = enemy;
-				Int2 mappos = new Int2( mapx, mapy );
-				MapPosByStaticEnemy.put( enemy, mappos );
-				for( EnemyMapListener listener : listeners ) {
-					listener.EnemyMapped( enemy, mappos);
-				}
-			}
-		}
+      enemyTracker.registerListener( new EnemyControllerHandler() );
 
-		@Override
-		public void EnemyDestroyed( Unit unit )
-		{
-			if( MapPosByStaticEnemy.containsKey( unit ) )
-			{
-				Int2 mapPos = MapPosByStaticEnemy.get( unit );
-				enemyMap[ mapPos.getX() ][ mapPos.getY() ] = null;
-				MapPosByStaticEnemy.remove( unit );
-				for( EnemyMapListener listener : listeners ) {
-					listener.EnemyRemoved(unit, mapPos);
-				}
-			}
-		}        
-	}
+      Init();
+   }
+
+   public static interface EnemyMapListener {
+      public void EnemyMapped( Unit enemy, EnemyMapPos mapPos );
+      public void EnemyRemoved( Unit enemy, EnemyMapPos mapPos );
+   }
+   public static class EnemyMapAdapter implements EnemyMapListener {
+      @Override
+      public void EnemyMapped( Unit enemy, EnemyMapPos mapPos ){}
+      @Override
+      public void EnemyRemoved( Unit enemy, EnemyMapPos mapPos ){}		
+   }
+   ArrayList<EnemyMapListener> listeners = new ArrayList<EnemyMapListener>();
+   public void registerListener( EnemyMapListener listener ) {
+      listeners.add(listener);
+   }
+
+   public void Init()
+   {
+      Map map = aicallback.getMap();
+      mapwidth = map.getWidth();
+      mapheight = map.getHeight();
+
+      logfile.WriteLine( "EnemyMap.Init finished()" );
+   }
+
+   class EnemyControllerHandler extends EnemyTracker.EnemyAdapter {
+      @Override
+      public void AcquiredStaticEnemy( Unit enemy, UnitDef unitdef, TerrainPos terrainpos )
+      {
+         if( !MapPosByStaticEnemy.containsKey( enemy ) )
+         {
+            EnemyMapPos enemyMapPos = EnemyMapPos.fromTerrainPos( terrainpos );
+            enemyMap[ enemyMapPos.x ][ enemyMapPos.y ] = enemy;
+//            Int2 mappos = new Int2( mapx, mapy );
+            MapPosByStaticEnemy.put( enemy, enemyMapPos );
+            for( EnemyMapListener listener : listeners ) {
+               listener.EnemyMapped( enemy, enemyMapPos);
+            }
+         }
+      }
+
+      @Override
+      public void EnemyDestroyed( Unit unit )
+      {
+         if( MapPosByStaticEnemy.containsKey( unit ) )
+         {
+            EnemyMapPos mapPos = MapPosByStaticEnemy.get( unit );
+            enemyMap[ mapPos.getX() ][ mapPos.getY() ] = null;
+            MapPosByStaticEnemy.remove( unit );
+            for( EnemyMapListener listener : listeners ) {
+               listener.EnemyRemoved(unit, mapPos);
+            }
+         }
+      }        
+   }
 }

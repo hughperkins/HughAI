@@ -35,6 +35,10 @@ import hughai.CSAI;
 import hughai.PlayerObjects;
 import hughai.basictypes.*;
 import hughai.*;
+import hughai.mapping.BuildMap.BuildMapPos;
+import hughai.mapping.HeightMap.HeightMapPos;
+import hughai.mapping.LosMap.LosMapPos;
+import hughai.mapping.SlopeMap.SlopeMapPos;
 import hughai.ui.MainUI;
 import hughai.unitdata.UnitDefHelp;
 import hughai.utils.*;
@@ -42,6 +46,31 @@ import hughai.utils.*;
 
 public class MovementMaps
 {
+   public static final int granularity = 2;
+   
+   public static class MovementMapPos extends Int2 {
+      public MovementMapPos() {
+
+      }
+      public MovementMapPos( Int2 int2 ) {
+         x = int2.x;
+         y = int2.y;
+      }
+      public MovementMapPos( int x, int y ) {
+         super( x, y );
+      }
+      public TerrainPos toTerrainPos() {
+         return new TerrainPos( x * 8 * granularity, 0, y * 8 * granularity );
+      }
+      public static MovementMapPos fromHeightMapPos( HeightMapPos heightMapPos ) {
+         return new MovementMapPos( heightMapPos.x / granularity, heightMapPos.y / granularity );
+      }
+      public static MovementMapPos fromTerrainPos( TerrainPos terrainPos ) {
+         return new MovementMapPos( (int)terrainPos.x / 8 / granularity,
+               (int)terrainPos.z / 8 / granularity );
+      }
+   }
+   
    CSAI csai;
    OOAICallback aicallback;
    UnitDefHelp unitDefHelp;
@@ -58,19 +87,19 @@ public class MovementMaps
 
    public final int SQUARE_SIZE = 8;
 
-   public float[][] slopemap;
+//   private float[][] slopemap;
    //public double[] heightmap;
-   public List<Float> heightmap;
+   private List<Float> heightmap;
 
    // these are at half map resolution, so 16 pos per sector
-   public boolean[][] infantrymap; // true means troops can move freely in sector
-   public boolean[][] vehiclemap; // true means vehicles can move freely in sector
-   public boolean[][] boatmap; // true means boats can move freely in sector
+   private boolean[][] infantrymap; // true means troops can move freely in sector
+   private boolean[][] vehiclemap; // true means vehicles can move freely in sector
+   private boolean[][] boatmap; // true means boats can move freely in sector
 
    // these are at half map resolution, so 16 pos per sector
-   public int[][] infantryareas; // each area has its own number, 0 means infantry cant go there
-   public int[][] vehicleareas; // each area has its own number, 0 means vehicles cant go there
-   public int[][] boatareas; // each area has its own number, 0 means boats cant go there
+   private int[][] infantryareas; // each area has its own number, 0 means infantry cant go there
+   private int[][] vehicleareas; // each area has its own number, 0 means vehicles cant go there
+   private int[][] boatareas; // each area has its own number, 0 means boats cant go there
 
    public Integer[] infantryareasizes = null; // indexed by ( area number )
    public Integer[] vehicleareasizes = null; // indexed by ( area number )
@@ -136,32 +165,40 @@ public class MovementMaps
 //         DrawMetalSpots();
       }
    }
-
-   public int GetVehicleArea(Float3 currentpos)
-   {
-      int mapx = (int)(currentpos.x / 16);
-      int mapy = (int)(currentpos.z / 16);
-      return vehicleareas[mapx][ mapy];
+   
+   public boolean infantryCanMoveOk( MovementMapPos movementMapPos ) {
+      return infantrymap[movementMapPos.x][movementMapPos.y];
    }
 
-   public int GetBoatArea(Float3 currentpos)
-   {
-      int mapx = (int)(currentpos.x / 16);
-      int mapy = (int)(currentpos.z / 16);
-      return boatareas[mapx][ mapy];
+   public boolean vehicleCanMoveOk( MovementMapPos movementMapPos ) {
+      return vehiclemap[movementMapPos.x][movementMapPos.y];
    }
 
-   public int GetInfantryArea(Float3 currentpos)
-   {
-      int mapx = (int)(currentpos.x / 16);
-      int mapy = (int)(currentpos.z / 16);
-      return infantryareas[mapx][ mapy];
+   public boolean boatCanMoveOk( MovementMapPos movementMapPos ) {
+      return boatmap[movementMapPos.x][movementMapPos.y];
    }
 
-   public int GetArea(UnitDef unitdef, Float3 currentpos)
+   public int GetVehicleArea(TerrainPos currentpos)
    {
-      int mapx = (int)( currentpos.x / 16 );
-      int mapy = (int)( currentpos.z / 16 );
+      MovementMapPos movementMapPos = MovementMapPos.fromTerrainPos( currentpos );
+      return vehicleareas[ movementMapPos.x ][ movementMapPos.y ];
+   }
+
+   public int GetBoatArea(TerrainPos currentpos)
+   {
+      MovementMapPos movementMapPos = MovementMapPos.fromTerrainPos( currentpos );
+      return boatareas[ movementMapPos.x ][ movementMapPos.y ];
+   }
+
+   public int GetInfantryArea(TerrainPos currentpos)
+   {
+      MovementMapPos movementMapPos = MovementMapPos.fromTerrainPos( currentpos );
+      return infantryareas[ movementMapPos.x ][ movementMapPos.y ];
+   }
+
+   public int GetArea(UnitDef unitdef, TerrainPos currentpos)
+   {
+//      MovementMapPos movementMapPos = MovementMapPos.fromTerrainPos( currentpos );
       //logfile.WriteLine("MovementMaps.GetArea unitDefHelp is null? " + (unitDefHelp == null) + " unitdef is null? " + (unitdef == null) );
       if( unitDefHelp.IsAirCraft( unitdef ) )
       {
@@ -169,16 +206,16 @@ public class MovementMaps
       }
       if( unitDefHelp.IsBoat( unitdef ) )
       {
-         return boatareas[ mapx][ mapy ];
+         return GetBoatArea( currentpos );
       }
       else if( unitdef.getMoveData().getMaxSlope() >= config.getMaxinfantryslope() ) // so infantry, approximately
                                     // basically, the maxinfantryslope means the maximum slope over which all infantry can move
       {
-         return infantryareas[ mapx][ mapy ];
+         return GetInfantryArea( currentpos );
       }
       else if( unitdef.getMoveData().getMaxSlope() >= config.getMaxvehicleslope() ) // vehicle, approximately
       {
-         return vehicleareas[ mapx][ mapy ];
+         return GetVehicleArea( currentpos );
       }
       else 
       {
@@ -188,10 +225,12 @@ public class MovementMaps
       }
    }
 
+   SlopeMap slopeMap;
    public void GenerateMaps()
    {
       logfile.WriteLine( "MovementMaps.GenerateMaps start" );
-      slopemap = playerObjects.getMaps().getSlopeMap().GetSlopeMap();
+      slopeMap = playerObjects.getMaps().getSlopeMap();
+//      slopemap = playerObjects.getMaps().getSlopeMap().GetSlopeMap();
       heightmap = gameMap.getHeightMap();
 
       mapwidth = gameMap.getWidth();
@@ -213,15 +252,15 @@ public class MovementMaps
    int[][] CreateAreas( Integer[]infantryareasizes, boolean[][]accessibilitymap )
    {
       logfile.WriteLine( "CreateAreas" );
-      boolean[][]visited = new boolean[ mapwidth / 2][ mapheight / 2 ];
-      int[][] areamap = new int[ mapwidth / 2][ mapheight / 2 ];
+      boolean[][]visited = new boolean[ mapwidth / granularity][ mapheight / granularity ];
+      int[][] areamap = new int[ mapwidth / granularity][ mapheight / granularity ];
 
       ArrayList<Integer> areasizesal = new ArrayList<Integer>();
       areasizesal.add( 0 );
       int areanumber = 1;
-      for( int y = 0; y < mapwidth / 2; y++ )
+      for( int y = 0; y < mapwidth / granularity; y++ )
       {
-         for( int x = 0; x < mapwidth / 2; x++ )
+         for( int x = 0; x < mapwidth / granularity; x++ )
          {
             if( accessibilitymap[x][ y] && !visited[ x][ y ] )
             {
@@ -283,7 +322,7 @@ public class MovementMaps
          int newx = thisx + deltax;
          int newy = thisy + deltay;
          //logfile.WriteLine( "newx " + newx + "  " + newy + " delta: " + deltax + " " + deltay );
-         if( newx >= 0 && newy >= 0 && newx < ( mapwidth / 2 ) && newy < ( mapheight / 2 ) &&
+         if( newx >= 0 && newy >= 0 && newx < ( mapwidth / granularity ) && newy < ( mapheight / granularity ) &&
                !(visited[ newx][ newy ]) && (accessibilitymap[ newx][ newy ]) )
          {
             visited[ newx][ newy ] = true;
@@ -300,10 +339,10 @@ public class MovementMaps
    void GenerateInfantryAccessibleMap()
    {
       logfile.WriteLine( "GenerateInfantryAccessibleMap" );
-      infantrymap = new boolean[ mapwidth / 2][ mapheight / 2 ];
-      for( int y = 0; y < mapheight / 2; y++ )
+      infantrymap = new boolean[ mapwidth / granularity][ mapheight / granularity ];
+      for( int y = 0; y < mapheight / granularity; y++ )
       {
-         for( int x = 0; x < mapwidth / 2; x++ )
+         for( int x = 0; x < mapwidth / granularity; x++ )
          {
             infantrymap[ x ][ y ] = true;
          }
@@ -315,13 +354,15 @@ public class MovementMaps
       {
          for( int x = 0; x < mapwidth; x++ )
          {
-            if( slopemap[ x/ 2][ y / 2 ] > maxinfantryslope )
+            HeightMap.HeightMapPos heightMapPos = new HeightMap.HeightMapPos( x, y );
+            SlopeMapPos slopeMapPos = SlopeMapPos.fromHeightMapPos( heightMapPos );
+            if( slopeMap.getSlopeAt( slopeMapPos ) > maxinfantryslope )
             {
-               infantrymap[ x /2][ y / 2 ] = false;
+               infantrymap[ x / granularity][ y / granularity ] = false;
             }
             if( heightmap.get( arrayindexer.GetIndex( x, y ) ) < 0 )
             {
-               infantrymap[ x /2][ y / 2 ] = false;
+               infantrymap[ x / granularity ][ y / granularity ] = false;
             }
          }
       }
@@ -330,10 +371,10 @@ public class MovementMaps
    void GenerateVehicleAccessibleMap()
    {
       logfile.WriteLine( "GenerateVehicleAccessibleMap" );
-      vehiclemap = new boolean[ mapwidth / 2][ mapheight / 2 ];
-      for( int y = 0; y < mapheight / 2; y++ )
+      vehiclemap = new boolean[ mapwidth / granularity ][ mapheight / granularity ];
+      for( int y = 0; y < mapheight / granularity; y++ )
       {
-         for( int x = 0; x < mapwidth / 2; x++ )
+         for( int x = 0; x < mapwidth / granularity; x++ )
          {
             vehiclemap[ x ][ y ] = true;
          }
@@ -345,13 +386,16 @@ public class MovementMaps
       {
          for( int x = 0; x < mapwidth; x++ )
          {
-            if( slopemap[ x/ 2][ y / 2 ] > vehiclemaximumslope ) // too steep
+            HeightMap.HeightMapPos heightMapPos = new HeightMap.HeightMapPos( x, y );
+            SlopeMapPos slopeMapPos = SlopeMapPos.fromHeightMapPos( heightMapPos );
+            if( slopeMap.getSlopeAt( slopeMapPos ) > vehiclemaximumslope )
+//            if( slopemap[ x/ granularity][ y / granularity ] > vehiclemaximumslope ) // too steep
             {
-               vehiclemap[ x /2][ y / 2 ] = false;
+               vehiclemap[ x / granularity][ y / granularity ] = false;
             }
             if( heightmap.get( arrayindexer.GetIndex( x, y ) ) < 0 ) // underwater
             {
-               vehiclemap[ x /2][ y / 2 ] = false;
+               vehiclemap[ x / granularity][ y / granularity ] = false;
             }
          }
       }
@@ -360,10 +404,10 @@ public class MovementMaps
    void GenerateBoatAccessibleMap()
    {
       logfile.WriteLine( "GenerateBoatAccessibleMap" );
-      boatmap = new boolean[ mapwidth / 2][ mapheight / 2 ];
-      for( int y = 0; y < mapheight / 2; y++ )
+      boatmap = new boolean[ mapwidth / granularity][ mapheight / granularity ];
+      for( int y = 0; y < mapheight / granularity; y++ )
       {
-         for( int x = 0; x < mapwidth / 2; x++ )
+         for( int x = 0; x < mapwidth / granularity; x++ )
          {
             boatmap[ x ][ y ] = true;
          }
@@ -376,7 +420,7 @@ public class MovementMaps
          {
             if( heightmap.get( arrayindexer.GetIndex( x, y ) ) > 0 ) // over land
             {
-               boatmap[ x /2][ y / 2 ] = false;
+               boatmap[ x /granularity][ y / granularity ] = false;
             }
          }
       }

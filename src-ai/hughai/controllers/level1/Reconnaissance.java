@@ -119,16 +119,18 @@ public class Reconnaissance {
       logfile.WriteLine( "getLosCoverageStatistic running" );
       
       LosMap losMap = playerObjects.getMaps().getLosMap();
-      int[][]lastseenframecountmap = losMap.LastSeenFrameCount;
+//      int[][]lastseenframecountmap = losMap.LastSeenFrameCount;
       
       // how about we give 1 point for each point fully up to date
       // and then reduce that as the point gets older?
       // 
       int numpoints = 0;
       float nonnormalizedscore = 0;
-      for( int z = 0; z < lastseenframecountmap.length; z++ ) {
-         for( int x = 0; x < lastseenframecountmap[0].length; x++ ) {
-            int lastseen = lastseenframecountmap[x][z];
+      for( int z = 0; z < losMap.getLosMapHeight(); z++ ) {
+         for( int x = 0; x < losMap.getLosMapWidth(); x++ ) {
+            LosMap.LosMapPos losMapPos = new LosMap.LosMapPos( x, z );
+//            int lastseen = lastseenframecountmap[x][z];
+            int lastseen = losMap.getLastSeenFrameCount( losMapPos );
             float thisvalue = 0;
             if( lastseen != 0 ) {
                int age = frame - lastseen;

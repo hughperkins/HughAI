@@ -143,7 +143,7 @@ public class GiveOrderWrapper
       GiveOrder( new OOPCommands.BuildCommand( builder, unitdeftobuild, targetunitname ) );
    }
 
-   public void BuildUnit(Unit builder, String targetunitname, Float3 pos)
+   public void BuildUnit(Unit builder, String targetunitname, TerrainPos pos)
    {
       UnitDef targetunitdef = buildTable.UnitDefByName.get( targetunitname.toLowerCase() );
       drawingUtils.DrawUnit( targetunitname, pos, 0, 100, 
@@ -151,7 +151,7 @@ public class GiveOrderWrapper
       GiveOrder( new OOPCommands.BuildCommand( builder, targetunitdef, pos, targetunitname ) );
    }
 
-   public void MoveTo(Unit unit, Float3 pos)
+   public void MoveTo(Unit unit, TerrainPos pos)
    {
 //      logfile.WriteLine( "MoveTo " + unit.getUnitId() + " " + unit.getDef().getHumanName() );
       GiveOrder( new OOPCommands.MoveToCommand( unit, pos ) );
@@ -168,7 +168,7 @@ public class GiveOrderWrapper
       GiveOrder( new OOPCommands.AttackCommand( unit, new OOPCommands.UnitTarget( unittoattack ) ) );
    }
 
-   public void Attack(Unit unit, Float3 pos)
+   public void Attack(Unit unit, TerrainPos pos)
    {
       GiveOrder( new OOPCommands.AttackCommand( unit, new OOPCommands.PositionTarget( pos ) ) );
    }
@@ -183,7 +183,7 @@ public class GiveOrderWrapper
       GiveOrder(new OOPCommands.StopCommand(unit));
    }
 
-   public void Reclaim(Unit unit, Float3 pos, double radius)
+   public void Reclaim(Unit unit, TerrainPos pos, double radius)
    {
       GiveOrder(new OOPCommands.ReclaimCommand(unit, pos, radius));
    }

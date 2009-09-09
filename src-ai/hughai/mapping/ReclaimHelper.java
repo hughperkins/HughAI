@@ -66,9 +66,9 @@ public class ReclaimHelper
       maps = playerObjects.getMaps();
    }
 
-   public Float3 GetNearestReclaim(Unit constructor)
+   public TerrainPos GetNearestReclaim(Unit constructor)
    {
-      Float3 mypos = unitController.getPos( constructor );
+      TerrainPos mypos = unitController.getPos( constructor );
       if( playerObjects.getFrameController().getFrame() == 0 )// check ticks first, beacuse metal shows as zero at start
       {
          return null;
@@ -97,7 +97,7 @@ public class ReclaimHelper
          if( containedMetal > 0
                && containedMetal <= metalspace  )
          {
-            Float3 thisfeaturepos = Float3.fromAIFloat3( feature.getPosition() );
+            TerrainPos thisfeaturepos = TerrainPos.fromAIFloat3( feature.getPosition() );
             float thisdistance = (float) Math.sqrt( 
                   thisfeaturepos.GetSquaredDistance( mypos ) );
             float thismetaldistanceratio = containedMetal / thisdistance;
@@ -115,7 +115,7 @@ public class ReclaimHelper
       if( reclaimfound 
             && ( bestmetaldistanceratio > ( 1.0 / ( 100 * reclaimradiusperonehundredmetal ) ) ) )
       {
-         Float3 reclaimpos = Float3.fromAIFloat3( bestreclaim.getPosition() );
+         TerrainPos reclaimpos = TerrainPos.fromAIFloat3( bestreclaim.getPosition() );
          logfile.WriteLine( "Reclaim found, pos " + reclaimpos.toString() );
          if( csai.DebugOn )
          {

@@ -82,7 +82,7 @@ public class EnemySelector2
       //    startarea = MovementMaps.GetInstance().GetArea(typicalunitdef, startpos);
    }
 
-   public void InitStartPos(Float3 startpos)
+   public void InitStartPos(TerrainPos startpos)
    {
       startarea = maps.getMovementMaps().GetArea(typicalunitdef, startpos);
    }
@@ -90,7 +90,7 @@ public class EnemySelector2
    class VoiceFakeEnemy implements VoiceCommandHandler {
       @Override
       public void commandReceived( String command, String[] splitargs, int teamnumber ) {
-         fakeEnemyPos = new Float3( Integer.parseInt( splitargs[2] ), 0,
+         fakeEnemyPos = new TerrainPos( Integer.parseInt( splitargs[2] ), 0,
                Integer.parseInt( splitargs[3] ) );
          fakeEnemy = true;
       }
@@ -104,12 +104,12 @@ public class EnemySelector2
    }
 
    boolean fakeEnemy = false;
-   Float3 fakeEnemyPos;
+   TerrainPos fakeEnemyPos;
 
    // just get nearest known slow enemy
    // otherwise any enemy
    // no priority for buildings
-   public Float3 ChooseAttackPoint( Float3 ourpos)
+   public TerrainPos ChooseAttackPoint( TerrainPos ourpos)
    {
       if( fakeEnemy ) {
          return fakeEnemyPos;
@@ -117,16 +117,16 @@ public class EnemySelector2
       Unit bestunit = null;
       boolean gotknownunit = false;
       UnitDef defforbestid = null;
-      Float3 posforbestid = null;
+      TerrainPos posforbestid = null;
       double BestSquaredDistance = 100000000000d;
       for( Unit enemyunit : enemyTracker.EnemyUnits ) {
          UnitDef enemyunitdef = enemyTracker.EnemyUnitDefByUnit.get( enemyunit );
-         Float3 enemypos = enemyTracker.getPos( enemyunit );
+         TerrainPos enemypos = enemyTracker.getPos( enemyunit );
          if (enemypos != null)
          {
             if (maps.getMovementMaps().GetArea(typicalunitdef, enemypos) == startarea)
             {
-               if (enemypos.GetSquaredDistance(new Float3() ) > 1)
+               if (enemypos.GetSquaredDistance(new TerrainPos() ) > 1)
                {
                   double thissquareddistance = enemypos.GetSquaredDistance( ourpos );
                   if (enemyunitdef != null)
@@ -166,7 +166,7 @@ public class EnemySelector2
       for( Unit enemyunit : enemyTracker.EnemyUnits ) {
          //  logfile.WriteLine( "EnemySelector: checking static... " );
          UnitDef unitdef = enemyTracker.EnemyUnitDefByUnit.get( enemyunit );
-         Float3 enemypos = enemyTracker.getPos( enemyunit );
+         TerrainPos enemypos = enemyTracker.getPos( enemyunit );
          if (enemypos != null)
          {
             double thissquareddistance = enemypos.GetSquaredDistance( ourpos );
@@ -192,7 +192,7 @@ public class EnemySelector2
    // this is going to have to interact with all sorts of stuff in the future
    // for now keep it simple
    // for now we look for nearby buildings, then nearby enemy units with low speed, then anything
-   public Float3 OldChooseAttackPoint(Float3 ourpos)
+   public TerrainPos OldChooseAttackPoint(TerrainPos ourpos)
    {
       boolean gotbuilding = false;
       boolean gotknownunit = false;
@@ -200,16 +200,16 @@ public class EnemySelector2
 
       Unit bestunit = null;
       UnitDef defforbestid = null;
-      Float3 posforbestid = null;
+      TerrainPos posforbestid = null;
       //   logfile.WriteLine( "EnemySelector: checking mobile... " );
       for( Unit enemyunit : enemyTracker.EnemyUnits ) {
          UnitDef unitdef = enemyTracker.EnemyUnitDefByUnit.get( enemyunit );
-         Float3 enemypos = enemyTracker.getPos( enemyunit );
+         TerrainPos enemypos = enemyTracker.getPos( enemyunit );
          // logfile.WriteLine( "Found building " + 
          if (maps.getMovementMaps().GetArea(typicalunitdef, enemypos) 
                == startarea)
          {
-            if (enemypos.GetSquaredDistance( new Float3() ) > 1)
+            if (enemypos.GetSquaredDistance( new TerrainPos() ) > 1)
             {
                double thissquareddistance = ourpos.GetSquaredDistance( enemypos);
                //   logfile.WriteLine( "EnemySelector: Potential enemy at " + enemypos.toString() + " squareddistance: " + thissquareddistance );
@@ -270,7 +270,7 @@ public class EnemySelector2
 
       for( Unit enemyunit : enemyTracker.EnemyUnits ) {
          UnitDef unitdef = enemyTracker.EnemyUnitDefByUnit.get( enemyunit );
-         Float3 enemypos = enemyTracker.getPos( enemyunit );
+         TerrainPos enemypos = enemyTracker.getPos( enemyunit );
          double thissquareddistance = ourpos.GetSquaredDistance(enemypos);
          //  logfile.WriteLine( "EnemySelector: Potential enemy at " + enemypos.toString() + " squareddistance: " + thissquareddistance );
          if (thissquareddistance < BestSquaredDistance)

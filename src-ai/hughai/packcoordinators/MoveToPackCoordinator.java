@@ -54,16 +54,16 @@ public class MoveToPackCoordinator extends PackCoordinator
 		csai.registerGameListener( new GameListenerHandler() );
 	}
 
-	Float3 targetpos;
+	TerrainPos targetpos;
 
 	// does NOT imply Activate()
-	public void SetTarget( Float3 newtarget )
+	public void SetTarget( TerrainPos newtarget )
 	{
 		this.targetpos = newtarget;
 		//Activate();
 	}
 
-	Float3 lasttargetpos = null;
+	TerrainPos lasttargetpos = null;
 
 	@Override
 	void Recoordinate()

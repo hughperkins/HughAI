@@ -71,7 +71,7 @@ public class GuardPackCoordinator extends PackCoordinator
    }
 
    @Override	
-   public void SetTarget( Float3 target )
+   public void SetTarget( TerrainPos target )
    {
       //	this.targetid = targetid;
       //	Activate();

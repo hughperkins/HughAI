@@ -85,7 +85,7 @@ public class DrawingUtils
       public void commandReceived( String command, String[] args, int player ) {
          float posx = Float.parseFloat( args[2] );
          float posz = Float.parseFloat( args[3] );
-         drawText(new Float3( posx, 0, posz ), "(" + posx + ", " + posz + ")" );;
+         drawText(new TerrainPos( posx, 0, posz ), "(" + posx + ", " + posz + ")" );;
       }   
    }
 
@@ -133,7 +133,7 @@ public class DrawingUtils
       //            new AddLineDrawAICommand(startpos, endpos));
    }
 
-   public void AddLine(Float3 startpos, Float3 endpos ) {
+   public void AddLine(TerrainPos startpos, TerrainPos endpos ) {
       //      csai.handleEngineCommand(
       //            new CreateLineFigureDrawerAICommand(
       //                  startpos,
@@ -183,16 +183,16 @@ public class DrawingUtils
    //      AddLine(startpos, endpos);
    //   }
 
-   public void DrawUnit( int toDrawUnitDefId, Float3 pos, float rotation, int lifeTime, int teamId, boolean transparent, boolean drawBorder, int facing) {
+   public void DrawUnit( int toDrawUnitDefId, TerrainPos pos, float rotation, int lifeTime, int teamId, boolean transparent, boolean drawBorder, int facing) {
       csai.handleEngineCommand(
             new DrawUnitDrawerAICommand( toDrawUnitDefId, pos.toAIFloat3(), rotation, lifeTime, teamId, transparent, drawBorder, facing));		
    }
 
-   public void DrawUnit( String defname, Float3 pos ) {
+   public void DrawUnit( String defname, TerrainPos pos ) {
       DrawUnit( defname, pos, 0, 200, aicallback.getTeamId(), true, false );
    }
 
-   public void DrawUnit( String defname, Float3 pos, float rotation, int lifeTime, int teamId, boolean transparent, boolean drawBorder ) {
+   public void DrawUnit( String defname, TerrainPos pos, float rotation, int lifeTime, int teamId, boolean transparent, boolean drawBorder ) {
       if( pos == null ){ throw new RuntimeException( "drawunit: pos was null"); }
       UnitDef toDrawUnitDef = buildTable.UnitDefByName.get( defname.toLowerCase() );
       if( toDrawUnitDef == null ){ throw new RuntimeException( "unit " + defname + " doesn't exist."); }
@@ -202,7 +202,7 @@ public class DrawingUtils
             new DrawUnitDrawerAICommand(toDrawUnitDef, pos.toAIFloat3(), rotation, lifeTime, teamId, transparent, drawBorder, 0 ) );		
    }
 
-   public void drawText( Float3 pos, String text ) {
+   public void drawText( TerrainPos pos, String text ) {
       pushCheating();
       setCheating( false );
       csai.handleEngineCommand(
@@ -210,29 +210,29 @@ public class DrawingUtils
       popCheating();
    }
 
-   public void DrawRectangle(Float3 pos, int width, int height )
+   public void DrawRectangle(TerrainPos pos, int width, int height )
    {
       //Float3 pos = new Float3(inpos);
       float elevation = aicallback.getMap().getElevationAt(pos.x, pos.z) + 10;
-      AddLine(pos.add( new Float3(0f, elevation, 0f)  ),
-            pos.add( new Float3(width, elevation, 0) ) );
-      AddLine(pos.add( new Float3(width, elevation, 0) ),
-            pos.add( new Float3(width, elevation, height) ) );
-      AddLine(pos.add( new Float3(width, elevation, height) ),
-            pos.add( new Float3(0, elevation, height) ) );
-      AddLine(pos.add( new Float3(0, elevation, height) ),
-            pos.add( new Float3(0, elevation, 0) ) );
+      AddLine(pos.add( new TerrainPos(0f, elevation, 0f)  ),
+            pos.add( new TerrainPos(width, elevation, 0) ) );
+      AddLine(pos.add( new TerrainPos(width, elevation, 0) ),
+            pos.add( new TerrainPos(width, elevation, height) ) );
+      AddLine(pos.add( new TerrainPos(width, elevation, height) ),
+            pos.add( new TerrainPos(0, elevation, height) ) );
+      AddLine(pos.add( new TerrainPos(0, elevation, height) ),
+            pos.add( new TerrainPos(0, elevation, 0) ) );
    }
 
-   public void DrawCircle( Float3 pos, double radius )
+   public void DrawCircle( TerrainPos pos, double radius )
    {
-      Float3 lastpos = null;
+      TerrainPos lastpos = null;
 
       for( int angle = 0; angle <= 360; angle += 20 )
       {
          int x = (int)( (double)radius * Math.cos ( (double)angle * Math.PI / 180 ) );
          int y = (int)( (double)radius * Math.sin ( (double)angle * Math.PI / 180 ) );
-         Float3 thispos = new Float3( x, 0, y ).add( pos );
+         TerrainPos thispos = new TerrainPos( x, 0, y ).add( pos );
          if( lastpos != null )
          {
             AddLine( thispos,lastpos );
@@ -260,24 +260,26 @@ public class DrawingUtils
             + " x " + thismapheight + " / " + gamemapheight );
       if( skip < 1 ) { skip = 1; }
       HeightMap heightMap = playerObjects.getMaps().getHeightMap();
-      float[][] heightMapArray = heightMap.GetHeightMap();
+//      float[][] heightMapArray = heightMap.GetHeightMap();
       for( int z = 0; z < thismapheight; z += skip )
       {
          for (int x = 0; x < thismapwidth; x+= skip )
          {
             //            float elevation = gamemap.getElevationAt( x *multiplier, y * multiplier ) + 10;
-            float elevation = heightMapArray[x][z];
+//            float elevation = heightMapArray[x][z];
+            float elevation = heightMap.getElevationAt( 
+                  new HeightMap.HeightMapPos( x, z ) );
             if (x < (thismapwidth - skip) &&
                   map[x][z] != map[x + skip][z] )
             {
-               AddLine(new Float3((x + skip) * multiplier, elevation, z * multiplier),
-                     new Float3((x + skip) * multiplier, elevation, (z + skip) * multiplier) );
+               AddLine(new TerrainPos((x + skip) * multiplier, elevation, z * multiplier),
+                     new TerrainPos((x + skip) * multiplier, elevation, (z + skip) * multiplier) );
             }
             if (z < (thismapheight - skip) &&
                   map[x][z] != map[x][z + skip] )
             {
-               AddLine(new Float3(x * multiplier, elevation, (z + skip) * multiplier),
-                     new Float3((x + skip) * multiplier, elevation, (z + skip) * multiplier) );
+               AddLine(new TerrainPos(x * multiplier, elevation, (z + skip) * multiplier),
+                     new TerrainPos((x + skip) * multiplier, elevation, (z + skip) * multiplier) );
             }
          }
       }
@@ -302,16 +304,16 @@ public class DrawingUtils
                   map[x][y] != map[x + 1][y])
             {
                float elevation = gamemap.getElevationAt(x * multiplier, y * multiplier) + 10;
-               AddLine(new Float3((x + 1) * multiplier, elevation, y * multiplier),
-                     new Float3((x + 1) * multiplier, elevation, (y + 1) * multiplier) );
+               AddLine(new TerrainPos((x + 1) * multiplier, elevation, y * multiplier),
+                     new TerrainPos((x + 1) * multiplier, elevation, (y + 1) * multiplier) );
             }
             if (y < (thismapheight - 2) &&
                   //            if (y < (thismapheight - 1) &&
                   map[x][y] != map[x][y + 1])
             {
                float elevation = gamemap.getElevationAt(x * multiplier, y * multiplier) + 10;
-               AddLine(new Float3(x * multiplier, elevation, (y + 1) * multiplier),
-                     new Float3((x + 1) * multiplier, elevation, (y + 1) * multiplier) );
+               AddLine(new TerrainPos(x * multiplier, elevation, (y + 1) * multiplier),
+                     new TerrainPos((x + 1) * multiplier, elevation, (y + 1) * multiplier) );
             }
          }
       }

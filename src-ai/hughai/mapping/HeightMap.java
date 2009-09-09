@@ -37,6 +37,7 @@ import hughai.PlayerObjects;
 import hughai.basictypes.*;
 import hughai.*;
 import hughai.loader.utils.TransLoadStorage;
+import hughai.mapping.Metal.MetalPos;
 import hughai.mapping.Metal.MetalSpot;
 import hughai.mapping.SlopeMap.ButtonSlopeDistribution;
 import hughai.ui.MainUI;
@@ -60,7 +61,40 @@ public class HeightMap
    //	MovementMaps movementMaps;
    //Maps maps;
 
-   float[][] heightMap;
+   private float[][] heightMap;
+   
+   public static final int granularity = 1;
+   
+   public static class HeightMapPos extends Int2 {
+      public HeightMapPos() {
+         
+      }
+      public HeightMapPos( Int2 int2 ) {
+         x = int2.x;
+         y = int2.y;
+      }
+      public HeightMapPos( int x, int y ) {
+         super( x, y );
+      }
+      public TerrainPos toTerrainPos() {
+         return new TerrainPos( x * 8 * granularity, 0, y * 8 * granularity );
+      }
+      public static HeightMapPos fromTerrainPos( TerrainPos terrainPos ) {
+         return new HeightMapPos( (int)terrainPos.x / 8 / granularity,
+               (int)terrainPos.z / 8 / granularity );
+      }
+   }
+   
+   public float getElevationAt( HeightMapPos heightMapPos ) {
+      GetHeightMap();
+      return heightMap[heightMapPos.x][heightMapPos.y];
+   }
+   
+   public float getElevationAt( TerrainPos terrainPos ) {
+      GetHeightMap();
+      HeightMapPos heightMapPos = HeightMapPos.fromTerrainPos( terrainPos );
+      return getElevationAt( heightMapPos );
+   }
 
    public HeightMap( PlayerObjects playerObjects )
    {
@@ -132,7 +166,7 @@ public class HeightMap
       }
    }
 
-   public float[][] GetHeightMap()
+   private float[][] GetHeightMap()
    {
          if( heightMap != null ) {
             return heightMap;
