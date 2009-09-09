@@ -57,7 +57,7 @@ public class ScoutControllerRaider
    Maps maps;
    Config config;
 
-//   SpreadSearchPackCoordinatorWithSearchGrid searchcoordinator;
+   //   SpreadSearchPackCoordinatorWithSearchGrid searchcoordinator;
    SpreadSearchPackCoordinatorWithSearchGrid searchcoordinator;
 
    List< Unit > ScoutUnits = new ArrayList< Unit>();
@@ -79,10 +79,10 @@ public class ScoutControllerRaider
 
       random = new Random();
 
-//      searchcoordinator = new SpreadSearchPackCoordinatorWithSearchGrid( 
-//            playerObjects);
-    searchcoordinator = new SpreadSearchPackCoordinatorWithSearchGrid( 
-          playerObjects);
+      //      searchcoordinator = new SpreadSearchPackCoordinatorWithSearchGrid( 
+      //            playerObjects);
+      searchcoordinator = new SpreadSearchPackCoordinatorWithSearchGrid( 
+            playerObjects);
 
       logfile.WriteLine( "*ScoutControllerRaider initialized*" );
    }
@@ -98,7 +98,7 @@ public class ScoutControllerRaider
          csai.registerGameListener(new GameListenerHandler());
          csai.RegisterVoiceCommand( "countscouts", new VoiceCommandCountScouts() );
 
-//         enemyTracker.registerListener( new EnemyTrackerHandler() );
+         //         enemyTracker.registerListener( new EnemyTrackerHandler() );
 
          searchcoordinator.Activate();
          Active = true;
@@ -112,7 +112,7 @@ public class ScoutControllerRaider
          csai.unregisterGameListener(new GameListenerHandler());
          csai.UnregisterVoiceCommand( "countscouts" );
 
-//         enemyTracker.unregisterGameListener( new EnemyTrackerHandler() );
+         //         enemyTracker.unregisterGameListener( new EnemyTrackerHandler() );
 
          searchcoordinator.Disactivate();
          Active = false;
@@ -160,12 +160,12 @@ public class ScoutControllerRaider
       giveOrderWrapper.MoveTo(unit, destination );
    }
 
-//   class EnemyTrackerHandler extends EnemyTracker.EnemyAdapter {
-//      @Override
-//      public void AcquiredEnemy( Unit unit )
-//      {
-//      }
-//   }
+   //   class EnemyTrackerHandler extends EnemyTracker.EnemyAdapter {
+   //      @Override
+   //      public void AcquiredEnemy( Unit unit )
+   //      {
+   //      }
+   //   }
 
    void Reappraise()
    {
@@ -180,8 +180,8 @@ public class ScoutControllerRaider
          // need to add index by position for this, to speed things up
          for( Unit enemy : enemyTracker.getEnemyUnits() ) {
             UnitDef enemyunitdef = enemyTracker
-               .getEnemyUnitDefByUnit()
-               .get( enemy );
+            .getEnemyUnitDefByUnit()
+            .get( enemy );
             if( enemyunitdef != null )
             {				
                if( IsPriorityTarget( enemyunitdef ) )
@@ -191,26 +191,31 @@ public class ScoutControllerRaider
                   float thissquareddistance = scoutpos.GetSquaredDistance( enemypos);
                   if( thissquareddistance < bestsquareddistance )
                   {
-                     boolean nolasertowersnear = true;
-                     for( Unit potentiallasertower : enemyTracker.getEnemyPosByStaticUnit().keySet() ) {
-                        UnitDef potentialtowerunitdef = enemyTracker.getEnemyUnitDefByUnit().get(potentiallasertower);
-                        //								if( attackerunitdef != null )
-                        //								{
-                        if( IsLaserTower( potentialtowerunitdef ) )
-                        {
-                           TerrainPos lasertowerpos = enemyTracker.getEnemyPosByStaticUnit().get(potentiallasertower);
-                           if( enemypos.GetSquaredDistance( lasertowerpos ) < nearbyforenemiesmeans * nearbyforenemiesmeans )
-                           {
-                              nolasertowersnear = false;
-                           }
-                        }
-                     }
-                     if( nolasertowersnear )
-                     {
+                     if( maps.getThreatMap().getThreatAt( enemypos ) < 1 ) {
                         nearestpos = enemypos;
                         bestsquareddistance = thissquareddistance;
                         targetenemy = enemy;
                      }
+//                     boolean nolasertowersnear = true;
+//                     for( Unit potentiallasertower : enemyTracker.getEnemyPosByStaticUnit().keySet() ) {
+//                        UnitDef potentialtowerunitdef = enemyTracker.getEnemyUnitDefByUnit().get(potentiallasertower);
+//                        //								if( attackerunitdef != null )
+//                        //								{
+//                        if( IsLaserTower( potentialtowerunitdef ) )
+//                        {
+//                           TerrainPos lasertowerpos = enemyTracker.getEnemyPosByStaticUnit().get(potentiallasertower);
+//                           if( enemypos.GetSquaredDistance( lasertowerpos ) < nearbyforenemiesmeans * nearbyforenemiesmeans )
+//                           {
+//                              nolasertowersnear = false;
+//                           }
+//                        }
+//                     }
+//                     if( nolasertowersnear )
+//                     {
+//                        nearestpos = enemypos;
+//                        bestsquareddistance = thissquareddistance;
+//                        targetenemy = enemy;
+//                     }
                   }
                }
             }
@@ -230,7 +235,7 @@ public class ScoutControllerRaider
             if( attackingscouts.contains( scout ) || movefailed.contains( scout ) )
             {
                searchcoordinator.Activate();
-//               ExploreWith( scout );
+               //               ExploreWith( scout );
                attackingscouts.remove( scout );
                movefailed.remove( scout  );
             }
@@ -239,8 +244,8 @@ public class ScoutControllerRaider
       //     logfile.WriteLine("reappraise<<<");
    }
 
-//   List<String> prioritytargets = Arrays.asList(new String[] { 
-     //    "armmex", "cormex", "armrad", "corrad" });
+   //   List<String> prioritytargets = Arrays.asList(new String[] { 
+   //    "armmex", "cormex", "armrad", "corrad" });
 
    boolean IsPriorityTarget(UnitDef unitdef )
    {
@@ -263,11 +268,11 @@ public class ScoutControllerRaider
    ArrayList<Unit> attackingscouts = new ArrayList<Unit>(); // scoutid of scouts currently attacking
 
    class GameListenerHandler extends GameAdapter {
-//      int ticks = 0;
+      //      int ticks = 0;
       @Override
       public void Tick( int frame )
       {
-            Reappraise();
+         Reappraise();
       }
       @Override
       public void UnitMoveFailed( Unit unit ) {
