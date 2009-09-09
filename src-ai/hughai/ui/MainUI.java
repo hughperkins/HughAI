@@ -112,6 +112,7 @@ public class MainUI {
    }
    
    public void addPanelToTabbedPanel( String title, JPanel panel ) {
+      playerObjects.getLogFile().WriteLine( "MainUI: addpaneltotabbedpanel " + title );
       tabbedPane.addTab( title, panel );
       frame.validate();
    }

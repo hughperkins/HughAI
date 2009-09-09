@@ -16,8 +16,10 @@ in order to beat e323:
 
 low:
 - make config dialog easier to read somehow, group stuff together?
+- speed up getheighttmap somehow?  replicate spring's internal getelevation algo?
 
 usability:
+- add console
 - add parameters to welcome message, like %configfilepath, %workflowdirectory
   %modname
 - make gui non-default, so works full-screen and / or detect full-screen

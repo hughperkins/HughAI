@@ -77,6 +77,7 @@ public class PlayerObjects {
    FrameController frameController;
    Workflows workflows;
    WelcomeMessages welcomeMessages;
+   Console console;
 
    static Collection<CSAI> csais = new HashSet<CSAI>();
 
@@ -123,6 +124,14 @@ public class PlayerObjects {
       }
       welcomeMessages = new WelcomeMessages( this );
       return welcomeMessages;
+   }
+   
+   public Console getConsole() {
+      if( console != null ) {
+         return console;
+      }
+      console = new Console( this );
+      return console;
    }
    
    public synchronized BuildEconomy getBuildEconomy() {

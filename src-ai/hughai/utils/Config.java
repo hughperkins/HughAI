@@ -72,6 +72,8 @@ public class Config implements ConfigHelper.IConfig {
    @ReflectionHelper.Exclude
    final String ConfigVersion = "2";
    
+   String consoleclasspath="$aidir/SkirmishAI.jar:$aidir/UnderlyingAI.jar:$aidir/../../../Interfaces/Java/0.1/AIInterface.jar"; 
+
    int maxTimeToConserveMobileEnemyOnThreatMapGameSeconds = 30;
    
    String defaultWorkflowName = "default";
@@ -367,5 +369,11 @@ public class Config implements ConfigHelper.IConfig {
    public void setMaxTimeToConserveMobileEnemyOnThreatMapGameSeconds(
          int maxTimeToConserveMobileEnemyOnThreatMapGameSeconds ) {
       this.maxTimeToConserveMobileEnemyOnThreatMapGameSeconds = maxTimeToConserveMobileEnemyOnThreatMapGameSeconds;
+   }
+   public String getConsoleclasspath() {
+      return consoleclasspath;
+   }
+   public void setConsoleclasspath( String consoleclasspath ) {
+      this.consoleclasspath = consoleclasspath;
    }
 }

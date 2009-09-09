@@ -1,0 +1,25 @@
+package console;
+
+import java.util.*;
+import javax.swing.*;
+import java.io.*;
+
+import com.springrts.ai.*;
+import com.springrts.ai.command.*;
+import com.springrts.ai.oo.*;
+
+import hughai.*;
+import hughai.ui.*;
+import hughai.utils.*;
+import hughai.basictypes.*;
+import hughai.mapping.*;
+import hughai.building.*;
+
+public class ConsoleText implements ConsoleEntryPoint {
+   @Override
+   public String go( PlayerObjects playerObjects ) {
+      // your code here...
+
+      return "output from console";
+   }
+}
