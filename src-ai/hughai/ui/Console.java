@@ -54,7 +54,7 @@ public class Console {
 //   final String classpath="$aidir/SkirmishAI.jar:$aidir/UnderlyingAI.jar:$aidir/../../Interfaces/Java/0.1/AIInterface.jar"; 
 
 //   JFrame frame;
-   JPanel panel;
+   JPanel textpanel;
    GridLayout gridLayout;
    JTextArea textarea;
    JButton gobutton;
@@ -74,10 +74,17 @@ public class Console {
       try {
 //      frame = new JFrame("Console");
 //      frame.setSize( 400, 400 );
+         
+         JPanel outerpanel = new JPanel(new BorderLayout());
 
-      gridLayout = new GridLayout( 4, 1 );
-      panel = new JPanel( gridLayout );
+      gridLayout = new GridLayout( 2, 1 );
+      textpanel = new JPanel( gridLayout );
 //      frame.add( panel );
+      
+      JPanel buttonpanel = new JPanel(new GridLayout(1,2));
+      
+      outerpanel.add( "Center", textpanel );
+      outerpanel.add( "South", buttonpanel );
 
       textarea = new JTextArea();
       JScrollPane scrollPane = new JScrollPane( textarea );
@@ -99,12 +106,12 @@ public class Console {
       gobutton.addActionListener( new GoButton() );
       quitbutton.addActionListener( new QuitButton() );
 
-      panel.add( scrollPane );
-      panel.add( outputscrollpane );
-      panel.add( gobutton );
-      panel.add( quitbutton );
+      textpanel.add( scrollPane );
+      textpanel.add( outputscrollpane );
+      buttonpanel.add( gobutton );
+      buttonpanel.add( quitbutton );
 
-      playerObjects.getMainUI().addPanelToTabbedPanel( "Console", panel );
+      playerObjects.getMainUI().addPanelToTabbedPanel( "Console", outerpanel );
 //      frame.validate();
 //      frame.setVisible( true );
       } catch( Exception e ) {
