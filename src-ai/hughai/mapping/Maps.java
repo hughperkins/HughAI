@@ -83,4 +83,8 @@ public class Maps {
    public SlopeMap getSlopeMap() {
       return slopeMap;
    }
+
+   public ThreatMap getThreatMap() {
+      return threatMap;
+   }
 }

@@ -122,7 +122,7 @@ public class ThreatMap {
          }
       }
       
-      debug(" ... thread map done. milliseconds taken: " + ( System.currentTimeMillis() - time ) );
+      debug(" ... threat map done. milliseconds taken: " + ( System.currentTimeMillis() - time ) );
    }
    
    // this whole function heavily influenced by E323's CThreatMap.cpp class
