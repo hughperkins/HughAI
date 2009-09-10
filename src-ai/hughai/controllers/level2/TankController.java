@@ -399,8 +399,11 @@ public class TankController
       {
          if (unitcontroller.UnitsByName.containsKey(commanderunitname))
          {
-            guardpackcoordinator.SetTarget(unitcontroller.UnitsByName.get( commanderunitname ).get( 0 ) );
-            packcoordinatorselector.ActivatePackCoordinator(guardpackcoordinator);
+            List<Unit> commanders = unitcontroller.UnitsByName.get( commanderunitname );
+            if( commanders.size() > 0 ) {
+               guardpackcoordinator.SetTarget(commanders.get( 0 ) );
+               packcoordinatorselector.ActivatePackCoordinator(guardpackcoordinator);
+            }
          }
       }
    }
