@@ -1,5 +1,7 @@
 
-function go( playerObjects ) {
+function go( playerObjects, activator ) {
+   playerObjects.getDrawingUtils().drawText(
+      activator.newTerrainPos( 200, 200, 200 ), "Hello from ecma");
    playerObjects.getMainUI().showInfo('hello from ecma!');
    return "Message from ecma";
 }

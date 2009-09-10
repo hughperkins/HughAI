@@ -20,7 +20,6 @@ low:
 - speed up getheighttmap somehow?  replicate spring's internal getelevation algo?
 
 usability:
-- add console
 - add parameters to welcome message, like %configfilepath, %workflowdirectory
   %modname
 - make gui non-default, so works full-screen and / or detect full-screen
@@ -29,6 +28,8 @@ usability:
     - still, there is some issue it seems, to be monitored
 
 done:
+- add ecma console for imbaczek
+- add console
 - add threatmap
 - make decently typed Float3 classes, like terrainpos, metalpos, threatmappos etc
 - add cheating option

@@ -29,6 +29,7 @@ import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 
 import javax.activation.FileTypeMap;
+import javax.naming.Context;
 import javax.swing.*;
 import javax.script.*;
 import javax.xml.transform.stream.StreamResult;
@@ -159,6 +160,9 @@ public class ConsoleEcma {
             }
             Object newInstance = cls.newInstance(); 
             ScriptEngineManager scriptEngineManager = (ScriptEngineManager)newInstance;
+            for( String key : scriptEngineManager.getBindings().keySet() ) {
+               debug( key );
+            }
             
 //            ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
             List<ScriptEngineFactory> factories = scriptEngineManager.getEngineFactories();
@@ -171,9 +175,16 @@ public class ConsoleEcma {
                }
             }
             ScriptEngine scriptEngine = ecmaScriptEngineFactory.getScriptEngine();
+            //scriptEngine.getContext().
+            //javax.script.
+            debug( ConsoleEcma.class.getClassLoader() );
+            debug( ScriptEngineManager.class.getClassLoader() );
+            debug( ScriptEngineFactory.class.getClassLoader() );
+            debug( ScriptEngine.class.getClassLoader() );
+            
             scriptEngine.eval( textarea.getText() );
             Invocable invocable = (Invocable)scriptEngine;
-            String result = (String)invocable.invokeFunction( "go", playerObjects );
+            String result = (String)invocable.invokeFunction( "go", playerObjects, new Activator() );
             outputTextarea.setText( result );
                        
          } catch( Exception e ) {
