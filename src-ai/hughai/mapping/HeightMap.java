@@ -43,15 +43,74 @@ import hughai.mapping.SlopeMap.ButtonSlopeDistribution;
 import hughai.ui.MainUI;
 import hughai.utils.*;
 
-
-
 // holds the heightmap of the map
 // since this takes ages to load the heightmap, for now, this 
-// is cached in the loadeer module (for speed between ai reloads during dev)
+// is cached in the loader module (for speed between ai reloads during dev)
 // and in a cache file (which accelerates initial loading at each game
 // start, except for the very first, very slightly, but not enough.
-// perhaps we can just use getMap().getHeightMap(), but I can't remember
-// why that is hard :-D
+// See explanation below for why we can't just use getheightmap
+//
+// notes on heightmap:
+// aicallback.getElevationAt calls ultimately CGround::GetHeight2( float x, float y );
+// aicallback.getMap().getHeightMap() returns the heights at the center of each square,
+// rather than those at the corners
+//
+// notes on CGround::GetHeight2 (x,y) algo:
+// - first determines the square coordinates, ie sx,sy , which is basically x/8,y/8 for ints 
+// - and the coordinates within the square, deltax, deltay, the distance from the corner of the square
+//     ( so sounds like ,reasonable guess, this is going to interpolate, and give
+//       the exact height at the exact x,y coordinates)
+// - hs is ... oh, I reckon it's the position of the square height within the one-dimensional
+//   heightmap float array
+// - then it is using readmap->GetHeightMap(), which sounds like it gives the 
+//   corner heights of the map
+// 
+// so, this class's, HeightMap's heightmap, gives the corner
+// heights, the original readmap->GetHeightMap() ...
+//
+// If we wanted to avoid making multiple calls to getElevationAt, in order
+// to determine the heightmap, I suppose we have a couple of possibilities:
+// - somehow reverse the process of getting the center height, to get the corner
+//   heights, but that sounds tricky ...
+// - just read the original mapfile using java.io ?
+//
+// thinking about getting corner heights from center heights, I feel maybe
+// there is insufficient information.  Imagine a 1-d map, with just three heights:
+//
+//                                         h[2]
+//
+//
+//                                 c[1]
+//
+//
+//                         h[1]
+//            c[0]
+//  h[0]
+//
+// .. then: c[0] = (h[0] + h[1]) / 2
+//          c[1] = (h[1] + h[2]) / 2
+// going from h -> c, we have three knowns going to two unknowns
+// going from c -> h, we have two knowns somehow determining three unknowns,
+// which is insufficiently specified
+// or, looking at it intuitively, if we fix c[0] and c[1], we can imagine the 
+// two lines going through h[0],h[1] and h[1],h[2] being able to fold and unfold
+// like a hinge without leaving the fixed points provided by c[0] and c[1]
+//
+// Looking at just reading the mapfile directly using java.io, the issue
+// is that the Java Interface v0.1 does not seem to currently expose the
+// classes/methods we would need to easily obtain the map file.
+//
+// Without having such methods in the AI, we'd basically need to rewrite a 
+// whole chunk of Spring code:
+// - parse the script file (if we even know which script file it is...)
+// - locate the mapfile in the various locations that Spring searches in,
+//   which is quite a lot of work in itself, since different os's have
+//   different locations, and how am I going to test all of that?
+// - use 7z to decompress the actual map image from within the mapfile
+// ... ok, that's it, but each of those steps is at least several hours work,
+//     maybe more, maybe several man-days per step?
+//
+
 public class HeightMap
 {
    CSAI csai;
@@ -61,7 +120,7 @@ public class HeightMap
    //	MovementMaps movementMaps;
    //Maps maps;
 
-   private float[][] heightMap;
+   private float[][] heightMap; // corner heights of each map square
    
    public static final int granularity = 1;
    
@@ -85,11 +144,17 @@ public class HeightMap
       }
    }
    
+   // returns the top left corner height of the square at heightMapPos
    public float getElevationAt( HeightMapPos heightMapPos ) {
       GetHeightMap();
       return heightMap[heightMapPos.x][heightMapPos.y];
    }
    
+   // technically this isn't quite right, since it gives the top-left corner
+   // height of the square that this point is in.
+   // we could copy/paste the code from CGround::GetHeight2, in order to return
+   // the exact elevation, though I'm not sure there's anything that really 
+   // needs such a precise calculation of elevation?
    public float getElevationAt( TerrainPos terrainPos ) {
       GetHeightMap();
       HeightMapPos heightMapPos = HeightMapPos.fromTerrainPos( terrainPos );

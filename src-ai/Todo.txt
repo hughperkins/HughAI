@@ -28,6 +28,7 @@ usability:
     - still, there is some issue it seems, to be monitored
 
 done:
+- make enemy targeting by scoutcontrollers threatmap dependent 
 - add ecma console for imbaczek
 - add console
 - add threatmap
@@ -51,6 +52,10 @@ abandoned:
   cache, so it's irrelevant ;-)
 
 to communicate:
+- nice to have a function getCornerHeightMap, which returns the corner heights
+  of each mapsquare, rather than the center heights
+- or... a way of getting the mapfilename, and loading the map image directly
+  from the map file
 - get rid of debug and logging in java interface
 - Java AI in spring from git very slow!
 - getPos() to return null if not in los
@@ -63,7 +68,6 @@ to communicate, done:
 - crash with line drawer / how to draw lines that only last a few seconds? 
    or how  to draw lines and then delete them a few seconds later? or
    how to remove all lines on the map?
-
 
 High level methods:
 - take a group of units, say to someone "attack the enemy with these"
