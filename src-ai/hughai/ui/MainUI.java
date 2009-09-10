@@ -44,6 +44,7 @@ import hughai.packcoordinators.*;
 import hughai.unitdata.*;
 import hughai.unitdata.UnitController.UnitAdapter;
 import hughai.utils.*;
+import hughai.utils.Config.ConfigListener;
 
 // This creates a form with buttons in
 // other components register their methods with this form
@@ -83,9 +84,18 @@ public class MainUI {
       actionsPanel = new JPanel( actionsGridLayout );
       tabbedPane.addTab( "Actions", actionsPanel );
       
-      frame.setVisible( true );
+      frame.setVisible( playerObjects.getConfig().isGUIActivated() );
       //      }
       this.playerObjects.getCSAI().registerShutdown( new ShutdownHandler() );
+      this.playerObjects.getConfig().registerListener( new ConfigHandler() );
+   }
+   
+   class ConfigHandler implements ConfigListener {
+      @Override
+      public void configUpdated() {
+         playerObjects.getLogFile().WriteLine( "MainUI.ConfigHandler()" );
+         frame.setVisible( playerObjects.getConfig().isGUIActivated() );         
+      }
    }
 
    class ShutdownHandler implements CSAI.ShutdownHandler {

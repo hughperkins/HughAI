@@ -79,6 +79,8 @@ public class Config implements ConfigHelper.IConfig {
 
    int maxTimeToConserveMobileEnemyOnThreatMapGameSeconds = 30;
    
+   boolean GUIActivated = true; // do we show the ui?
+   
    String defaultWorkflowName = "default";
 
    String metalspotmarkerunitname = "armmex";
@@ -378,5 +380,11 @@ public class Config implements ConfigHelper.IConfig {
    }
    public void setConsoleclasspath( String consoleclasspath ) {
       this.consoleclasspath = consoleclasspath;
+   }
+   public boolean isGUIActivated() {
+      return GUIActivated;
+   }
+   public void setGUIActivated( boolean gUIActivated ) {
+      GUIActivated = gUIActivated;
    }
 }

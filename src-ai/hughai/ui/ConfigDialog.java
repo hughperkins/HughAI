@@ -293,6 +293,7 @@ public class ConfigDialog {
       revertConfig(); // in case some parses and stuff didn't work, so 
                       // user can see what is actually being read.
       playerObjects.getMainUI().showInfo( "Config updated.  Note that most changes require an AI restart.  You can click on 'reloadAI' in 'Actions' tab to do so." );
+      playerObjects.getConfig().configUpdated();
    }
 
    class ConfigSave implements ActionListener {
@@ -307,6 +308,7 @@ public class ConfigDialog {
       @Override
       public void actionPerformed( ActionEvent e ){
          playerObjects.getConfig().reload();
+         playerObjects.getConfig().configUpdated();
          revertConfig();
       }
    }

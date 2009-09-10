@@ -14,6 +14,7 @@ medium/low, suboptimal:
 in order to beat e323:
 - make enemy targeting threatmap dependent 
 - add pathing
+- get hold of valid startscript, or latest springlobby
 
 low:
 - make config dialog easier to read somehow, group stuff together?
