@@ -17,7 +17,11 @@ in order to beat e323:
 
 low:
 - make config dialog easier to read somehow, group stuff together?
+
+suspended:
 - speed up getheighttmap somehow?  replicate spring's internal getelevation algo?
+   - we need basically an addition to the Java AI Interface v0.1, in order to 
+     obtain the corner map heights
 
 usability:
 - add parameters to welcome message, like %configfilepath, %workflowdirectory
