@@ -214,7 +214,7 @@ public class Ownership
             }
             catch (Exception e)
             {
-               e.printStackTrace();
+               logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
                logfile.WriteLine( e.toString());
                //throw e;
                throw new RuntimeException(e);

@@ -188,8 +188,9 @@ public class CSAI extends AbstractOOAI implements IHughAI
       }
       catch( Exception e )
       {
-         e.printStackTrace();
-         logfile.WriteLine( "Exception: " + e.toString() );
+     //    e.printStackTrace();
+         logfile.WriteLine( "Exception: " + e.toString() + 
+               " " + Formatting.exceptionToStackTrace( e ));
          SendTextMsg( "Exception: " + e.toString() );
          aistopped = false;
       }
@@ -203,7 +204,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
             //sendTextMessage( ".hughai reload" );
             hughAILoader.triggerReload();
          } catch( Exception e ) {
-            e.printStackTrace();
+            logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
             throw new RuntimeException( e );
          }
       }
@@ -242,7 +243,8 @@ public class CSAI extends AbstractOOAI implements IHughAI
          playerObjects.dispose();
          logfile.Shutdown();
       } catch( Exception e ) {
-         e.printStackTrace();
+         logfile.WriteLine( "Exception: " + e.toString() + 
+               " " + Formatting.exceptionToStackTrace( e ));
          throw new RuntimeException( e );
       }
    }
@@ -288,7 +290,8 @@ public class CSAI extends AbstractOOAI implements IHughAI
       }
       catch( Exception e )
       {
-         e.printStackTrace();
+         logfile.WriteLine( "Exception: " + e.toString() + 
+               " " + Formatting.exceptionToStackTrace( e ));
 //       logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
          aistopped = false;
@@ -315,7 +318,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
       catch( Exception e )
       {
          logfile.WriteLine( "Exception in csai.unitfinished: " + e.toString() );
-         e.printStackTrace();
+         logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //       logfile.WriteLine( "Exception: " + e.toString() );
          aistopped = false;
       }
@@ -337,7 +340,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
       }
       catch( Exception e )
       {
-         e.printStackTrace();
+         logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //         logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
          aistopped = false;
@@ -360,7 +363,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
       }
       catch( Exception e )
       {
-         e.printStackTrace();
+         logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //         logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
          aistopped = false;
@@ -382,7 +385,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
       }
       catch( Exception e )
       {
-         e.printStackTrace();
+         logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
          //logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
          aistopped = false;
@@ -418,7 +421,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
       }
       catch( Exception e )
       {
-         e.printStackTrace();
+         logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
        //  logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
          aistopped = false;
@@ -437,7 +440,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
       }
       catch( Exception e )
       {
-         e.printStackTrace();
+         logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //       logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
          aistopped = false;
@@ -456,7 +459,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
       }
       catch( Exception e )
       {
-         e.printStackTrace();
+         logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //       logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
          aistopped = false;
@@ -477,7 +480,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
       }
       catch( Exception e )
       {
-         e.printStackTrace();
+         logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //       logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
          aistopped = false;
@@ -496,7 +499,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
       }
       catch( Exception e )
       {
-         e.printStackTrace();
+         logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //       logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
          aistopped = false;
@@ -521,7 +524,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
       }
       catch( Exception e )
       {
-         e.printStackTrace();
+         logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //         logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
          aistopped = false;
@@ -568,7 +571,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
       }
       catch( Exception e )
       {
-         e.printStackTrace();
+         logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
          logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
          aistopped = false;
@@ -649,7 +652,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
       }
       catch( Exception e )
       {
-         e.printStackTrace();
+         logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
          logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
          if( config.isDebug() ) {

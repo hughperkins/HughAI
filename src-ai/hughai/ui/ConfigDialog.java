@@ -80,7 +80,7 @@ public class ConfigDialog {
       try {
          method = targetClass.getMethod( methodname, new Class<?>[0] );
       } catch( Exception e ) {
-         e.printStackTrace();
+         playerObjects.getLogFile().WriteLine( Formatting.exceptionToStackTrace( e ) );
       }
       return method;
    }
@@ -93,7 +93,7 @@ public class ConfigDialog {
       try {
          method = targetClass.getMethod( methodname, new Class<?>[]{ fieldType } );
       } catch( Exception e ) {
-         e.printStackTrace();
+         playerObjects.getLogFile().WriteLine( Formatting.exceptionToStackTrace( e ) );
       }
       return method;
    }
@@ -126,7 +126,7 @@ public class ConfigDialog {
             }
          }
       } catch( Exception e ) {
-         e.printStackTrace();
+         playerObjects.getLogFile().WriteLine( Formatting.exceptionToStackTrace( e ) );
       }
 
       configGridLayout.setRows( configGridLayout.getRows() + 2 );
@@ -227,7 +227,7 @@ public class ConfigDialog {
             }
          }
       } catch( Exception e ) {
-         e.printStackTrace();
+         playerObjects.getLogFile().WriteLine( Formatting.exceptionToStackTrace( e ) );
       }
    }
 
@@ -278,7 +278,7 @@ public class ConfigDialog {
                      try {
                         setMethod.invoke( config, value );
                      } catch( Exception e ) {
-                        e.printStackTrace();
+                        playerObjects.getLogFile().WriteLine( Formatting.exceptionToStackTrace( e ) );
                      }
                   }
                }

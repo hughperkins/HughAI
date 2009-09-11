@@ -42,6 +42,7 @@ import java.net.URLClassLoader;
 
 import hughai.*;
 import hughai.loader.utils.Loader;
+import hughai.utils.Formatting;
 import hughai.utils.LogFile;
 
 // provides a console tab to the gui that lets us execute code
@@ -110,7 +111,7 @@ public class ConsoleEcma {
 //      frame.validate();
 //      frame.setVisible( true );
       } catch( Exception e ) {
-         e.printStackTrace();
+         playerObjects.getLogFile().WriteLine( Formatting.exceptionToStackTrace( e ) );
          throw new RuntimeException( e );
       }
    }
@@ -133,7 +134,7 @@ public class ConsoleEcma {
          fileReader.close();
          return stringBuilder.toString();
       } catch( Exception e ) {
-         e.printStackTrace();
+         playerObjects.getLogFile().WriteLine( Formatting.exceptionToStackTrace( e ) );
          return null;
       }
    }

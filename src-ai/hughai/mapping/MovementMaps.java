@@ -258,7 +258,7 @@ public class MovementMaps
       ArrayList<Integer> areasizesal = new ArrayList<Integer>();
       areasizesal.add( 0 );
       int areanumber = 1;
-      for( int y = 0; y < mapwidth / granularity; y++ )
+      for( int y = 0; y < mapheight / granularity; y++ )
       {
          for( int x = 0; x < mapwidth / granularity; x++ )
          {

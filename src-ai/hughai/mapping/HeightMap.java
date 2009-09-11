@@ -346,7 +346,7 @@ public class HeightMap
 
          logFile.WriteLine( " ... done" );
       } catch( Exception e ) {
-         e.printStackTrace();
+         logFile.WriteLine( Formatting.exceptionToStackTrace( e ) );
          throw new RuntimeException( e );
       }
    }
@@ -386,7 +386,7 @@ public class HeightMap
             return false;
          }
       } catch( Exception e ) {
-         e.printStackTrace();
+         logFile.WriteLine( Formatting.exceptionToStackTrace( e ) );
          throw new RuntimeException( e );
       }
    }

@@ -113,7 +113,7 @@ public class ReflectionHelper {
          //         validate();
 //         saveObjectToFile( filepath, object );
       } catch( Exception e ) {
-         e.printStackTrace();
+         playerObjects.getLogFile().WriteLine( Formatting.exceptionToStackTrace( e ) );
          throw new RuntimeException( e );
       }
    }
@@ -159,7 +159,7 @@ public class ReflectionHelper {
          saveObjectToElement( objectElement, object );
          XmlHelper.SaveDom( document, filepath );
       } catch( Exception e ) {
-         e.printStackTrace();
+         playerObjects.getLogFile().WriteLine( Formatting.exceptionToStackTrace( e ) );
          throw new RuntimeException( e );
       }
    }
@@ -423,7 +423,7 @@ public class ReflectionHelper {
          }
          
       } catch( Exception e ) {
-         e.printStackTrace();
+         playerObjects.getLogFile().WriteLine( Formatting.exceptionToStackTrace( e ) );
          throw new RuntimeException( e );
       }
       throw new RuntimeException("elementToFieldValue: unknown field class: " + fieldclass.getName() );

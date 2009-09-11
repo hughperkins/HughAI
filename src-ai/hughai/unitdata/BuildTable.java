@@ -28,8 +28,6 @@ import java.io.*;
 
 import com.springrts.ai.oo.*;
 
-import hughai.CSAI;
-import hughai.PlayerObjects;
 import hughai.*;
 import hughai.utils.*;
 
@@ -117,7 +115,7 @@ public class BuildTable
          }
          printWriter.close();
       } catch( Exception e ) {
-         e.printStackTrace();
+         logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
          throw new RuntimeException( e );
       }
 

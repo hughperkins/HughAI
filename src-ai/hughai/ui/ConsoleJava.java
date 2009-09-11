@@ -41,6 +41,7 @@ import java.net.URLClassLoader;
 
 import hughai.*;
 import hughai.loader.utils.Loader;
+import hughai.utils.Formatting;
 import hughai.utils.LogFile;
 
 // provides a console tab to the gui that lets us execute code
@@ -115,7 +116,7 @@ public class ConsoleJava {
 //      frame.validate();
 //      frame.setVisible( true );
       } catch( Exception e ) {
-         e.printStackTrace();
+         playerObjects.getLogFile().WriteLine( Formatting.exceptionToStackTrace( e ) );
          throw new RuntimeException( e );
       }
    }
@@ -138,7 +139,7 @@ public class ConsoleJava {
          fileReader.close();
          return stringBuilder.toString();
       } catch( Exception e ) {
-         e.printStackTrace();
+         playerObjects.getLogFile().WriteLine( Formatting.exceptionToStackTrace( e ) );
          return null;
       }
    }
@@ -183,7 +184,7 @@ public class ConsoleJava {
          output.append("outputstream read" + "\n");   
          return output.toString();
       } catch( Exception e ) {
-         e.printStackTrace();
+         playerObjects.getLogFile().WriteLine( Formatting.exceptionToStackTrace( e ) );
          throw new RuntimeException( e );
       }
    }
@@ -259,7 +260,7 @@ public class ConsoleJava {
             String result = subjar.go( playerObjects );
             outputTextarea.setText( result );
          } catch( Exception e ) {
-            e.printStackTrace();
+            playerObjects.getLogFile().WriteLine( Formatting.exceptionToStackTrace( e ) );
          }
       }      
    }
