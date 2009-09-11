@@ -18,6 +18,8 @@ in order to beat e323:
 
 low:
 - make config dialog easier to read somehow, group stuff together?
+- add 'reset config to defaults' button
+- add 'needs to be arm' to welcome messages
 
 suspended:
 - speed up getheighttmap somehow?  replicate spring's internal getelevation algo?

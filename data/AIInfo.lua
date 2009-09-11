@@ -20,6 +20,16 @@ local infos = {
 		desc   = 'machine conform name.',
 	},
 	{
+		key    = 'description',
+		value  = 'Java AI by Hugh Perkins.  Please make sure the AI runs as ARM, and use the BA mod.',
+		desc   = 'tooltip',
+	},
+	{
+		key    = 'url',
+		value  = 'http://springrts.com/wiki/AI:HughAI',
+		desc   = 'URL with more detailed info about the AI',
+	},
+	{
 		key    = 'version',
 		value  = '0.1', -- AI version - !This comment is used for parsing!
 	},
