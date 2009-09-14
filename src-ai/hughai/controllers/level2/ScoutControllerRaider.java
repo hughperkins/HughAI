@@ -250,17 +250,17 @@ public class ScoutControllerRaider
       return config.getScoutraiderprioritytargets().contains( name );
    }
 
-   boolean IsLaserTower(UnitDef unitdef )
-   {
-      if( unitdef.getName().toLowerCase() == "armllt" 
-         || unitdef.getName().toLowerCase() == "corllt" 
-            || unitdef.getName().toLowerCase() == "armfrt"
-               || unitdef.getName().toLowerCase() == "corfrt" )
-      {
-         return true;
-      }
-      return false;
-   }
+//   boolean IsLaserTower(UnitDef unitdef )
+//   {
+//      if( unitdef.getName().toLowerCase() == "armllt" 
+//         || unitdef.getName().toLowerCase() == "corllt" 
+//            || unitdef.getName().toLowerCase() == "armfrt"
+//               || unitdef.getName().toLowerCase() == "corfrt" )
+//      {
+//         return true;
+//      }
+//      return false;
+//   }
 
    ArrayList<Unit> attackingscouts = new ArrayList<Unit>(); // scoutid of scouts currently attacking
 

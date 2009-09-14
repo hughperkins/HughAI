@@ -24,6 +24,8 @@ import com.springrts.ai.*;
 import com.springrts.ai.command.*;
 import com.springrts.ai.oo.*;
 
+import hughai.unitdata.UnitController;
+
 // wraps the Spring Command with an OOP version
 
 // allows adding toString etc
@@ -191,7 +193,13 @@ public class OOPCommands {
 		@Override
 		public String toString()
 		{
+		   UnitDef unitdef = UnitToReceiveOrder.getDef();
+		   if( unitdef != null ) {
 			return "MoveToCommand " + UnitToReceiveOrder.getUnitId() + " " + UnitToReceiveOrder.getDef().getHumanName() + " moving to " + targetpos.toString();
+		   }
+		   else {
+		      return "MoveToCommand.  Unittoreceiveorder doesn't exist. id " + UnitToReceiveOrder.getUnitId();
+		   }
 		}
 	}
 

@@ -196,7 +196,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( "Exception: " + e.toString() + 
                " " + Formatting.exceptionToStackTrace( e ));
          SendTextMsg( "Exception: " + e.toString() );
-         aistopped = false;
+         playerObjects.getExceptionList().reportException( e );
       }
       return 0;
    }
@@ -298,7 +298,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
                " " + Formatting.exceptionToStackTrace( e ));
 //       logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         aistopped = false;
+         playerObjects.getExceptionList().reportException( e );
       }
       unitcreatedtime.add( 
             timeHelper.CompareRealTimePoint( 
@@ -324,7 +324,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( "Exception in csai.unitfinished: " + e.toString() );
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //       logfile.WriteLine( "Exception: " + e.toString() );
-         aistopped = false;
+         playerObjects.getExceptionList().reportException( e );
       }
       unitfinishedtime.add( 
             timeHelper.CompareRealTimePoint( 
@@ -347,7 +347,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //         logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         aistopped = false;
+         playerObjects.getExceptionList().reportException( e );
       }
       unitdestroyedtime.add( 
             timeHelper.CompareRealTimePoint( 
@@ -370,7 +370,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //         logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         aistopped = false;
+         playerObjects.getExceptionList().reportException( e );
       }
       unitidletime.add( 
             timeHelper.CompareRealTimePoint( 
@@ -392,7 +392,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
          //logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         aistopped = false;
+         playerObjects.getExceptionList().reportException( e );
       }
       return 0;
    }       
@@ -428,7 +428,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
        //  logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         aistopped = false;
+         playerObjects.getExceptionList().reportException( e );
       }
       return 0;
    }       
@@ -447,7 +447,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //       logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         aistopped = false;
+         playerObjects.getExceptionList().reportException( e );
       }
       return 0;
    }
@@ -466,7 +466,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //       logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         aistopped = false;
+         playerObjects.getExceptionList().reportException( e );
       }
       return 0;
    }
@@ -476,7 +476,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
    {
       try
       {
-         sendTextMessage("enemy entered radar: " + enemy );
+//         sendTextMessage("enemy entered radar: " + enemy );
          logfile.WriteLine("enemy entered radar: " + enemy);
          for( GameListener listener : gameListeners ) {
             listener.EnemyEnterRadar(enemy);
@@ -487,7 +487,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //       logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         aistopped = false;
+         playerObjects.getExceptionList().reportException( e );
       }
       return 0;
    }
@@ -506,7 +506,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //       logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         aistopped = false;
+         playerObjects.getExceptionList().reportException( e );
       }
       return 0;
    }
@@ -531,7 +531,8 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //         logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         aistopped = false;
+  //       aistopped = false;
+         playerObjects.getExceptionList().reportException( e );
       }
       return 0;
    }
@@ -578,7 +579,8 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
          logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         aistopped = false;
+         playerObjects.getExceptionList().reportException( e );
+//         aistopped = false;
       }
       return 0;
    }
@@ -660,10 +662,11 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
          logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         if( config.isDebug() ) {
-            aistopped = true;
-            SendTextMsg("AI updates halted.  Say '.hughai unpauseai' to unhalt them." );
-         }
+         playerObjects.getExceptionList().reportException( e );
+//         if( config.isDebug() ) {
+//            aistopped = true;
+//            SendTextMsg("AI updates halted.  Say '.hughai unpauseai' to unhalt them." );
+//         }
       }
       return 0;
    }    

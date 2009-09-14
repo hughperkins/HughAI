@@ -178,6 +178,15 @@ public class PlayerObjects {
       return maps;
    }
 
+   ExceptionList exceptionList;
+   public synchronized ExceptionList getExceptionList() {
+      if( exceptionList != null ){
+         return exceptionList;
+      }
+      exceptionList = new ExceptionList(this);
+      return exceptionList;
+   }
+
    public synchronized LosHelper getLosHelper() {
       if( losHelper != null ){
          return losHelper;

@@ -272,10 +272,43 @@ public class EnemyTracker
                {
                   RemoveEnemy( enemy );
                }
+               
+               ArrayList<Unit> unitstopurgepos = new ArrayList<Unit>();
+               // clean dynamic ones too.... or at least purge this pos...
+               for( Unit enemy : DynamicEnemyLastSeenPos.keySet() ) {
+                  TerrainPos enemypos = DynamicEnemyLastSeenPos.get(enemy);
+                  if (enemypos.GetSquaredDistance( friendlypos)
+                        < friendlydef.getLosRadius() * friendlydef.getLosRadius()
+                        * 16 * 16 ) // because this map is different scale
+                  {
+                     unitstopurgepos.add( enemy );
+                  }
+               }
+               for( Unit enemy : unitstopurgepos )
+               {
+                  DynamicEnemyLastSeenPos.remove( enemy );
+//                  DynamicEnemyLastSeenFrame.remove( enemy ); // should we purge this?  probably not in the long-run, good for now though.
+               }
             }
+
+            // at this point, we need to purge old mobile units, at least, their poses...
+            // or maybe this should just be in the threatmap, haven't decided really...
+//            List<Unit> unitstopurge = new ArrayList<Unit>();
+//            for( Unit unit : DynamicEnemyLastSeenFrame.keySet() ) {
+//               if( frame - DynamicEnemyLastSeenFrame.get( unit ) 
+//                     >  playerObjects.getConfig().getMaxTimeToConserveMobileEnemyOnThreatMapGameSeconds() * 30 ) {
+//                  unitstopurge.add(  unit  );
+//               }
+//            }
+//            for( Unit unit : unitstopurge ) {
+//               DynamicEnemyLastSeenPos.remove( unit );
+////             DynamicEnemyLastSeenFrame.remove( unit );
+//            }
+            
+            // plus, above, we should partially purge mobile units not at that pos too.
             if( csai.DebugOn )
             {
-               ShowEnemies();
+               //ShowEnemies();
             }
          }
       }
@@ -331,6 +364,7 @@ public class EnemyTracker
       //      for( Unit enemy : EnemyPosByStaticUnit.keySet() ) {
       int dynamicenemieswithpos = 0;
       int otherenemies = 0;
+      int currentframe = playerObjects.getFrameController().frame;
       for( Unit enemy : DynamicEnemyLastSeenPos.keySet() ) {
          TerrainPos staticpos = EnemyPosByStaticUnit.get( enemy );
          if( staticpos != null ) {
@@ -339,9 +373,15 @@ public class EnemyTracker
          } else {
             TerrainPos dynamicpos = DynamicEnemyLastSeenPos.get( enemy );
             if( dynamicpos != null ) {
-               drawingUtils.DrawUnit("ARMSAM", dynamicpos, 0.0f, 1, aicallback.getTeamId(), true, true);
-               drawingUtils.drawText( dynamicpos, "" + enemy.getUnitId() );
-               dynamicenemieswithpos++;
+               int lastseenframe = DynamicEnemyLastSeenFrame.get( enemy );
+               int frameage = currentframe - lastseenframe;
+               int maxframeagetoshow = 30 *
+                  playerObjects.getConfig().getMaxTimeToConserveMobileEnemyOnThreatMapGameSeconds();
+               if( frameage < maxframeagetoshow ) {
+                  drawingUtils.DrawUnit("ARMSAM", dynamicpos, 0.0f, 1, aicallback.getTeamId(), true, true);
+                  drawingUtils.drawText( dynamicpos, "" + enemy.getUnitId() );
+                  dynamicenemieswithpos++;
+               }
             } else {
                otherenemies++;
             }

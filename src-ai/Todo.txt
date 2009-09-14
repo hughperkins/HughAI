@@ -21,6 +21,13 @@ in order to beat e323:
 - add pathing
 - why does workflow jam?
 
+in order to beat aai:
+- make better use of excessive amounts of metal...
+  - add workflow status to gui
+
+in order to beat aai, done:
+- purge dynamic enemies' pos if they're no longer there...
+
 in order to beat e323, done:
 - make enemy targeting threatmap dependent 
 - make attacks threatmaap dependent, rather than purely >=5 tanks dependent
@@ -46,6 +53,7 @@ usability:
     - still, there is some issue it seems, to be monitored
 
 done:
+- added exceptions dialog to gui
 - migrated logging to use java.util.logging classes
 - make enemy targeting by scoutcontrollers threatmap dependent 
 - add ecma console for imbaczek

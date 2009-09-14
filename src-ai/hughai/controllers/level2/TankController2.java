@@ -318,13 +318,20 @@ public class TankController2
          packcoordinatorselector.ActivatePackCoordinator( attackpackcoordinator );
          LastAttackPos = bestenemypos;
       } else { // else, not enough tanks to attack, just guard commander, or something
-         String commanderunitname = config.getCommanderunitname();
-         if (unitcontroller.UnitsByName.containsKey(commanderunitname))
-         {
-            List<Unit> commanders = unitcontroller.UnitsByName.get( commanderunitname );
-            if( commanders.size() > 0 ) {
-               guardpackcoordinator.SetTarget(commanders.get( 0 ) );
-               packcoordinatorselector.ActivatePackCoordinator(guardpackcoordinator);
+         // otherwise search
+         if( unitsToControl.size() > MinTanksForSpreadSearch ) {
+            spreadsearchpackcoordinator.SetTarget( medianfriendlypos );
+            packcoordinatorselector.ActivatePackCoordinator( spreadsearchpackcoordinator );
+         } else {// or if we're too weak, jsut guard the commander
+   
+            String commanderunitname = config.getCommanderunitname();
+            if (unitcontroller.UnitsByName.containsKey(commanderunitname))
+            {
+               List<Unit> commanders = unitcontroller.UnitsByName.get( commanderunitname );
+               if( commanders.size() > 0 ) {
+                  guardpackcoordinator.SetTarget(commanders.get( 0 ) );
+                  packcoordinatorselector.ActivatePackCoordinator(guardpackcoordinator);
+               }
             }
          }
       }

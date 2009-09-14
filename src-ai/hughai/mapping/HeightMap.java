@@ -239,12 +239,12 @@ public class HeightMap
          if( LoadCoreStorage() ) {
             return heightMap;
          }
-//         if( LoadCache() ) {
-//            SaveCoreStorage();
-//            return heightMap;
-//         }
+         if( LoadCache() ) {
+            SaveCoreStorage();
+            return heightMap;
+         }
          calculateHeightMap();
-//         SaveCache();
+         SaveCache();
          SaveCoreStorage();
          return heightMap;
    }

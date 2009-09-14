@@ -38,6 +38,9 @@ import hughai.ui.MainUI;
 import hughai.unitdata.UnitDefHelp;
 import hughai.utils.*;
 
+// this depends directly on EnemyTracker, which it just calls directly, without using
+// events
+// no other direct dependencies
 public class ThreatMap {
    public static class ThreatMapPos extends Int2 {
       public ThreatMapPos() {}
@@ -133,17 +136,21 @@ public class ThreatMap {
          }
       }
       int currentframe = playerObjects.getFrameController().getFrame();
+      int maxtimetoconservemobileunitsseconds = config.getMaxTimeToConserveMobileEnemyOnThreatMapGameSeconds();
+      int maxtimetoconservemobileunitsframes = 30 * maxtimetoconservemobileunitsseconds;
       for( Unit enemy : enemyTracker.getEnemyUnits() ) {
 //         debug("threatmap considering " + enemy.getUnitId() + " ... ");
-         Float3 pos = enemyTracker.getPos( enemy );
+         TerrainPos pos = enemyTracker.getPos( enemy );
 //         debug(" ... pos: " + pos );
          int lastseenframe = enemyTracker.getLastLocatedFrame( enemy );
 //         debug(" ... lastseenframe: " + lastseenframe );
-         if( ( pos != null ) 
-               && ( ( ( currentframe - lastseenframe ) <= config.getMaxTimeToConserveMobileEnemyOnThreatMapGameSeconds() ) )
+         if( pos != null ) {
+            int lastseenframesago = currentframe - lastseenframe;
+               if ( ( lastseenframesago <= maxtimetoconservemobileunitsframes )
                     || ( enemyTracker.getEnemyPosByStaticUnit().get( enemy ) != null ) ) {
 //            debug(" ... calling mapEnemy" );
-            mapEnemy( enemy, pos );
+                  mapEnemy( enemy, pos );
+               }
          }
       }
       
@@ -151,9 +158,9 @@ public class ThreatMap {
    }
    
    // this whole function heavily influenced by E323's CThreatMap.cpp class
-   void mapEnemy( Unit enemy, Float3 pos ) {
+   void mapEnemy( Unit enemy, TerrainPos pos ) {
       UnitDef enemyUnitDef = enemyTracker.getEnemyUnitDefByUnit().get( enemy );
-      debug("... unitdef: " + enemyUnitDef.getHumanName() );
+      debug("... unitdef: " + enemyUnitDef.getHumanName() + " " + pos );
       if( !enemyUnitDef.isAbleToAttack() ){
 //         debug("... not able to attack" );
          return;
