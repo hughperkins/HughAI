@@ -57,7 +57,7 @@ public class Offense {
    Collection<UnitDef> managedUnitTypes = new HashSet<UnitDef>();
    Collection<Unit> managedunits = new HashSet<Unit>();
 
-   TankController tankcontroller;
+   TankController2 tankcontroller;
    
    public Offense( PlayerObjects playerObjects ) {
       this.playerObjects = playerObjects;
@@ -81,7 +81,7 @@ public class Offense {
       }
       
       UnitDef typicalunitdef = buildTable.getUnitDefByName( config.getTypicallevel1tankunitdefname() );
-      tankcontroller = new TankController( playerObjects, typicalunitdef );
+      tankcontroller = new TankController2( playerObjects, typicalunitdef );
       tankcontroller.Activate();
       //scoutcontroller.AssignUnits( units )
    }

@@ -10,10 +10,22 @@ medium/low, suboptimal:
 - workflow stalls occasionally
 - add workflow configuration dialog to gui
 - add lists to config dialog
+- reactivate heightmap file cache
+- add workflow to gui
+- add battle analysis to gui, using cheating perhaps:
+    - total energy, total metal
+    - total units, breakdown by unit
+    - total "power"
 
 in order to beat e323:
-- make enemy targeting threatmap dependent 
 - add pathing
+- why does workflow jam?
+
+in order to beat e323, done:
+- make enemy targeting threatmap dependent 
+- make attacks threatmaap dependent, rather than purely >=5 tanks dependent
+- make scouts target anything, not just metal extractors and solarcells, though
+  maybe make those priority
 
 low:
 - make config dialog easier to read somehow, group stuff together?

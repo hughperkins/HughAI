@@ -239,10 +239,14 @@ public class EnemyTracker
                AddEnemy( enemy );
             }
             // remove destroyed ones
+            List<Unit> unitstopurge = new ArrayList<Unit>();
             for( Unit enemy : EnemyUnits ) {
                if( !enemyunits.contains( enemy ) ) {
-                  RemoveEnemy( enemy );
+                  unitstopurge.add(  enemy );
                }
+            }
+            for( Unit enemy : unitstopurge ) {
+               RemoveEnemy( enemy );
             }
          } else { // not cheating
             if( aicallback.getCheats().isEnabled() ) {

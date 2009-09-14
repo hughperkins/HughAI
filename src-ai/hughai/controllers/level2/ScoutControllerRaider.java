@@ -176,6 +176,20 @@ public class ScoutControllerRaider
          TerrainPos nearestpos = null;
          float bestsquareddistance = 100000000;
          Unit targetenemy = null;
+         
+         boolean existsPriorityTargets = false;
+         for( Unit enemy : enemyTracker.getEnemyUnits() ) {
+            UnitDef enemyunitdef = enemyTracker
+            .getEnemyUnitDefByUnit()
+            .get( enemy );
+            if( enemyunitdef != null )
+            {               
+               if( IsPriorityTarget( enemyunitdef ) )
+               {
+                  existsPriorityTargets = true;
+               }
+            }
+         }
 
          // need to add index by position for this, to speed things up
          for( Unit enemy : enemyTracker.getEnemyUnits() ) {
@@ -184,7 +198,9 @@ public class ScoutControllerRaider
             .get( enemy );
             if( enemyunitdef != null )
             {				
-               if( IsPriorityTarget( enemyunitdef ) )
+               // if priority targets exist grab those, otherwise target anything
+               // if no threat exists
+               if( !existsPriorityTargets || IsPriorityTarget( enemyunitdef ) )
                {
                   logfile.WriteLine("considering unit " + enemy.getUnitId() + " " + enemyunitdef.getName());
                   TerrainPos enemypos = TerrainPos.fromAIFloat3( enemy.getPos() );
@@ -196,26 +212,7 @@ public class ScoutControllerRaider
                         bestsquareddistance = thissquareddistance;
                         targetenemy = enemy;
                      }
-//                     boolean nolasertowersnear = true;
-//                     for( Unit potentiallasertower : enemyTracker.getEnemyPosByStaticUnit().keySet() ) {
-//                        UnitDef potentialtowerunitdef = enemyTracker.getEnemyUnitDefByUnit().get(potentiallasertower);
-//                        //								if( attackerunitdef != null )
-//                        //								{
-//                        if( IsLaserTower( potentialtowerunitdef ) )
-//                        {
-//                           TerrainPos lasertowerpos = enemyTracker.getEnemyPosByStaticUnit().get(potentiallasertower);
-//                           if( enemypos.GetSquaredDistance( lasertowerpos ) < nearbyforenemiesmeans * nearbyforenemiesmeans )
-//                           {
-//                              nolasertowersnear = false;
-//                           }
-//                        }
-//                     }
-//                     if( nolasertowersnear )
-//                     {
-//                        nearestpos = enemypos;
-//                        bestsquareddistance = thissquareddistance;
-//                        targetenemy = enemy;
-//                     }
+
                   }
                }
             }

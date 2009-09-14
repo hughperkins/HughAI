@@ -75,7 +75,9 @@ public class MetalController
 		float actualbuildtime = targetdef.getBuildTime() / constructorbuildspeed;
         logfile.WriteLine( "constructor build speed: " + constructorbuildspeed +
               " targetbuildtime: " + targetdef.getBuildTime()
-                + " actual buildtime: " + actualbuildtime );
+                + " actual buildtime: " + actualbuildtime
+                + " metalcost " + metalcost
+                + " currentmetal " + currentmetal );
         float excessmetalrequired = metalcost - currentmetal;
         float OurIncome = metalincome - metalusage;
 		// now, in actualbuildtime seconds, will we have earned excessmetalrequired metal?

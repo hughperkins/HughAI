@@ -584,6 +584,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
    }
 
    boolean aistopped = false;
+   public boolean getAIStopped() { return aistopped; }
 
    void DumpTimings()
    {
