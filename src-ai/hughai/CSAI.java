@@ -174,6 +174,10 @@ public class CSAI extends AbstractOOAI implements IHughAI
          
          playerObjects.getWelcomeMessages();
          
+         playerObjects.getUnitController();
+         playerObjects.getEnemyTracker();
+         playerObjects.getMaps();
+         
          playerObjects.getBuildEconomy();
 
          if( DebugOn ) {

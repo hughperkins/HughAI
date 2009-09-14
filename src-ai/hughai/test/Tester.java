@@ -200,16 +200,16 @@ public class Tester {
    }
 
    void runTests() {
-//      testgetmilliseconds();
-//      testgetunitdefs();
-//      testgetfriendlyunits();
-//      testgetpos();      
-//      testgetunitdef();     
-//      testgetsquareddistance();
-//      testismobile();
-//      testunithash();
-//      testgethumanname();
-//      testgetspeed();
+      testgetmilliseconds();
+      testgetunitdefs();
+      testgetfriendlyunits();
+      testgetpos();      
+      testgetunitdef();     
+      testgetsquareddistance();
+      testismobile();
+      testunithash();
+      testgethumanname();
+      testgetspeed();
       testCheats();
    }
    

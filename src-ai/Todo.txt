@@ -14,7 +14,6 @@ medium/low, suboptimal:
 in order to beat e323:
 - make enemy targeting threatmap dependent 
 - add pathing
-- get hold of valid startscript, or latest springlobby
 
 low:
 - make config dialog easier to read somehow, group stuff together?
@@ -35,6 +34,7 @@ usability:
     - still, there is some issue it seems, to be monitored
 
 done:
+- migrated logging to use java.util.logging classes
 - make enemy targeting by scoutcontrollers threatmap dependent 
 - add ecma console for imbaczek
 - add console
@@ -55,6 +55,7 @@ done:
 - issue with movementareaas for search etc
 
 abandoned:
+- get hold of valid startscript, or latest springlobby -> just use 0.80.4
 - add mod name + version to name of buildtable cachefile => there isn't a buildtable
   cache, so it's irrelevant ;-)
 

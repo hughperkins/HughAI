@@ -41,8 +41,7 @@ import java.net.URLClassLoader;
 
 import hughai.*;
 import hughai.loader.utils.Loader;
-import hughai.utils.Formatting;
-import hughai.utils.LogFile;
+import hughai.utils.*;
 
 // provides a console tab to the gui that lets us execute code
 // on the fly!
@@ -95,9 +94,9 @@ public class ConsoleJava {
 
       gobutton = new JButton( "Go" );
       quitbutton = new JButton( "Quit" );
-
       String templatepath = playerObjects.getCSAI().getAIDirectoryPath() + consoletemplatefilename;
-      String initialFile = readFile( templatepath );
+      FileHelper fileHelper = new FileHelper( playerObjects );
+      String initialFile = fileHelper.readFile( templatepath );
       if( initialFile != null ) {
          textarea.setText( initialFile );
       } else {
@@ -121,74 +120,6 @@ public class ConsoleJava {
       }
    }
 
-   // should be moved to some generic utility class...
-   // returns the contents of file filename
-   // or null if not found
-   String readFile( String filename ) {
-      try {
-         FileReader fileReader = new FileReader( filename );
-         BufferedReader bufferedReader = new BufferedReader( fileReader );
-         StringBuilder stringBuilder = new StringBuilder();
-         String line = bufferedReader.readLine();
-         while( line != null ) {
-            stringBuilder.append( line );
-            stringBuilder.append( "\n" );
-            line = bufferedReader.readLine();
-         }
-         bufferedReader.close();
-         fileReader.close();
-         return stringBuilder.toString();
-      } catch( Exception e ) {
-         playerObjects.getLogFile().WriteLine( Formatting.exceptionToStackTrace( e ) );
-         return null;
-      }
-   }
-
-   // executes commandstring, and returns a string with output
-   // from errorstream and inversely named "input"stream
-   // commandstring includes arguments
-   // this should be moved to a different utility class really...
-   String exec( String commandstring, String dir ) {
-      try {
-         StringBuilder output = new StringBuilder();
-         output.append( "Executing " + commandstring + "\nin " + dir + "\n" );
-         Process process = 
-            Runtime.getRuntime().exec( commandstring, null,
-                  new File( dir ) );
-         output.append("executed" + "\n");
-         process.waitFor();
-         output.append("exit value: " + process.exitValue() + "\n" );
-         InputStreamReader errorStreamReader = new InputStreamReader( process.getErrorStream() ); 
-         BufferedReader errorReader = new BufferedReader(
-               errorStreamReader );
-         String line;
-         //      if( errorReader.ready() ) {
-         line = errorReader.readLine();
-         while( line != null ) {
-            output.append( "error stream: " + line + "\n" );
-            line = null;
-            //            if( errorReader.ready() ) {
-            line = errorReader.readLine();
-            //            }
-         }
-         //      }
-         output.append("errorstream read" + "\n");
-         InputStreamReader outStreamReader = new InputStreamReader( process.getInputStream() ); 
-         BufferedReader outReader = new BufferedReader(
-               outStreamReader );
-         line = outReader.readLine();
-         while( line != null ) {
-            output.append( "out stream: " + line + "\n" );
-            line = errorReader.readLine();
-         }
-         output.append("outputstream read" + "\n");   
-         return output.toString();
-      } catch( Exception e ) {
-         playerObjects.getLogFile().WriteLine( Formatting.exceptionToStackTrace( e ) );
-         throw new RuntimeException( e );
-      }
-   }
-   
    // kind of hacky quick fix for linux vs Windows
    // there must be a better way of doing this...
    String localizeClassPath( String classpath ) {
@@ -230,12 +161,13 @@ public class ConsoleJava {
                   playerObjects.getConfig().getConsoleclasspath() );
             classpath = classpath.replace( "$aidir/", ourdir );
             
-            debug( exec( "javac -classpath " + classpath
+            Exec exec = new Exec( playerObjects );
+            debug( exec.exec( "javac -classpath " + classpath
                         + " -d " + ourdir + classdir + 
                         " console" + File.separator + "ConsoleText.java", 
                         ourdir + "src-console" ) );
 
-            debug( exec( "jar -cf " + ourdir + jarfilename 
+            debug( exec.exec( "jar -cf " + ourdir + jarfilename 
                         + " console", 
                         ourdir + classdir ) );
 
