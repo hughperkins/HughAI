@@ -187,6 +187,15 @@ public class PlayerObjects {
       return exceptionList;
    }
 
+   WorkflowUI workflowUI;
+   public synchronized WorkflowUI getWorkflowUI() {
+      if( workflowUI != null ){
+         return workflowUI;
+      }
+      workflowUI = new WorkflowUI(this);
+      return workflowUI;
+   }
+
    public synchronized LosHelper getLosHelper() {
       if( losHelper != null ){
          return losHelper;
