@@ -35,29 +35,40 @@ import hughai.PlayerObjects;
 //methods
 public class Exec {
    PlayerObjects playerObjects;
-   
+
    public Exec( PlayerObjects playerObjects ) {
       this.playerObjects = playerObjects;
    }
-   
+
    // executes commandstring, and returns a string with output
    // from errorstream and inversely named "input"stream
    // commandstring includes arguments
-   public String exec( String commandstring, String dir ) {
+   public String exec( String commandstring, String dir ) throws Exception {
+      StringBuilder output = new StringBuilder();
+      output.append( "Executing " + commandstring + "\nin " + dir + "\n" );
+      Process process  = null;
       try {
-         StringBuilder output = new StringBuilder();
-         output.append( "Executing " + commandstring + "\nin " + dir + "\n" );
-         Process process = 
+         process = 
             Runtime.getRuntime().exec( commandstring, null,
                   new File( dir ) );
-         output.append("executed" + "\n");
+      } catch( Exception e ) {
+         playerObjects.getLogFile().WriteLine( Formatting.exceptionToStackTrace( e ) );
+         throw new RuntimeException( e );
+      }
+      output.append("executed" + "\n");
+      try {
          process.waitFor();
-         output.append("exit value: " + process.exitValue() + "\n" );
-         InputStreamReader errorStreamReader = new InputStreamReader( process.getErrorStream() ); 
-         BufferedReader errorReader = new BufferedReader(
-               errorStreamReader );
-         String line;
-         //      if( errorReader.ready() ) {
+      } catch( Exception e ) {
+         playerObjects.getLogFile().WriteLine( Formatting.exceptionToStackTrace( e ) );
+         throw new RuntimeException( e );
+      }
+      output.append("exit value: " + process.exitValue() + "\n" );
+      InputStreamReader errorStreamReader = new InputStreamReader( process.getErrorStream() ); 
+      BufferedReader errorReader = new BufferedReader(
+            errorStreamReader );
+      String line;
+      //      if( errorReader.ready() ) {
+      try {
          line = errorReader.readLine();
          while( line != null ) {
             output.append( "error stream: " + line + "\n" );
@@ -76,11 +87,15 @@ public class Exec {
             output.append( "out stream: " + line + "\n" );
             line = errorReader.readLine();
          }
-         output.append("outputstream read" + "\n");   
-         return output.toString();
       } catch( Exception e ) {
          playerObjects.getLogFile().WriteLine( Formatting.exceptionToStackTrace( e ) );
          throw new RuntimeException( e );
       }
+      output.append("outputstream read" + "\n");   
+      if( process.exitValue() != 0 ) {
+         throw new Exception( output.toString() );
+      }
+
+      return output.toString();
    }   
 }
