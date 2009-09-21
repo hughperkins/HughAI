@@ -53,10 +53,12 @@ public class BuildEconomy
       //workflow.AddBuildUnitWeighting(0.2, 0.4, "armmex");
       //workflow.AddBuildUnitWeighting(0.2, 0.6, "armsolar");
 
-      workflowController.AddEnergyUnit(config.getBasicenergyextractorunitname());
+      String energyextractorunitname = playerObjects.getBuildTree().listToOurTeamsUnitName( config.getBasicenergyextractorunitnames() );
+      workflowController.AddEnergyUnit(energyextractorunitname);
       //workflow.AddEnergyUnit("armmfus");
 
-      workflowController.AddMetalUnit(config.getBasicmetalextractorunitname());
+      String metalextractorname = playerObjects.getBuildTree().listToOurTeamsUnitName( config.getBasicmetalextractorunitnames() );
+      workflowController.AddMetalUnit(metalextractorname);
 
 //      workflowController.BuildUnit(2.0, "armvp", 1);
 //

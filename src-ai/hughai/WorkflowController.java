@@ -161,7 +161,7 @@ public class WorkflowController
 //      tankcontroller = new TankController(
 //            playerObjects,
 //            unitLists.getTankList().getUnits(), 
-//            buildTable.UnitDefByName.get("armstump" ) );
+//            buildTable.getUnitDefByName("armstump" ) );
 //      tankcontroller.Activate();
       //	helicoptercontroller = new TankController(HelicopterList.GetInstance().defbyid, BuildTable.GetInstance().UnitDefByName["arm_brawler"]);
       //helicoptercontroller.Activate();
@@ -176,6 +176,8 @@ public class WorkflowController
       offense.Activate();
 
       maps.getLosMap();
+      
+      playerObjects.getBuildTree();
 
       unitController.LoadExistingUnits();
       enemyTracker.LoadExistingUnits();
@@ -268,7 +270,7 @@ public class WorkflowController
             csai.DebugSay("bestorder " + order.unitname);
             //if( BuildTree.GetInstance().CanBuild( unitdef.getName().ToLower(), order.unitname ) )
             //{
-            deftobuild = buildTable.UnitDefByName.get(order.unitname);
+            deftobuild = buildTable.getUnitDefByName(order.unitname);
             if (metalController.CanBuild( constructorunitdef, deftobuild))
             {
                if (energyController.CanBuild( constructorunitdef, deftobuild))
@@ -291,8 +293,9 @@ public class WorkflowController
          }
          if( possibleorders.size() == 0 )
          {
+            String commanderUnitName = buildTree.listToOurTeamsUnitName( config.getCommanderunitnames() );
             if ( unitLists.getLevel1ConstructorList().getUnits().size() < 1 &&
-                  !unitController.UnitsByName.containsKey(config.getCommanderunitname()) )
+                  !unitController.UnitsByName.containsKey( commanderUnitName ) )
             {
                if (BuildConstructionVehicle(constructor, constructorunitdef))
                {
@@ -337,7 +340,8 @@ public class WorkflowController
             return;
          }
          Order ordertodo = possibleorders.get(random.nextInt(possibleorders.size()));
-         if (ordertodo.unitname.equals( config.getBasicmetalextractorunitname() ) )
+         String metalextractorname = buildTree.listToOurTeamsUnitName( config.getBasicmetalextractorunitnames() );
+         if (ordertodo.unitname.equals(metalextractorname ) )
          {
             BuildMex(constructor);
             if (AssistingConstructors.containsKey(constructor))
@@ -348,7 +352,7 @@ public class WorkflowController
          else
          {
             //ordertodo.unitsunderconstruction += 1;
-            deftobuild = buildTable.UnitDefByName.get(ordertodo.unitname);
+            deftobuild = buildTable.getUnitDefByName(ordertodo.unitname);
             TerrainPos pos = BuildUnit(constructor, ordertodo.unitname);
             Ownership.IOrder ownershiporder = ownership.RegisterBuildingOrder(
                   new BuildListener(),
@@ -489,13 +493,17 @@ public class WorkflowController
    boolean BuildConstructionVehicle( Unit constructor, UnitDef constructordef)
    {
       UnitDef deftobuild = null;
-      if( buildTree.CanBuild( constructordef.getName().toLowerCase(), config.getBasicconstructionvehicleunitname() ) )
-      {
-         deftobuild = buildTable.UnitDefByName.get(config.getBasicconstructionvehicleunitname());
+      String basicConstructionVehicleName = buildTree.listToOurTeamsUnitName( config.getBasicconstructionvehicleunitnames() );
+      if( basicConstructionVehicleName == null ) {
+         return false;
       }
-      else if (buildTree.CanBuild(constructordef.getName().toLowerCase(), config.getBasicconstructionvehicleunitname()))
+      if( buildTree.CanBuild( constructordef.getName().toLowerCase(), basicConstructionVehicleName ) )
       {
-         deftobuild = buildTable.UnitDefByName.get(config.getBasicconstructionvehicleunitname());
+         deftobuild = buildTable.getUnitDefByName(basicConstructionVehicleName);
+      }
+      else if (buildTree.CanBuild(constructordef.getName().toLowerCase(), basicConstructionVehicleName))
+      {
+         deftobuild = buildTable.getUnitDefByName(basicConstructionVehicleName);
       }
       else
       {
@@ -518,7 +526,7 @@ public class WorkflowController
    TerrainPos BuildUnit(Unit constructor, String targetunitname)
    {
       csai.DebugSay("workflow, building " + targetunitname);
-      UnitDef targetunitdef = buildTable.UnitDefByName.get(targetunitname);
+      UnitDef targetunitdef = buildTable.getUnitDefByName(targetunitname);
       UnitDef constructordef = constructor.getDef();
       if (unitDefHelp.IsMobile(constructordef))
       {
@@ -554,13 +562,17 @@ public class WorkflowController
 
    boolean BuildMex(Unit constructor)
    {
-      String metalextractorname = config.getBasicmetalextractorunitname();
+//      String metalextractorname = config.getBasicmetalextractorunitname();
+      String metalextractorname = buildTree.listToOurTeamsUnitName( config.getBasicmetalextractorunitnames() );
+      if( metalextractorname == null ) {
+         return false;
+      }
       if( !buildTree.CanBuild( constructor.getDef().getName().toLowerCase(),
             metalextractorname ) )
       {
          return false;
       }
-      UnitDef unitdef = buildTable.UnitDefByName.get(metalextractorname);
+      UnitDef unitdef = buildTable.getUnitDefByName(metalextractorname);
       TerrainPos buildsitefrommetal = metal.GetNearestMetalSpot(
             unitController.getPos( constructor ) );
       TerrainPos buildsite = TerrainPos.fromAIFloat3( aicallback.getMap().findClosestBuildSite(
@@ -577,13 +589,16 @@ public class WorkflowController
 
    boolean BuildSolarCell(Unit constructor)
    {
-      String energyextractorunitname = config.getBasicenergyextractorunitname();
+      String energyextractorunitname = buildTree.listToOurTeamsUnitName( config.getBasicenergyextractorunitnames() );
+      if( energyextractorunitname == null ) {
+         return false;
+      }
       if (!buildTree.CanBuild(constructor.getDef().getName().toLowerCase(),
             energyextractorunitname))
       {
          return false;
       }
-      UnitDef unitdef = buildTable.UnitDefByName.get(energyextractorunitname);
+      UnitDef unitdef = buildTable.getUnitDefByName(energyextractorunitname);
       TerrainPos buildsite = buildPlanner.ClosestBuildSite(unitdef,
             unitController.getPos( constructor ),
             3000, 2);

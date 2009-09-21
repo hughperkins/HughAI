@@ -194,7 +194,7 @@ public class DrawingUtils
 
    public void DrawUnit( String defname, TerrainPos pos, float rotation, int lifeTime, int teamId, boolean transparent, boolean drawBorder ) {
       if( pos == null ){ throw new RuntimeException( "drawunit: pos was null"); }
-      UnitDef toDrawUnitDef = buildTable.UnitDefByName.get( defname.toLowerCase() );
+      UnitDef toDrawUnitDef = buildTable.getUnitDefByName( defname.toLowerCase() );
       if( toDrawUnitDef == null ){ throw new RuntimeException( "unit " + defname + " doesn't exist."); }
 
       lifeTime = 200;

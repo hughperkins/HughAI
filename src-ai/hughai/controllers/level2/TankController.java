@@ -348,7 +348,7 @@ public class TankController
    // note to self: this function is a mess... spaghetti... unreadable...
    void DoSomething()
    {
-      String commanderunitname = config.getCommanderunitname();
+      String commanderunitname = playerObjects.getBuildTree().listToOurTeamsUnitName( config.getCommanderunitnames() );
       if( unitsToControl.size() >= MinTanksForAttack ) // make sure at least have a few units before attacking
       {
          // ok, so first, we're going to figure out roughly where

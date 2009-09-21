@@ -186,6 +186,15 @@ public class PlayerObjects {
       exceptionList = new ExceptionList(this);
       return exceptionList;
    }
+   
+   SideManager sideManager;
+   public synchronized SideManager getSideManager() {
+      if( sideManager != null ) {
+         return sideManager;
+      }
+      sideManager = new SideManager( this );
+      return sideManager;
+   }
 
    WorkflowUI workflowUI;
    public synchronized WorkflowUI getWorkflowUI() {

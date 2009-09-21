@@ -89,10 +89,15 @@ public class Workflows {
       this.config = playerObjects.getConfig();
 
       this.modname = aicallback.getMod().getShortName().toLowerCase();
-      this.workflowdirectory = csai.getAIDirectoryPath() + aicallback.getMod().getShortName() + "_workflows" 
+      String side = playerObjects.getSideManager().getSide();
+      this.workflowdirectory = csai.getAIDirectoryPath() + aicallback.getMod().getShortName() + "_" + side + "_workflows" 
          + File.separator;
       new File( workflowdirectory ).mkdirs();
       Init();
+   }
+   
+   String getWorkflowFilePath( String workflowname ) {
+      return workflowdirectory + workflowname + ".xml";
    }
 
    void Init () {
@@ -101,11 +106,15 @@ public class Workflows {
       ReflectionHelper reflectionHelper = new ReflectionHelper( playerObjects );
       for( File file : new File(this.workflowdirectory).listFiles() ) {
          String filename = file.getName().toLowerCase();
+         if( filename.startsWith( "." ) ) {  // various hidden files, vim swap, ....
+            continue;
+         }
          String workflowname = filename.split("\\.")[0]; // remove extension
          logfile.WriteLine( "Workflow file found: " + filename );
          Workflow workflow = new Workflow();
          reflectionHelper.loadObjectFromFile( workflowdirectory + filename, workflow );
          workflow.setWorkflowName( workflowname );
+         validate( workflow );
          workflowsByName.put( workflow.getWorkflowName(), workflow );
       }
 //      if( workflowsByName.size() == 0 ) {
@@ -125,6 +134,23 @@ public class Workflows {
       }
       for( Workflow workflow : workflowsByName.values() ) {
          reflectionHelper.saveObjectToFile( workflowdirectory + workflow.getWorkflowName() + ".xml", workflow );
+      }
+   }
+   
+   // check that all unit names are ok, to save weird crashes later
+   void validate( Workflow workflow ) {
+      List<String> invalidunitnames = new ArrayList<String>();
+      for( Workflow.Order order : workflow.orders ) {
+         String thisunitname = order.unitname;
+         if( playerObjects.getBuildTable().getUnitDefByName( thisunitname ) == null ) {
+            invalidunitnames.add( thisunitname );
+         }
+      }
+      if( invalidunitnames.size() > 0 ) {
+         playerObjects.getMainUI().showInfo( "ERROR: the workflow file\n" + getWorkflowFilePath( workflow.workflowName ) + "\ncontains the following invalid unitnames:\n" + invalidunitnames + " .  If you are not sure what this means, you may be using an unsupported mod.  Please restart the game using the BA mod." );
+         playerObjects.getLogFile().WriteLine( "ERROR: the workflow file " + getWorkflowFilePath( workflow.workflowName ) + " contains the following invalid unitnames: " + invalidunitnames + " .  If you are not sure what this means, you may be using an unsupported mod.  Please restart the game using the BA mod."  );
+      } else {
+         playerObjects.getLogFile().WriteLine( "workflow " + workflow.workflowName + " validated."  );
       }
    }
    
@@ -150,7 +176,7 @@ public class Workflows {
       workflow.getOrders().add( new Workflow.Order(0.8f, "armmmkr", 4) );
       workflow.getOrders().add( new Workflow.Order(0.8f, "armarad", 1) );
       workflow.getOrders().add( new Workflow.Order(0.8f, "armestor", 1) );
-      workflow.getOrders().add( new Workflow.Order(0.8f, "armmfus", 8) );
+//      workflow.getOrders().add( new Workflow.Order(0.8f, "armmfus", 8) );
       workflow.getOrders().add( new Workflow.Order(0.7f, "armalab", 1) );
       workflow.getOrders().add( new Workflow.Order(0.7f, "armfark", 2) );
 

@@ -87,10 +87,18 @@ public class Config implements ConfigHelper.IConfig {
    String usedmetalspotmarkerunitname = "armfort";
    String spreadsearchnextmovemarkerunitname = "armrad";
 
-   String commanderunitname = "armcom";
-   String basicmetalextractorunitname = "armmex";
-   String basicenergyextractorunitname = "armsolar";
-   String basicconstructionvehicleunitname = "armcv";
+   @ListTypeInfo(String.class)
+   List<String> commanderunitnames = Arrays.asList( new String[] {
+         "armcom", "corcom" } );
+   @ListTypeInfo(String.class)
+   List<String> basicmetalextractorunitnames = Arrays.asList( new String[] {
+         "armmex", "cormex" } );
+   @ListTypeInfo(String.class)
+   List<String> basicenergyextractorunitnames = Arrays.asList( new String[] {
+         "armsolar", "corsolar" } );
+   @ListTypeInfo(String.class)
+   List<String> basicconstructionvehicleunitnames = Arrays.asList( new String[] {
+         "armcv", "corcv" } );
    
    int welcomeMessageSecondsInterval = 10;
    
@@ -128,17 +136,20 @@ public class Config implements ConfigHelper.IConfig {
    @ListTypeInfo(String.class)
    List<String> reconnaissanceunitnames = Arrays.asList( 
          new String[]{
-               "armfav"  
+               "armfav", "corfav"
          } );
    @ListTypeInfo(String.class)
    List<String> offensiveunitnames = Arrays.asList( 
          new String[]{
+               // arm units
                "armsam", "armstump", "armrock", "armjeth", "armkam", "armanac", "armsfig", "armmh", "armah", 
-                  "armbull", "armmart", "armmav", "armyork"  
+                  "armbull", "armmart", "armmav", "armyork",
+               // core units
+               "correap", "cormist", "corraid", "cormart", "corsent", "corpyro" 
          } );
    @ListTypeInfo(String.class)
    List<String> scoutraiderprioritytargets = Arrays.asList(new String[] { 
-         "armmex", "cormex", "armrad", "corrad" });
+         "armmex", "cormex", "armrad" });
 
    public Config( PlayerObjects playerObjects ) {
       this.playerObjects = playerObjects;
@@ -163,7 +174,8 @@ public class Config implements ConfigHelper.IConfig {
    @Override
    public String getConfigPath() {
       String configPath = playerObjects.getCSAI().getAIDirectoryPath() + playerObjects.getAicallback()
-         .getMod().getShortName() + "_" + ConfigVersion + ".xml";
+         .getMod().getShortName() + "_" + 
+         playerObjects.getSideManager().getSide() + ".xml";
       playerObjects.getLogFile().WriteLine( "Config path: " + configPath );
       return configPath;
    }
@@ -182,30 +194,6 @@ public class Config implements ConfigHelper.IConfig {
 
    public void setUsedmetalspotmarkerunitname( String usedmetalspotmarkerunitname ) {
       this.usedmetalspotmarkerunitname = usedmetalspotmarkerunitname;
-   }
-
-   public String getCommanderunitname() {
-      return commanderunitname;
-   }
-
-   public void setCommanderunitname( String commanderunitname ) {
-      this.commanderunitname = commanderunitname;
-   }
-
-   public String getBasicmetalextractorunitname() {
-      return basicmetalextractorunitname;
-   }
-
-   public void setBasicmetalextractorunitname( String basicmetalextractorunitname ) {
-      this.basicmetalextractorunitname = basicmetalextractorunitname;
-   }
-
-   public String getBasicenergyextractorunitname() {
-      return basicenergyextractorunitname;
-   }
-
-   public void setBasicenergyextractorunitname( String basicenergyextractorunitname ) {
-      this.basicenergyextractorunitname = basicenergyextractorunitname;
    }
 
    public boolean isDebug() {
@@ -324,15 +312,6 @@ public class Config implements ConfigHelper.IConfig {
       this.maxLinesOnMap = maxLinesOnMap;
    }
 
-   public String getBasicconstructionvehicleunitname() {
-      return basicconstructionvehicleunitname;
-   }
-
-   public void setBasicconstructionvehicleunitname(
-         String basicconstructionvehicleunitname ) {
-      this.basicconstructionvehicleunitname = basicconstructionvehicleunitname;
-   }
-
    public List<String> getWelcomeMessages() {
       return welcomeMessages;
    }
@@ -386,5 +365,32 @@ public class Config implements ConfigHelper.IConfig {
    }
    public void setGUIActivated( boolean gUIActivated ) {
       GUIActivated = gUIActivated;
+   }
+   public List<String> getCommanderunitnames() {
+      return commanderunitnames;
+   }
+   public void setCommanderunitnames( List<String> commanderunitnames ) {
+      this.commanderunitnames = commanderunitnames;
+   }
+   public List<String> getBasicmetalextractorunitnames() {
+      return basicmetalextractorunitnames;
+   }
+   public void setBasicmetalextractorunitnames(
+         List<String> basicmetalextractorunitnames ) {
+      this.basicmetalextractorunitnames = basicmetalextractorunitnames;
+   }
+   public List<String> getBasicenergyextractorunitnames() {
+      return basicenergyextractorunitnames;
+   }
+   public void setBasicenergyextractorunitnames(
+         List<String> basicenergyextractorunitnames ) {
+      this.basicenergyextractorunitnames = basicenergyextractorunitnames;
+   }
+   public List<String> getBasicconstructionvehicleunitnames() {
+      return basicconstructionvehicleunitnames;
+   }
+   public void setBasicconstructionvehicleunitnames(
+         List<String> basicconstructionvehicleunitnames ) {
+      this.basicconstructionvehicleunitnames = basicconstructionvehicleunitnames;
    }
 }

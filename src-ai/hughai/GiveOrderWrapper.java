@@ -139,13 +139,13 @@ public class GiveOrderWrapper
 
    public void BuildUnit(Unit builder, String targetunitname )
    {
-      UnitDef unitdeftobuild = buildTable.UnitDefByName.get( targetunitname.toLowerCase() );
+      UnitDef unitdeftobuild = buildTable.getUnitDefByName( targetunitname.toLowerCase() );
       GiveOrder( new OOPCommands.BuildCommand( builder, unitdeftobuild, targetunitname ) );
    }
 
    public void BuildUnit(Unit builder, String targetunitname, TerrainPos pos)
    {
-      UnitDef targetunitdef = buildTable.UnitDefByName.get( targetunitname.toLowerCase() );
+      UnitDef targetunitdef = buildTable.getUnitDefByName( targetunitname.toLowerCase() );
       drawingUtils.DrawUnit( targetunitname, pos, 0, 100, 
             aicallback.getTeamId(), true, true );
       GiveOrder( new OOPCommands.BuildCommand( builder, targetunitdef, pos, targetunitname ) );

@@ -324,7 +324,7 @@ public class TankController2
             packcoordinatorselector.ActivatePackCoordinator( spreadsearchpackcoordinator );
          } else {// or if we're too weak, jsut guard the commander
    
-            String commanderunitname = config.getCommanderunitname();
+            String commanderunitname = playerObjects.getBuildTree().listToOurTeamsUnitName( config.getCommanderunitnames() );
             if (unitcontroller.UnitsByName.containsKey(commanderunitname))
             {
                List<Unit> commanders = unitcontroller.UnitsByName.get( commanderunitname );

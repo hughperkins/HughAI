@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<root workflowName="default">
+<list fieldname="orders">
+<listitem priority="2.0" quantity="1" unitname="corvp"/>
+<listitem priority="2.1" quantity="2" unitname="corfav"/>
+<listitem priority="2.0" quantity="10" unitname="corraid"/>
+<listitem priority="2.0" quantity="10" unitname="cormist"/>
+<listitem priority="1.95" quantity="4" unitname="cormex"/>
+<listitem priority="1.95" quantity="4" unitname="corsolar"/>
+<listitem priority="1.9" quantity="3" unitname="corcv"/>
+<listitem priority="1.8" quantity="1" unitname="cormstor"/>
+<listitem priority="1.8" quantity="1" unitname="coravp"/>
+<listitem priority="2.0" quantity="3" unitname="correap"/>
+<listitem priority="2.0" quantity="2" unitname="cormart"/>
+<listitem priority="1.9" quantity="1" unitname="corvrad"/>
+<listitem priority="1.7" quantity="3" unitname="corsent"/>
+<listitem priority="1.7" quantity="3" unitname="correap"/>
+<listitem priority="1.7" quantity="2" unitname="cormart"/>
+<listitem priority="0.9" quantity="2" unitname="coracv"/>
+<listitem priority="0.8" quantity="4" unitname="cormmkr"/>
+<listitem priority="0.8" quantity="1" unitname="corarad"/>
+<listitem priority="0.8" quantity="1" unitname="corestor"/>
+<listitem priority="0.7" quantity="1" unitname="coralab"/>
+<listitem priority="0.7" quantity="2" unitname="corfast"/>
+<listitem priority="0.6" quantity="20" unitname="correap"/>
+<listitem priority="0.6" quantity="20" unitname="corsent"/>
+<listitem priority="0.6" quantity="20" unitname="cormart"/>
+<listitem priority="0.5" quantity="1" unitname="corvrad"/>
+<listitem priority="0.5" quantity="1" unitname="corsjam"/>
+<listitem priority="0.4" quantity="50" unitname="corpyro"/>
+<listitem priority="0.3" quantity="4" unitname="corfast"/>
+</list>
+</root>
