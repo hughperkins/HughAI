@@ -162,14 +162,27 @@ public class ConsoleJava {
             classpath = classpath.replace( "$aidir/", ourdir );
             
             Exec exec = new Exec( playerObjects );
-            debug( exec.exec( "javac -classpath " + classpath
+            String result = "";
+            try {
+               result = exec.exec( "javac -classpath " + classpath
                         + " -d " + ourdir + classdir + 
                         " console" + File.separator + "ConsoleText.java", 
-                        ourdir + "src-console" ) );
+                        ourdir + "src-console" );
+               debug( result );
+            } catch( Exception e ) {
+               outputTextarea.setText( "Error during compilation: " + e.getMessage() );
+               return;
+            }
 
-            debug( exec.exec( "jar -cf " + ourdir + jarfilename 
+            try {
+               result = exec.exec( "jar -cf " + ourdir + jarfilename 
                         + " console", 
-                        ourdir + classdir ) );
+                        ourdir + classdir );
+               debug( result );
+            } catch( Exception e ) {
+               outputTextarea.setText( "Error during jar creation: " + e.getMessage() );
+               return;
+            }
 
             // this should be moved to some generic class really
             URL[] locations = new URL[] { new File( ourdir + jarfilename )
@@ -189,8 +202,13 @@ public class ConsoleJava {
             }
             Object newInstance = cls.newInstance(); 
             ConsoleEntryPoint subjar = (ConsoleEntryPoint)newInstance;
-            String result = subjar.go( playerObjects );
-            outputTextarea.setText( result );
+            try {
+               result = subjar.go( playerObjects );
+               outputTextarea.setText( result );
+            } catch( Exception e ) {
+               String exceptiontrace = Formatting.exceptionToStackTrace( e );
+               outputTextarea.setText( exceptiontrace );               
+            }
          } catch( Exception e ) {
             playerObjects.getLogFile().WriteLine( Formatting.exceptionToStackTrace( e ) );
          }
