@@ -171,7 +171,7 @@ public class Workflows {
       workflow.getOrders().add( new Workflow.Order(1.7f, "armyork", 3) );
       workflow.getOrders().add( new Workflow.Order(1.7f, "armbull", 3) );
       workflow.getOrders().add( new Workflow.Order(1.7f, "armmart", 2) );
-      workflow.getOrders().add( new Workflow.Order(1.0f, "armmfus", 1) );
+//      workflow.getOrders().add( new Workflow.Order(1.0f, "armmfus", 1) );
       workflow.getOrders().add( new Workflow.Order(0.9f, "armacv", 2) );
       workflow.getOrders().add( new Workflow.Order(0.8f, "armmmkr", 4) );
       workflow.getOrders().add( new Workflow.Order(0.8f, "armarad", 1) );
