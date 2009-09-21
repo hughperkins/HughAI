@@ -61,8 +61,12 @@ public class ExceptionList {
       playerObjects.getMainUI().addPanelToTabbedPanel( "Exceptions", panel );
    }
    
+   boolean exceptionReportedAlready = false;
    public void reportException( Exception e ) {
-      playerObjects.getMainUI().showInfo( "Something went wrong :-/  Please send the team log in the AI directory to hughperkins@gmail.com.  Techie info follows: " + Formatting.exceptionToStackTrace( e ) );
+      if( !exceptionReportedAlready ) {
+         playerObjects.getMainUI().showInfo( "Something went wrong :-/  Please send the team log in the AI directory to hughperkins@gmail.com.  Techie info follows: " + Formatting.exceptionToStackTrace( e ) );
+         exceptionReportedAlready = true;
+      }
       exceptionsText.setText(
            exceptionsText.getText() + 
            Formatting.exceptionToStackTrace( e ) + "\n" );
