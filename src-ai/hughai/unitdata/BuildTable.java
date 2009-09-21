@@ -39,9 +39,11 @@ public class BuildTable
 {
    //int numOfUnitTypes = 0;
    UnitDef[] availableunittypes;
-   public HashMap<String, UnitDef> UnitDefByName = new HashMap<String,UnitDef>();
-   public HashMap<Integer, UnitDef> UnitDefById = new HashMap<Integer, UnitDef>(); // yes, we could use array, but this is easier to read
+   private HashMap<String, UnitDef> UnitDefByName = new HashMap<String,UnitDef>();
+   private HashMap<Integer, UnitDef> UnitDefById = new HashMap<Integer, UnitDef>(); // yes, we could use array, but this is easier to read
 
+   private int largestUnitDefId = 0;
+   
    //PlayerObjects playerObjects;
    CSAI CSAI;
    OOAICallback aicallback;
@@ -80,9 +82,14 @@ public class BuildTable
       UnitDef unitdef = UnitDefByName.get( unitdefname.toLowerCase() );
       if( unitdef == null ) {
          CSAI.sendTextMessage( "No unit named '" + unitdefname + "'.  Please check the build table in the AI's directory for allowed unit names in this mod." );
-         throw new RuntimeException( "No unit named '" + unitdefname + "'.  Please check the build table in the AI's directory for allowed unit names in this mod.");
+//         throw new RuntimeException( "No unit named '" + unitdefname + "'.  Please check the build table in the AI's directory for allowed unit names in this mod.");
+         return null;
       }
       return unitdef;
+   }
+   
+   public UnitDef getUnitDefByUnitDefId( int unitDefId ) {
+      return UnitDefById.get( unitDefId );
    }
 
    void GenerateBuildTable( String modname )
@@ -104,8 +111,12 @@ public class BuildTable
 
             if (!UnitDefByName.containsKey(unitdef.getName().toLowerCase()))
             {
+               int unitdefid = unitdef.getUnitDefId();
                UnitDefByName.put( unitdef.getName().toLowerCase(), unitdef );
-               UnitDefById.put(unitdef.getUnitDefId(), unitdef);
+               UnitDefById.put(unitdefid, unitdef);
+               if( unitdefid > largestUnitDefId  ) {
+                  largestUnitDefId = unitdefid;
+               }
             }
             else
             {
@@ -160,5 +171,9 @@ public class BuildTable
 
       logfile.WriteLine( "Leaving GetBiggestMexUnit(), it's unittypeid is " + biggest_mex_id  );
       return biggestmexunit;
+   }
+
+   public int getLargestUnitDefId() {
+      return largestUnitDefId;
    }
 }
