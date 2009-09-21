@@ -159,7 +159,14 @@ public class UiReflectionHelper {
    // if false, then lists and classes will just become a button?
    // if true, and classasrowtable is true, then a class will be horizontal,
    // as a table row, otherwise vertically
-   public JComponent objectToDisplayComponent( final Object object, final Annotation[] annotations, DisplayContext displayContext ) {
+   //
+   // so much for layout... what about behavior when canModify is true?
+   // - probably need a button 'apply', 'revert' for each dialog and sub-dialog, ie for classes, maybe also for lists?
+   //   - apply and revert applies only to that dialog, not to modifications to children dialogs
+   // - for lists, need button for each row, to delete it, and a button to add a new row
+   // - for primitive types, nothing is applied until parent class or list applies it?
+   // - maybe 'apply' and 'revert' apply at the level of each custom class?
+   public JComponent objectToDisplayComponent( final Object object, final Annotation[] annotations, DisplayContext displayContext, final boolean canModify ) {
       try {
       if( object == null ) {
          return new JLabel("<null>");
@@ -167,25 +174,43 @@ public class UiReflectionHelper {
       
       final Class<?> objectClass = object.getClass();
       if( objectClass == String.class ) {
-         JLabel textField = new JLabel();
-         textField.setText( "" + object );
-         return textField;
+         if( canModify ) {
+            JTextField textField = new JTextField();
+            textField.setText( "" + object );
+            return textField;
+         } else {
+            JLabel textField = new JLabel();
+            textField.setText( "" + object );
+            return textField;            
+         }
       }
-      if( objectClass == boolean.class || objectClass == Boolean.class ) {
-         JCheckBox checkBox = new JCheckBox();
-         checkBox.setEnabled( false );
-         checkBox.setSelected( (Boolean)object );
-         return checkBox;
+      if( objectClass.equals( Float.class ) ) {
+         if( canModify ) {
+            JTextField textField = new JTextField();
+            textField.setText( "" + object );
+            return textField;
+         } else {
+            JLabel textField = new JLabel();
+            textField.setText( "" + object );
+            return textField;
+         }
       }
-      if( objectClass == float.class || objectClass == Float.class ) {
-         JLabel textField = new JLabel();
-         textField.setText( "" + object );
-         return textField;
+      if( objectClass.equals( Integer.class ) ) {
+         if( canModify ) {
+            JTextField textField = new JTextField();
+            textField.setText( "" + object );
+            return textField;
+         } else {
+            JLabel textField = new JLabel();
+            textField.setText( "" + object );
+            return textField;
+         }
       }
-      if( objectClass == int.class || objectClass == Integer.class ) {
-         JLabel textField = new JLabel();
-         textField.setText( "" + object );
-         return textField;
+      if( objectClass.equals( Boolean.class ) ) {
+         JCheckBox checkbox = new JCheckBox();
+         checkbox.setEnabled( canModify );
+         checkbox.setSelected( (Boolean )object );
+         return checkbox;
       }
       if( List.class.isAssignableFrom( objectClass ) ) {
          Class<?> listItemClass = getListItemClass( annotations );
@@ -201,7 +226,7 @@ public class UiReflectionHelper {
                public void actionPerformed( ActionEvent e ) {
                   System.out.println("creating child dialog...");
                   JDialog childDialog = createDialog( button, "List", true );
-                  JComponent childcomponents = objectToDisplayComponent(object, annotations, DisplayContext.detailed );
+                  JComponent childcomponents = objectToDisplayComponent(object, annotations, DisplayContext.detailed, canModify );
                   childDialog.add( childcomponents );
                   childDialog.setSize( 300, 300 );
                   childDialog.setVisible( true );
@@ -223,7 +248,7 @@ public class UiReflectionHelper {
 
          for( Object item : objectAsList ) {
             JComponent childcomponent = objectToDisplayComponent( item,
-                  annotations, DisplayContext.listrow );
+                  annotations, DisplayContext.listrow, canModify );
             addGridLayoutRow( gridLayout );
             panel.add( childcomponent );
          }         
@@ -249,7 +274,7 @@ public class UiReflectionHelper {
             public void actionPerformed( ActionEvent e ) {
                System.out.println("creating child dialog...");
                JDialog childDialog = createDialog( button, objectClass.getSimpleName(), true );
-               JComponent childcomponents = objectToDisplayComponent(object, new Annotation[0], DisplayContext.detailed );
+               JComponent childcomponents = objectToDisplayComponent(object, new Annotation[0], DisplayContext.detailed, canModify );
                childDialog.add( childcomponents );
                childDialog.setSize( 300, 300 );
                childDialog.setVisible( true );
@@ -265,7 +290,7 @@ public class UiReflectionHelper {
          GridLayout gridLayout = new GridLayout(1,0);
          JPanel panel = new JPanel( gridLayout );
          for( Field field : objectClass.getDeclaredFields() ) {
-            JComponent childcomponent = objectToDisplayComponent( field.get( object ), field.getAnnotations(), DisplayContext.brief );
+            JComponent childcomponent = objectToDisplayComponent( field.get( object ), field.getAnnotations(), DisplayContext.brief, canModify );
             gridLayout.setColumns( gridLayout.getColumns() + 1 );
             panel.add( childcomponent );
          }
@@ -276,7 +301,7 @@ public class UiReflectionHelper {
          JPanel panel = new JPanel( gridLayout );
          for( Field field : objectClass.getDeclaredFields() ) {
             JLabel label = new JLabel( field.getName() );
-            JComponent childcomponent = objectToDisplayComponent( field.get( object ), field.getAnnotations(), DisplayContext.brief );
+            JComponent childcomponent = objectToDisplayComponent( field.get( object ), field.getAnnotations(), DisplayContext.brief, canModify );
 
             gridLayout.setRows( gridLayout.getRows() + 1 );
 
