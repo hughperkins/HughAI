@@ -45,7 +45,7 @@ public class SideManager {
    
    void init() {
       String startscriptcontents = playerObjects.getAicallback().getGame().getSetupScript();
-      debug( "start script: " );
+//      debug( "start script: " );
 //      debug( startscriptcontents );
       
       int ourteamnumber = playerObjects.getAicallback().getTeamId();
@@ -56,6 +56,9 @@ public class SideManager {
       this.side = playerObjects.getAicallback().getGame().getTeamSide( ourteamnumber );
 //      tdfParser.RootSection.SubSections.
       debug("Our side: " + this.side ); 
+      if( this.side.equals("") ) {
+         throw new RuntimeException("Failed to obtain the name of our faction." );
+      }
    }
 
    public String getSide() {
