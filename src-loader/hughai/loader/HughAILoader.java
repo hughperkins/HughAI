@@ -92,6 +92,16 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
 
       return 0;
    }
+   
+   @Override
+   public int release( int reason ) {
+      underlyingAI.Shutdown();
+      underlyingAI = null;
+      System.runFinalization();
+      System.gc();
+      System.gc();
+      return 0;
+   }
 
    @Override
    public int update(int frame) {
