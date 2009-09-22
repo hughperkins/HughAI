@@ -52,7 +52,8 @@ public class SideManager {
       debug("our team number: " + ourteamnumber );
       
       TdfParser tdfParser = new TdfParser( playerObjects, startscriptcontents );
-      this.side = tdfParser.RootSection.GetStringValue( "GAME/TEAM" + ourteamnumber + "/Side" ).toLowerCase();
+//      this.side = tdfParser.RootSection.GetStringValue( "GAME/TEAM" + ourteamnumber + "/Side" ).toLowerCase();
+      this.side = playerObjects.getAicallback().getGame().getTeamSide( ourteamnumber );
 //      tdfParser.RootSection.SubSections.
       debug("Our side: " + this.side ); 
    }
