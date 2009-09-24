@@ -98,7 +98,7 @@ public class AttackPackCoordinator extends PackCoordinator
       logfile.WriteLine( this.getClass().getSimpleName() + " recoordinate" );
       int packsize = Math.min(MaxPackToConsider, unitsControlled.size());
       UnitInfo[] closestunits = GetClosestUnits(targetpos, packsize);
-      if( closestunits.length < 0 ) {
+      if( closestunits.length == 0 ) {
          return;
       }
       TerrainPos packheadpos = closestunits[0].pos;
