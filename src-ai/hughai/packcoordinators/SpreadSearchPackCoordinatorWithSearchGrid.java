@@ -236,6 +236,9 @@ public class SpreadSearchPackCoordinatorWithSearchGrid extends PackCoordinator
       {
          nextpoint = GetRandomDestination(currentarea);
       }
+      if (nextpoint == null ) {
+         return;
+      }
       lastexploretime.put(unit, playerObjects.getFrameController().getFrame());
       giveOrderWrapper.MoveTo(unit, nextpoint );
       if( config.isDebug() ) {
