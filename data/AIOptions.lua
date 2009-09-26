@@ -23,14 +23,36 @@
 
 local options = {
 	{
-		key="difficulty",
-		name="AI Difficulty Level",
-		desc="1 means, the AI plays very poor, 5 means, it gives its best",
-		type   = 'number',
-		def    = 3,
-		min    = 1,
-		max    = 5,
-		step   = 1,
+		key="maphack",
+		name="Activatd Maphack",
+		desc="does the AI use maphack to find your units?",
+		type='list',
+		def='yes',
+		items='no','yes',
+	},
+	{
+		key="guiactivated",
+		name="Activate GUI",
+		desc="Activates GUI. Mostly useful for developers.  Make sure to play in windowed mode if this is activated!",
+		type='list',
+		def='yes',
+		items='no','yes',
+	},
+	{
+		key="debug",
+		name="Activated debug",
+		desc="Shows lots of debug info, lines, ghost units and so on, so you can see what the AI is thinking.  Turn off for normal usage."
+		type='list',
+		def='no',
+		items='no','yes',
+	},
+	{
+		key="defaultworkflowname",
+		name="Default workflow name",
+		desc="Selects the build workflow to use.  By default there is only the default workflow, but you can create others, and switch between them here.",
+		type='list',
+		def='default',
+		items='default',
 	},
 }
 
