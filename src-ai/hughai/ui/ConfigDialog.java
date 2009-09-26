@@ -45,6 +45,7 @@ import hughai.packcoordinators.*;
 import hughai.unitdata.*;
 import hughai.unitdata.UnitController.UnitAdapter;
 import hughai.utils.*;
+import hughai.utils.ConfigController.ConfigSource;
 
 // builds the configuration tab in the gui
 // using reflection
@@ -73,7 +74,7 @@ public class ConfigDialog {
       fieldName = fieldName.substring( 0, 1 ).toUpperCase()
       + fieldName.substring( 1 );
       String methodname = "get" + fieldName;
-      if( fieldType == boolean.class ) {
+      if( fieldType == boolean.class || fieldType == Boolean.class ) {
          methodname = "is" + fieldName;
       }
       Method method = null;
@@ -111,13 +112,13 @@ public class ConfigDialog {
                   if( fieldType == String.class ) {
                      addTextBox( field.getName(), (String)value );
                   }
-                  if( fieldType == boolean.class ) {
+                  if( fieldType == boolean.class || fieldType == Boolean.class ) {
                      addBooleanComponent( field.getName(), (Boolean)value );
                   }
-                  if( fieldType == float.class ) {
+                  if( fieldType == float.class || fieldType == Float.class ) {
                      addTextBox( field.getName(), "" + value );
                   }
-                  if( fieldType == int.class ) {
+                  if( fieldType == int.class || fieldType == Integer.class ) {
                      addTextBox( field.getName(), "" + value );
                   }
                } else {
@@ -211,13 +212,13 @@ public class ConfigDialog {
                      if( fieldType == String.class ) {
                         ((JTextField)component).setText( (String )value );
                      }
-                     if( fieldType == boolean.class ) {
+                     if( fieldType == boolean.class || fieldType == Boolean.class ) {
                         ((JCheckBox)component).setSelected( (Boolean )value );
                      }
-                     if( fieldType == float.class ) {
+                     if( fieldType == float.class || fieldType == Float.class ) {
                         ((JTextField)component).setText( "" + value );
                      }
-                     if( fieldType == int.class ) {
+                     if( fieldType == int.class || fieldType == Integer.class ) {
                         ((JTextField)component).setText( "" + value );
                      }
                   }
@@ -257,17 +258,17 @@ public class ConfigDialog {
                   if( fieldType == String.class ) {
                      value = ((JTextField)component).getText();
                   }
-                  if( fieldType == boolean.class ) {
+                  if( fieldType == boolean.class || fieldType == Boolean.class ) {
                      value = ((JCheckBox)component).isSelected();
                   }
-                  if( fieldType == float.class ) {
+                  if( fieldType == float.class || fieldType == Float.class ) {
                      String stringvalue = (String)((JTextField)component).getText();
                      try {
                         value = Float.parseFloat( stringvalue );
                      } catch( Exception e ) {
                      }
                   }
-                  if( fieldType == int.class ) {
+                  if( fieldType == int.class || fieldType == Integer.class ) {
                      String stringvalue = (String)((JTextField)component).getText();
                      try {
                         value = Integer.parseInt( stringvalue );
@@ -282,7 +283,7 @@ public class ConfigDialog {
                      }
                   }
                }
-               if( fieldType == boolean.class ) {
+               if( fieldType == boolean.class || fieldType == Boolean.class ) {
                   //addBooleanComponent( field.getName(), (Boolean)value );
                }
             } else {
@@ -300,14 +301,16 @@ public class ConfigDialog {
       @Override
       public void actionPerformed( ActionEvent e ){
          applyConfig();
-         playerObjects.getConfig().save();
+         playerObjects.getConfigController().writeConfigBackToSource( ConfigSource.XmlFile );
+//         playerObjects.getConfig().save();
       }
    }
    
    class ConfigReload implements ActionListener {
       @Override
       public void actionPerformed( ActionEvent e ){
-         playerObjects.getConfig().reload();
+         //playerObjects.getConfig().reload();
+         playerObjects.getConfigController().restoreFromSource( ConfigSource.WorkingCopy );
          playerObjects.getConfig().configUpdated();
          revertConfig();
       }

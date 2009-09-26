@@ -142,11 +142,15 @@ public class CSAI extends AbstractOOAI implements IHughAI
 
          logfile = playerObjects.getLogFile();
          logfile.Init( getAIDirectoryPath() + "team" + team + ".log" );
-         logfile.WriteLine( "Hugh AI started v" + AIVersion+ ", team " + team + 
+         logfile.writeLine( "Opening log" );
+         logfile.WriteLine( "Hugh AI started v" + AIVersion + ", team " + team + 
                " map " + aicallback.getMap().getName() + " mod " + aicallback.getMod().getHumanName() );
 
          //         if( new File( getAIDirectoryPath() + File.separator + "debug.flg" ).exists() ) // if this file exists, activate debug mode; saves manually changing this for releases
          config = playerObjects.getConfig();
+         
+         playerObjects.getOptionsFromStartScript();
+         
          if( config.isDebug() ) {
             logfile.WriteLine( "Toggling debug on" );
             DebugOn = true;

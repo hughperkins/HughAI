@@ -173,9 +173,13 @@ public class ReflectionHelper {
    
    void writeDebugLine( String message ) {
       // uncomment for debugging, you'll need it most likely ;-) :-D
-//      playerObjects.getLogFile().WriteLine( padLeft( "", " ", indent ) + message );
+//      debug( message );
    }
    
+   void debug( Object message ) {
+      playerObjects.getLogFile().WriteLine( "" + this.getClass().getSimpleName() + ": " + message );
+   }
+      
    public void saveObjectToElement ( Element parentelement, Object object ) throws Exception {
 
       if( object == null ) {
@@ -210,17 +214,17 @@ public class ReflectionHelper {
       if( fieldclass == String.class ) {
          return (String)value;
       }
-      if( fieldclass == boolean.class ) {
+      if( fieldclass == boolean.class || fieldclass == Boolean.class ) {
          if( (Boolean)value ){
             return "yes";
          } else {
             return "no";
          }
       }
-      if( fieldclass == int.class ) {
+      if( fieldclass == int.class || fieldclass == Integer.class ) {
          return "" + value;
       }
-      if( fieldclass == float.class ) {
+      if( fieldclass == float.class || fieldclass == Float.class ) {
          return "" + value;
       }
       throw new RuntimeException("Config.primitiveToString: unknown field class: " + fieldclass.getName() );      
@@ -234,15 +238,15 @@ public class ReflectionHelper {
          element.setAttribute(fieldname, primitiveasstring );
          return;
       }
-      if( fieldclass == boolean.class ) {
+      if( fieldclass == boolean.class || fieldclass == Boolean.class ) {
          element.setAttribute(fieldname, primitiveToString( fieldclass, value ) );
          return;
       }
-      if( fieldclass == int.class ) {
+      if( fieldclass == int.class || fieldclass == Integer.class ) {
          element.setAttribute(fieldname, primitiveToString( fieldclass, value ) );
          return;
       }
-      if( fieldclass == float.class ) {
+      if( fieldclass == float.class || fieldclass == Float.class ) {
          element.setAttribute(fieldname, primitiveToString( fieldclass, value ) );
          return;
       }
@@ -327,19 +331,19 @@ public class ReflectionHelper {
             }
             return stringTofieldValue( fieldclass, element.getAttribute(fieldname) );
          }
-         if( fieldclass == boolean.class ) {
+         if( fieldclass == boolean.class || fieldclass == Boolean.class ) {
             if( !element.hasAttribute( fieldname )) {
                return null;
             }
             return stringTofieldValue( fieldclass, element.getAttribute(fieldname) );
          }
-         if( fieldclass == int.class ) {
+         if( fieldclass == int.class || fieldclass == Integer.class ) {
             if( !element.hasAttribute( fieldname )) {
                return null;
             }
             return stringTofieldValue( fieldclass, element.getAttribute(fieldname) );
          }
-         if( fieldclass == float.class ) {
+         if( fieldclass == float.class || fieldclass == Float.class ) {
             if( !element.hasAttribute( fieldname )) {
                return null;
             }
@@ -429,23 +433,80 @@ public class ReflectionHelper {
       throw new RuntimeException("elementToFieldValue: unknown field class: " + fieldclass.getName() );
    }
 
-   Object stringTofieldValue( Class<?> fieldclass, String stringValue ) {
+   public Object stringTofieldValue( Class<?> fieldclass, String stringValue ) {
       if( fieldclass == String.class ) {
          return stringValue;
       }
-      if( fieldclass == boolean.class ) {
+      if( fieldclass == boolean.class || fieldclass == Boolean.class ) {
          stringValue = stringValue.toLowerCase();
          if( stringValue.equals( "yes" ) || stringValue.equals("true") ) {
             return true;
          }
          return false;
       }
-      if( fieldclass == int.class ) {
+      if( fieldclass == int.class || fieldclass == Integer.class ) {
          return Integer.parseInt( stringValue );
       }
-      if( fieldclass == float.class ) {
+      if( fieldclass == float.class || fieldclass == Float.class ) {
          return Float.parseFloat( stringValue );
       }
       throw new RuntimeException("Config.stringTofieldValue: unknown field class: " + fieldclass.getName() );
+   }
+   
+   // note: don't copy anything with Exclude annotation set
+   // destination is NOT reallocated
+   public void deepCopy( Object source, Object destination ) {
+      deepCopy(source, destination, true );
+   }
+   
+   // note: don't copy anything with Exclude annotation set
+   // destination is NOT reallocated
+   public void deepCopy( Object source, Object destination, boolean copynulls ) {
+      try {
+         for( Field field : source.getClass().getDeclaredFields() ) {
+            Exclude exclude = field.getAnnotation( Exclude.class );
+            if( exclude == null ) { // if it's not null, we've excluded it
+               Object sourcevalue = field.get( source );
+               if( sourcevalue == null ) {
+                  if( copynulls ) {
+                     field.set( destination, null );
+                  } // else dont copy the null
+               } else {
+//                  if( !copynulls ) {
+                     debug("copying field " + field.getName() );
+//                  }
+                  field.set( destination, deepCopyGeneric( sourcevalue ) );
+               }
+            }
+         }
+      } catch( Exception e) {
+         playerObjects.getLogFile().writeStackTrace( e );
+         throw new RuntimeException( e );
+      }
+   }
+   
+   // generic deepcopy routine, from http://javatechniques.com/blog/faster-deep-copies-of-java-objects/
+   // this will allocate a brand new object for the destination
+   Object deepCopyGeneric( Object source ) {
+      try {
+         ByteArrayOutputStream bos = new ByteArrayOutputStream();
+         ObjectOutputStream out = new ObjectOutputStream(bos);
+         out.writeObject(source);
+         out.flush();
+         out.close();
+   
+         ObjectInputStream in = new ObjectInputStream(
+             new ByteArrayInputStream(bos.toByteArray()));
+         return in.readObject();         
+      } catch( Exception e ) {
+         playerObjects.getLogFile().writeStackTrace( e );
+         throw new RuntimeException( e );
+      }
+   }
+   
+   // don't copy anything across that is null
+   // note: don't copy anything with Exclude annotation set
+   public void deepCopyNonNullOnly( Object source, Object destination ) {
+      deepCopy(source, destination, false );
    }
 }

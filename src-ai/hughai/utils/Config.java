@@ -47,7 +47,11 @@ import java.lang.annotation.*;
 //
 // For documentation on what types are supported and so on,
 // please see ReflectionHelper.java
-public class Config implements ConfigHelper.IConfig {
+//
+// IMPORTANT: MAKE SURE TO USE CLASS TYPES (INTEGER, FLOAT ETC,)RATHER
+// THAN PRIMITIVE TYPES, SO WE CAN SET THESE VALUES TO NULL TO SHOW
+// THEIR VALUES DONT EXIST (SEE CONFIGCONTROLLER, CONFIGSTARTSCRIPTREADER ...)
+public class Config {
    public interface ConfigListener {
       public void configUpdated();
    }
@@ -77,9 +81,9 @@ public class Config implements ConfigHelper.IConfig {
         + ":$aidir/../../../Interfaces/Java/0.1/jlib/jna.jar" 
         + ":$aidir/../../../Interfaces/Java/0.1/jlib/vecmath.jar"; 
 
-   int maxTimeToConserveMobileEnemyOnThreatMapGameSeconds = 30;
+   Integer maxTimeToConserveMobileEnemyOnThreatMapGameSeconds = 30;
    
-   boolean GUIActivated = true; // do we show the ui?
+   Boolean GUIActivated = true; // do we show the ui?
    
    String defaultWorkflowName = "default";
 
@@ -100,7 +104,7 @@ public class Config implements ConfigHelper.IConfig {
    List<String> basicconstructionvehicleunitnames = Arrays.asList( new String[] {
          "armcv", "corcv" } );
    
-   int welcomeMessageSecondsInterval = 10;
+   Integer welcomeMessageSecondsInterval = 10;
    
    @ListTypeInfo(String.class)
    List<String> welcomeMessages = Arrays.asList( new String[] {
@@ -112,26 +116,26 @@ public class Config implements ConfigHelper.IConfig {
        }
    );
    
-   int maxLinesOnMap = 1000; // spring, or maybe java interface, crashes with too many lines...
+   Integer maxLinesOnMap = 1000; // spring, or maybe java interface, crashes with too many lines...
    
-   float maxvehicleslope = 0.08f;  // maximum slope a vehicle can use. arbitrary cutoff, for simplicity
-   float maxinfantryslope = 0.33f; // maximum slope infantry can use.  arbitrary cutoff, for simplicity
+   Float maxvehicleslope = 0.08f;  // maximum slope a vehicle can use. arbitrary cutoff, for simplicity
+   Float maxinfantryslope = 0.33f; // maximum slope infantry can use.  arbitrary cutoff, for simplicity
 
-   int mapDrawGranularity = 8; // in a jna-free world, we wouldn't need this ;-)
+   Integer mapDrawGranularity = 8; // in a jna-free world, we wouldn't need this ;-)
                                // but we need to do something to make up for the
                                // insane jna lag ;-)
                                // this is in map squares
          // Addendum: also ,with a line limit of 1000 lines max, this probably needs to be set
          // to at least 8 or so, otherwise map drawing will run out of lines...
-   int tickFrameInterval = 30;
-   int losMapInterpolationDistance = 100;
-   int losrefreshallintervalframecount = 2000;
-   int losmapdistancethresholdforunitupdate = 100;
+   Integer tickFrameInterval = 30;
+   Integer losMapInterpolationDistance = 100;
+   Integer losrefreshallintervalframecount = 2000;
+   Integer losmapdistancethresholdforunitupdate = 100;
 
    String typicallevel1tankunitdefname = "armstump";
    
-   boolean debug = false;
-   boolean mapHack = false;
+   Boolean debug = false;
+   Boolean mapHack = false;
 
    @ListTypeInfo(String.class)
    List<String> reconnaissanceunitnames = Arrays.asList( 
@@ -155,30 +159,21 @@ public class Config implements ConfigHelper.IConfig {
       this.playerObjects = playerObjects;
    }
    
-   @Exclude
-   ConfigHelper<Config> configHelper;
+//   @Exclude
+//   ConfigFileReadWriter<Config> configFileHelper;
    
    public void init() {
-      configHelper = new ConfigHelper<Config>( playerObjects );
-      configHelper.loadConfig( this );      
+//      configFileHelper = new ConfigFileReadWriter<Config>( playerObjects );
+//      configFileHelper.loadConfig( this );      
    }
    
-   public void reload(){
-      configHelper.loadConfig( this );            
-   }
-   
-   public void save() {
-      configHelper.saveConfig( this );                  
-   }
-
-   @Override
-   public String getConfigPath() {
-      String configPath = playerObjects.getCSAI().getAIDirectoryPath() + playerObjects.getAicallback()
-         .getMod().getShortName() + "_" + 
-         playerObjects.getSideManager().getSide() + ".xml";
-      playerObjects.getLogFile().WriteLine( "Config path: " + configPath );
-      return configPath;
-   }
+//   public void reload(){
+//      configFileHelper.loadConfig( this );            
+//   }
+//   
+//   public void save() {
+//      configFileHelper.saveConfig( this );                  
+//   }
 
    public String getMetalspotmarkerunitname() {
       return metalspotmarkerunitname;
@@ -196,11 +191,11 @@ public class Config implements ConfigHelper.IConfig {
       this.usedmetalspotmarkerunitname = usedmetalspotmarkerunitname;
    }
 
-   public boolean isDebug() {
+   public Boolean isDebug() {
       return debug;
    }
 
-   public void setDebug( boolean debug ) {
+   public void setDebug( Boolean debug ) {
       this.debug = debug;
    }
 
@@ -228,37 +223,37 @@ public class Config implements ConfigHelper.IConfig {
       this.typicallevel1tankunitdefname = typicallevel1tankunitdefname;
    }
 
-   public int getTickFrameInterval() {
+   public Integer getTickFrameInterval() {
       return tickFrameInterval;
    }
 
-   public void setTickFrameInterval( int tickFrameInterval ) {
+   public void setTickFrameInterval( Integer tickFrameInterval ) {
       this.tickFrameInterval = tickFrameInterval;
    }
 
-   public int getLosMapInterpolationDistance() {
+   public Integer getLosMapInterpolationDistance() {
       return losMapInterpolationDistance;
    }
 
-   public void setLosMapInterpolationDistance( int losMapInterpolationDistance ) {
+   public void setLosMapInterpolationDistance( Integer losMapInterpolationDistance ) {
       this.losMapInterpolationDistance = losMapInterpolationDistance;
    }
 
-   public int getLosrefreshallintervalframecount() {
+   public Integer getLosrefreshallintervalframecount() {
       return losrefreshallintervalframecount;
    }
 
    public void setLosrefreshallintervalframecount(
-         int losrefreshallintervalframecount ) {
+         Integer losrefreshallintervalframecount ) {
       this.losrefreshallintervalframecount = losrefreshallintervalframecount;
    }
 
-   public int getLosmapdistancethresholdforunitupdate() {
+   public Integer getLosmapdistancethresholdforunitupdate() {
       return losmapdistancethresholdforunitupdate;
    }
 
    public void setLosmapdistancethresholdforunitupdate(
-         int losmapdistancethresholdforunitupdate ) {
+         Integer losmapdistancethresholdforunitupdate ) {
       this.losmapdistancethresholdforunitupdate = losmapdistancethresholdforunitupdate;
    }
 
@@ -280,35 +275,35 @@ public class Config implements ConfigHelper.IConfig {
       this.spreadsearchnextmovemarkerunitname = spreadsearchnextmovemarkerunitname;
    }
 
-   public int getMapDrawGranularity() {
+   public Integer getMapDrawGranularity() {
       return mapDrawGranularity;
    }
 
-   public void setMapDrawGranularity( int mapDrawGranularity ) {
+   public void setMapDrawGranularity( Integer mapDrawGranularity ) {
       this.mapDrawGranularity = mapDrawGranularity;
    }
 
-   public float getMaxvehicleslope() {
+   public Float getMaxvehicleslope() {
       return maxvehicleslope;
    }
 
-   public void setMaxvehicleslope( float maxvehicleslope ) {
+   public void setMaxvehicleslope( Float maxvehicleslope ) {
       this.maxvehicleslope = maxvehicleslope;
    }
 
-   public float getMaxinfantryslope() {
+   public Float getMaxinfantryslope() {
       return maxinfantryslope;
    }
 
-   public void setMaxinfantryslope( float maxinfantryslope ) {
+   public void setMaxinfantryslope( Float maxinfantryslope ) {
       this.maxinfantryslope = maxinfantryslope;
    }
 
-   public int getMaxLinesOnMap() {
+   public Integer getMaxLinesOnMap() {
       return maxLinesOnMap;
    }
 
-   public void setMaxLinesOnMap( int maxLinesOnMap ) {
+   public void setMaxLinesOnMap( Integer maxLinesOnMap ) {
       this.maxLinesOnMap = maxLinesOnMap;
    }
 
@@ -320,11 +315,11 @@ public class Config implements ConfigHelper.IConfig {
       this.welcomeMessages = welcomeMessages;
    }
 
-   public int getWelcomeMessageSecondsInterval() {
+   public Integer getWelcomeMessageSecondsInterval() {
       return welcomeMessageSecondsInterval;
    }
 
-   public void setWelcomeMessageSecondsInterval( int welcomeMessageSecondsInterval ) {
+   public void setWelcomeMessageSecondsInterval( Integer welcomeMessageSecondsInterval ) {
       this.welcomeMessageSecondsInterval = welcomeMessageSecondsInterval;
    }
 
@@ -340,18 +335,18 @@ public class Config implements ConfigHelper.IConfig {
       this.defaultWorkflowName = defaultWorkflowName;
    }
 
-   public boolean isMapHack() {
+   public Boolean isMapHack() {
       return mapHack;
    }
 
-   public void setMapHack( boolean mapHack ) {
+   public void setMapHack( Boolean mapHack ) {
       this.mapHack = mapHack;
    }
-   public int getMaxTimeToConserveMobileEnemyOnThreatMapGameSeconds() {
+   public Integer getMaxTimeToConserveMobileEnemyOnThreatMapGameSeconds() {
       return maxTimeToConserveMobileEnemyOnThreatMapGameSeconds;
    }
    public void setMaxTimeToConserveMobileEnemyOnThreatMapGameSeconds(
-         int maxTimeToConserveMobileEnemyOnThreatMapGameSeconds ) {
+         Integer maxTimeToConserveMobileEnemyOnThreatMapGameSeconds ) {
       this.maxTimeToConserveMobileEnemyOnThreatMapGameSeconds = maxTimeToConserveMobileEnemyOnThreatMapGameSeconds;
    }
    public String getConsoleclasspath() {
@@ -360,10 +355,10 @@ public class Config implements ConfigHelper.IConfig {
    public void setConsoleclasspath( String consoleclasspath ) {
       this.consoleclasspath = consoleclasspath;
    }
-   public boolean isGUIActivated() {
+   public Boolean isGUIActivated() {
       return GUIActivated;
    }
-   public void setGUIActivated( boolean gUIActivated ) {
+   public void setGUIActivated( Boolean gUIActivated ) {
       GUIActivated = gUIActivated;
    }
    public List<String> getCommanderunitnames() {

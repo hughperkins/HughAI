@@ -92,6 +92,10 @@ public class PlayerObjects {
       //this.resourceManager = new ResourceManager( CSAI.aicallback );
    }
    
+   void debug( Object message ) {
+      getLogFile().writeLine( "PlayerObjects: " + message );
+   }
+
    public void dispose() throws Exception {
       csais.clear();
       for( Field field : this.getClass().getFields() ) {
@@ -109,13 +113,27 @@ public class PlayerObjects {
    public synchronized CSAI getCSAI(){
       return CSAI; 
    }
+   
+   ConfigController configController;
+   public ConfigController getConfigController() {
+      if( configController != null ) {
+         return configController;
+      }
+      System.out.println("constructing configController ...");
+      configController = new ConfigController( this );
+      System.out.println("configController constructed ok");
+      return configController;
+   }   
 
    public Config getConfig() {
       if( config != null ) {
          return config;
       }
-      config = new Config( this );
-      config.init();
+      // note: this bit is different from many of the methods in
+      // playerobjects
+      System.out.println("constructing config ...");
+      config = getConfigController().getConfig();
+      System.out.println("config constructed ok");
       return config;
    }
    
@@ -155,7 +173,9 @@ public class PlayerObjects {
       if( frameController != null ){
          return frameController;
       }
+      System.out.println("constructing frameController ...");
       frameController = new FrameController(this);
+      System.out.println(" ... frameController constructed");
       return frameController;
    }
 
@@ -187,12 +207,25 @@ public class PlayerObjects {
       return exceptionList;
    }
    
+   OptionsFromStartScript optionsFromStartScript;
+   public synchronized OptionsFromStartScript getOptionsFromStartScript() {
+      if( optionsFromStartScript != null ){
+         return optionsFromStartScript;
+      }
+      System.out.println("constructing OptionsFromStartScript ...");
+      optionsFromStartScript = new OptionsFromStartScript(this);
+      System.out.println("optionsFromStartScript constructed ok");
+      return optionsFromStartScript;
+   }
+   
    SideManager sideManager;
    public synchronized SideManager getSideManager() {
       if( sideManager != null ) {
          return sideManager;
       }
+      debug("instantiating sidemanager... ");
       sideManager = new SideManager( this );
+      debug(" ... sidemanager instantiated ");
       return sideManager;
    }
 
@@ -349,6 +382,7 @@ public class PlayerObjects {
       }
       System.out.println("Creating new timehelper");
       timeHelper = new TimeHelper( this );
+      System.out.println("timehelper constructed ok");
       return timeHelper;
    }
 
@@ -413,6 +447,7 @@ public class PlayerObjects {
          return logfile;
       }
       logfile = new LogFile(this);
+      System.out.println("logfile constructed ok");
       return logfile;
    }
 

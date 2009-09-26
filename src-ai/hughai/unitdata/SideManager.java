@@ -44,14 +44,14 @@ public class SideManager {
    }
    
    void init() {
-      String startscriptcontents = playerObjects.getAicallback().getGame().getSetupScript();
+//      String startscriptcontents = playerObjects.getAicallback().getGame().getSetupScript();
 //      debug( "start script: " );
 //      debug( startscriptcontents );
       
       int ourteamnumber = playerObjects.getAicallback().getTeamId();
       debug("our team number: " + ourteamnumber );
       
-      TdfParser tdfParser = new TdfParser( playerObjects, startscriptcontents );
+//      TdfParser tdfParser = new TdfParser( playerObjects, startscriptcontents );
 //      this.side = tdfParser.RootSection.GetStringValue( "GAME/TEAM" + ourteamnumber + "/Side" ).toLowerCase();
       this.side = playerObjects.getAicallback().getGame().getTeamSide( ourteamnumber );
 //      tdfParser.RootSection.SubSections.

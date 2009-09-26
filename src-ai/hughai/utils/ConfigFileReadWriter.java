@@ -36,34 +36,50 @@ import hughai.utils.*;
 // then the config will not be loaded, but simply use the default
 // values in the Config class
 // also, debug will be forced to true.
-public class ConfigHelper<T extends ConfigHelper.IConfig> {
+public class ConfigFileReadWriter<T> implements ConfigSourceReadWriter<T> {
 //   boolean overwritefileconfig = false; // overrides other stuff, and turns on debug
+//   
+//   public interface IConfig {
+//      public String getConfigPath();
+//      public void setDebug( boolean debug );
+//   }
    
-   public interface IConfig {
-      public String getConfigPath();
-      public void setDebug( boolean debug );
+   @Override
+   public boolean canRead(){
+      return true;
+   }
+   
+   @Override
+   public boolean canWrite(){
+      return true;
    }
    
    PlayerObjects playerObjects;
    
    ReflectionHelper reflectionHelper;
 
-   public ConfigHelper( PlayerObjects playerObjects ) {
+   public ConfigFileReadWriter( PlayerObjects playerObjects ) {
       this.playerObjects = playerObjects;
       reflectionHelper = new ReflectionHelper( playerObjects );
      // loadConfig();
    }
 
+   void debug( Object message ) {
+      playerObjects.getLogFile().writeLine( "ConfigFileReadWrite: " + message );
+   }
+
+   @Override
    public void loadConfig( T config ) {
-      String configpath = config.getConfigPath();
-      boolean overwritefileconfig = false;
-      if( new File( playerObjects.getCSAI().getAIDirectoryPath() + "debug.flg" ).exists() ) {
-         overwritefileconfig = true;
-      }
-      if( overwritefileconfig ) {
-         config.setDebug( true );
-      }
-      if( !overwritefileconfig && new File( configpath ).exists() ) {
+      String configpath = getConfigPath();
+//      boolean overwritefileconfig = false;
+//      if( new File( playerObjects.getCSAI().getAIDirectoryPath() + "debug.flg" ).exists() ) {
+//         overwritefileconfig = true;
+//      }
+//      if( overwritefileconfig ) {
+//         config.setDebug( true );
+//      }
+//      if( !overwritefileconfig && new File( configpath ).exists() ) {
+      if( new File( configpath ).exists() ) {
          reflectionHelper.loadObjectFromFile( configpath, config );
          validate();
       }
@@ -73,7 +89,17 @@ public class ConfigHelper<T extends ConfigHelper.IConfig> {
    void validate() {
    }
 
+   @Override
    public void saveConfig( T config ) {
-      reflectionHelper.saveObjectToFile( config.getConfigPath(), config );
+      reflectionHelper.saveObjectToFile( getConfigPath(), config );
+   }
+   
+   String getConfigPath() {
+      debug("getconfigpath()");
+      String configPath = playerObjects.getCSAI().getAIDirectoryPath() + playerObjects.getAicallback()
+         .getMod().getShortName() + "_" + 
+         playerObjects.getSideManager().getSide() + ".xml";
+      debug( "Config path: " + configPath );
+      return configPath;
    }
 }

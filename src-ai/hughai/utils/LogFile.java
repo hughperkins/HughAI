@@ -102,13 +102,13 @@ public class LogFile
    }
 
    // arguably we shouldnt auto-flush. because it slows writes, up to you
-   public void WriteLine( String message )
+   public void WriteLine( Object message )
    {
       //sw.WriteLine(DateTime.Now.toString("hh:mm:ss.ff") + ": " + message);
 //      printWriter.println(playerObjects.getTimeHelper().GetCurrentGameTimeString() + ": " + message);
 //      System.out.println(playerObjects.getTimeHelper().GetCurrentGameTimeString() + ": " + message);
       
-      logger.info( message );
+      logger.info( "" + message );
       
       if( AutoFlushOn )
       {
@@ -116,6 +116,15 @@ public class LogFile
 //         printWriter.flush();
       }
       //sw.Flush();
+   }
+   
+   public void writeLine( Object message ) {
+      WriteLine( message );
+   }
+   
+   public void writeStackTrace( Exception e ) {
+      String stacktrace = Formatting.exceptionToStackTrace( e );
+      WriteLine( stacktrace );
    }
 
    public void Shutdown()
