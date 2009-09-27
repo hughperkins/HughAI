@@ -26,30 +26,22 @@ local options = {
 		key="maphack",
 		name="Activatd Maphack",
 		desc="does the AI use maphack to find your units?",
-		type='boolean',
+		type='bool',
 		def=true,
 	},
 	{
 		key="guiactivated",
 		name="Activate GUI",
 		desc="Activates GUI. Mostly useful for developers.  Make sure to play in windowed mode if this is activated!",
-		type='boolean',
+		type='bool',
 		def=true,
 	},
 	{
 		key="debug",
 		name="Activated debug",
 		desc="Shows lots of debug info, lines, ghost units and so on, so you can see what the AI is thinking.  Turn off for normal usage."
-		type='boolean',
+		type='bool',
 		def=false,
-	},
-	{
-		key="defaultworkflowname",
-		name="Default workflow name",
-		desc="Selects the build workflow to use.  By default there is only the default workflow, but you can create others, and switch between them here.",
-		type='list',
-		def='default',
-		items='default',
 	},
 }
 
