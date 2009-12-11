@@ -29,7 +29,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import com.springrts.ai.*;
-import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.CSAI;
 import hughai.PlayerObjects;

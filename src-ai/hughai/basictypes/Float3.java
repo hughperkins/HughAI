@@ -25,7 +25,7 @@ package hughai.basictypes;
 
 import org.w3c.dom.Element;
 
-import com.springrts.ai.*;
+import com.springrts.ai.oo.AIFloat3;
 
 // like AIFloat3 class, with vector operations etc added
 public class Float3

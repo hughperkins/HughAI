@@ -26,7 +26,7 @@ import java.util.Map;
 
 
 import com.springrts.ai.*;
-import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.*;
 import hughai.building.Workflows.Workflow;
@@ -542,7 +542,7 @@ public class WorkflowController
          {
             ActiveConstructors.add(constructor);
          }
-         drawingUtils.DrawUnit(targetunitname.toUpperCase(), buildsite, 0.0f, 1, aicallback.getTeamId(), true, true);
+         drawingUtils.DrawUnit(targetunitname.toUpperCase(), buildsite, 0.0f, 1, aicallback.getSkirmishAI().getTeamId(), true, true);
          giveOrderWrapper.BuildUnit(constructor, targetunitname, buildsite);
          return buildsite;
       }
@@ -554,7 +554,7 @@ public class WorkflowController
          {
             ActiveConstructors.add(constructor);
          }
-         drawingUtils.DrawUnit(targetunitdef.getName().toUpperCase(), factorypos, 0.0f, 200, aicallback.getTeamId(), true, true);
+         drawingUtils.DrawUnit(targetunitdef.getName().toUpperCase(), factorypos, 0.0f, 200, aicallback.getSkirmishAI().getTeamId(), true, true);
          giveOrderWrapper.BuildUnit(constructor, targetunitname );
          return factorypos;
       }

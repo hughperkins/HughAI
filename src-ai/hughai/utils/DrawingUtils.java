@@ -23,12 +23,11 @@
 
 package hughai.utils;
 
-import java.util.*;
+import java.util.Stack;
 
 import com.springrts.ai.*;
-import com.springrts.ai.command.*;
 import com.springrts.ai.oo.*;
-import com.springrts.ai.oo.Map;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.CSAI;
 import hughai.GameAdapter;
@@ -117,8 +116,11 @@ public class DrawingUtils
       for( int z = 0; z < mapheight; z+= 100 ) {
          for( int x = 0; x < mapwidth; x+= 100 ) {
             float elevation = aicallback.getMap().getElevationAt( x, z );
-            csai.handleEngineCommand(
-                  new RemovePointDrawAICommand( new AIFloat3( x, elevation, z )));
+            try {
+               aicallback.getMap().getDrawer().deletePointsAndLines(new AIFloat3( x, elevation, z ));
+            } catch (CallbackAIException ex) {
+               logfile.writeStackTrace(ex);
+            }
          }
 
       }
@@ -153,8 +155,11 @@ public class DrawingUtils
          }
          pushCheating();
          setCheating( false );
-         csai.handleEngineCommand(
-               new AddLineDrawAICommand(startpos.toAIFloat3(), endpos.toAIFloat3()));
+         try {
+            aicallback.getMap().getDrawer().addLine(startpos.toAIFloat3(), endpos.toAIFloat3());
+         } catch (CallbackAIException ex) {
+            logfile.writeStackTrace(ex);
+         }
          linesDrawn++;
          popCheating();
    }
@@ -183,13 +188,17 @@ public class DrawingUtils
    //      AddLine(startpos, endpos);
    //   }
 
-   public void DrawUnit( int toDrawUnitDefId, TerrainPos pos, float rotation, int lifeTime, int teamId, boolean transparent, boolean drawBorder, int facing) {
-      csai.handleEngineCommand(
-            new DrawUnitDrawerAICommand( toDrawUnitDefId, pos.toAIFloat3(), rotation, lifeTime, teamId, transparent, drawBorder, facing));		
+   public void DrawUnit( UnitDef toDrawUnitDef, TerrainPos pos, float rotation, int lifeTime, int teamId, boolean transparent, boolean drawBorder, int facing) {
+
+      try {
+         aicallback.getMap().getDrawer().drawUnit(toDrawUnitDef, pos.toAIFloat3(), rotation, lifeTime, teamId, transparent, drawBorder, facing);
+      } catch (CallbackAIException ex) {
+         logfile.writeStackTrace(ex);
+      }
    }
 
    public void DrawUnit( String defname, TerrainPos pos ) {
-      DrawUnit( defname, pos, 0, 200, aicallback.getTeamId(), true, false );
+      DrawUnit( defname, pos, 0, 200, aicallback.getSkirmishAI().getTeamId(), true, false );
    }
 
    public void DrawUnit( String defname, TerrainPos pos, float rotation, int lifeTime, int teamId, boolean transparent, boolean drawBorder ) {
@@ -198,15 +207,21 @@ public class DrawingUtils
       if( toDrawUnitDef == null ){ throw new RuntimeException( "unit " + defname + " doesn't exist."); }
 
       lifeTime = 200;
-      csai.handleEngineCommand(
-            new DrawUnitDrawerAICommand(toDrawUnitDef, pos.toAIFloat3(), rotation, lifeTime, teamId, transparent, drawBorder, 0 ) );		
+      try {
+         aicallback.getMap().getDrawer().drawUnit(toDrawUnitDef, pos.toAIFloat3(), rotation, lifeTime, teamId, transparent, drawBorder, 0);
+      } catch (CallbackAIException ex) {
+         logfile.writeStackTrace(ex);
+      }
    }
 
    public void drawText( TerrainPos pos, String text ) {
       pushCheating();
       setCheating( false );
-      csai.handleEngineCommand(
-            new AddPointDrawAICommand( pos.toAIFloat3(), text ) );
+      try {
+         aicallback.getMap().getDrawer().addPoint(pos.toAIFloat3(), text);
+      } catch (CallbackAIException ex) {
+         logfile.writeStackTrace(ex);
+      }
       popCheating();
    }
 

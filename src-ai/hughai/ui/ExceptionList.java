@@ -29,7 +29,7 @@ import java.util.Map;
 import javax.swing.*;
 
 import com.springrts.ai.*;
-import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.*;
 import hughai.EnemyTracker.EnemyAdapter;

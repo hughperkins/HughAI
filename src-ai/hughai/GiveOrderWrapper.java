@@ -21,10 +21,12 @@
 
 package hughai;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.springrts.ai.*;
 import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.basictypes.*;
 import hughai.unitdata.*;
@@ -147,7 +149,7 @@ public class GiveOrderWrapper
    {
       UnitDef targetunitdef = buildTable.getUnitDefByName( targetunitname.toLowerCase() );
       drawingUtils.DrawUnit( targetunitname, pos, 0, 100, 
-            aicallback.getTeamId(), true, true );
+            aicallback.getSkirmishAI().getTeamId(), true, true );
       GiveOrder( new OOPCommands.BuildCommand( builder, targetunitdef, pos, targetunitname ) );
    }
 
@@ -198,11 +200,9 @@ public class GiveOrderWrapper
          recentcommands.add( new CommandInfo( gametime, command) );
          allcommands.add(new CommandInfo(gametime, command));
       }
-      if (aicallback.getEngine().handleCommand(
-            com.springrts.ai.AICommandWrapper.COMMAND_TO_ID_ENGINE,
-            -1, 
-            command.ToSpringCommand()) == -1 )
-      {
+      try {
+         command.execute();
+      } catch (CallbackAIException ex) {
          throw new RuntimeException( "GiveOrder failed");
       }
    }

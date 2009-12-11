@@ -48,7 +48,7 @@ public class SideManager {
 //      debug( "start script: " );
 //      debug( startscriptcontents );
       
-      int ourteamnumber = playerObjects.getAicallback().getTeamId();
+      int ourteamnumber = playerObjects.getAicallback().getSkirmishAI().getTeamId();
       debug("our team number: " + ourteamnumber );
       
 //      TdfParser tdfParser = new TdfParser( playerObjects, startscriptcontents );

@@ -21,7 +21,7 @@
 // ======================================================================================
 //
 
-package hughai.loader;
+/*package hughai.loader;
 
 
 import com.springrts.ai.oo.*;
@@ -38,4 +38,4 @@ public class HughAILoaderFactory extends OOAIFactory {
 	public OOAI createAI(int teamId, OOAICallback callback) {
 		return new HughAILoader(teamId, callback);
 	}
-}
+}*/

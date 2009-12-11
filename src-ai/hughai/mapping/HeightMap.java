@@ -21,7 +21,6 @@
 
 package hughai.mapping;
 
-import java.util.*;
 import java.io.*;
 
 
@@ -30,7 +29,7 @@ import org.w3c.dom.Element;
 
 import com.springrts.ai.*;
 import com.springrts.ai.oo.*;
-import com.springrts.ai.oo.Map;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.CSAI;
 import hughai.PlayerObjects;
@@ -292,7 +291,7 @@ public class HeightMap
    String getCacheFilepath() {
       String MapName = gameMap.getName();
       return csai.getCacheDirectoryPath() + File.separator +  MapName + "_heightmap"
-      + "_" + playerObjects.getAicallback().getTeamId() + "_" + version + ".dat";      
+      + "_" + playerObjects.getAicallback().getSkirmishAI().getTeamId() + "_" + version + ".dat";      
    }
 
    // save cache to speed up load times.  storing as xml is sloooowwww

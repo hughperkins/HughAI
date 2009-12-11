@@ -27,7 +27,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.*;
 

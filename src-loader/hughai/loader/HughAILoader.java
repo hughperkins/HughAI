@@ -37,16 +37,16 @@ import java.text.*;
 import java.util.logging.Formatter;
 
 import com.springrts.ai.*;
-import com.springrts.ai.command.*;
 import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 
-public class HughAILoader extends AbstractOOAI implements OOAI {
+public class HughAILoader extends AbstractOOAI implements AI {
    final String underlyingJarFileName = "UnderlyingAI.jar";
    final String underlyingClassNameToLoad = "hughai.CSAI";
    final String reloadCommandString = ".hughai reload";
 
-   private int teamId = -1;
+   private int skirmishId = -1;
    private Properties info = null;
    private Properties optionValues = null;
    private OOAICallback callback = null;
@@ -55,27 +55,23 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
 
    private static final int DEFAULT_ZONE = 0;
 
-   HughAILoader(int teamId, OOAICallback callback) {
+   HughAILoader() {}
 
-      this.teamId = teamId;
-      this.callback = callback;
-   }
-
-   private int handleEngineCommand(AICommand command) {
-      return callback.getEngine().handleCommand(
-            com.springrts.ai.AICommandWrapper.COMMAND_TO_ID_ENGINE,
-            -1, command);
-   }
    private int sendTextMsg(String msg) {
 
-      SendTextMessageAICommand msgCmd
-      = new SendTextMessageAICommand(msg, DEFAULT_ZONE);
-      return handleEngineCommand(msgCmd);
+      try {
+         callback.getGame().sendTextMessage(msg, 0);
+      } catch (Exception ex) {
+         ex.printStackTrace();
+         return 1;
+      }
+
+      return 0;
    }
 
    @Override
-   public int init(int teamId, OOAICallback callback) {
-      this.teamId = teamId;
+   public int init(int skirmishId, OOAICallback callback) {
+      this.skirmishId = skirmishId;
       this.callback = callback;
 
       try {
@@ -83,7 +79,7 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
          //((StorageUser)underlyingAI).setStorage( TransLoadStorage.getInstance() );
 
          if( underlyingAI != null ) {
-            underlyingAI.init( teamId, callback );
+            underlyingAI.init( skirmishId, callback );
          }
       } catch( Exception e ) {
          System.out.println("exception on init:");
@@ -146,11 +142,11 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
       Runtime runtime = Runtime.getRuntime();
       System.out.println( "total: " + longToMeg(runtime.totalMemory() ) +
             " free: " + longToMeg( runtime.freeMemory() )
-            + " used: " + longToMeg( runtime.totalMemory() - runtime.freeMemory() ) );      
+            + " used: " + longToMeg( runtime.totalMemory() - runtime.freeMemory() ) );
    }
 
    void doReloadAI() throws Exception {
-      sendTextMsg( "Reloading ai " + teamId + " ..." );
+      sendTextMsg( "Reloading ai " + skirmishId + " ..." );
       underlyingAI.Shutdown();
       underlyingAI = null;
       System.runFinalization();
@@ -158,7 +154,7 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
       System.gc();
       dumpSystemStats();
       loadUnderlyingAI();
-      underlyingAI.init( teamId, callback );      
+      underlyingAI.init( skirmishId, callback );
       dumpSystemStats();
    }
 
@@ -353,10 +349,10 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
    }
 
    @Override
-   public int playerCommand(List<Unit> units, AICommand command, int playerId) {
+   public int playerCommand(List<Unit> units, int commandTopicId, int playerId) {
       try {
          if( underlyingAI != null ) {
-            return underlyingAI.playerCommand( units, command, playerId );
+            return underlyingAI.playerCommand( units, commandTopicId, playerId );
          }
       } catch( Exception e ) {
          System.out.println("exception on playerCommand:");

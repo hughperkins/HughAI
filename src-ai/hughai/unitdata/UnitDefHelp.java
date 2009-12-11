@@ -4,7 +4,7 @@
 
 package hughai.unitdata;
 
-import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.PlayerObjects;
 import hughai.ResourceManager;

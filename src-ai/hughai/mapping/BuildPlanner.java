@@ -24,7 +24,7 @@
 package hughai.mapping;
 
 import com.springrts.ai.*;
-import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.*;
 import hughai.mapping.MovementMaps.MovementMapPos;

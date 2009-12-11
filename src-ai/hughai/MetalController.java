@@ -26,7 +26,7 @@ package hughai;
 import java.util.*;
 
 import com.springrts.ai.*;
-import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.basictypes.*;
 import hughai.utils.*;

@@ -2,7 +2,7 @@ package hughai;
 
 import java.util.*;
 
-import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 public class ResourceManager {
 	OOAICallback aicallback;

@@ -31,6 +31,7 @@ import org.w3c.dom.*;
 
 import com.springrts.ai.*;
 import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.*;
 import hughai.basictypes.*;

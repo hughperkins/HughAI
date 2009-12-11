@@ -25,7 +25,7 @@ import java.util.*;
 import java.util.Map;
 
 import com.springrts.ai.*;
-import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.basictypes.*;
 import hughai.mapping.*;

@@ -27,8 +27,8 @@ import java.util.*;
 import java.io.*;
 
 import com.springrts.ai.*;
-import com.springrts.ai.command.*;
 import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.ui.MainUI;
 import hughai.utils.*;
@@ -76,16 +76,13 @@ public class CSAI extends AbstractOOAI implements IHughAI
 
    private static final int DEFAULT_ZONE = 0;
 
-   public int handleEngineCommand(AICommand command) {
-      return aicallback.getEngine().handleCommand(
-            com.springrts.ai.AICommandWrapper.COMMAND_TO_ID_ENGINE,
-            -1, command);
-   }
    public void sendTextMessage(String msg) {
 
-      SendTextMessageAICommand msgCmd
-      = new SendTextMessageAICommand(msg, DEFAULT_ZONE);
-      handleEngineCommand(msgCmd);
+      try {
+         aicallback.getGame().sendTextMessage(msg, 0);
+      } catch (Exception ex) {
+         ex.printStackTrace();
+      }
    }
 
    public int Team;

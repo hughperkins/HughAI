@@ -27,6 +27,7 @@ import java.util.*;
 
 import com.springrts.ai.*;
 import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.basictypes.*;
 import hughai.basictypes.Float3.*;
@@ -368,7 +369,7 @@ public class EnemyTracker
       for( Unit enemy : DynamicEnemyLastSeenPos.keySet() ) {
          TerrainPos staticpos = EnemyPosByStaticUnit.get( enemy );
          if( staticpos != null ) {
-            drawingUtils.DrawUnit("ARMAMD", staticpos, 0.0f, 1, aicallback.getTeamId(), true, true);
+            drawingUtils.DrawUnit("ARMAMD", staticpos, 0.0f, 1, aicallback.getSkirmishAI().getTeamId(), true, true);
             drawingUtils.drawText( staticpos, "" + enemy.getUnitId() );
          } else {
             TerrainPos dynamicpos = DynamicEnemyLastSeenPos.get( enemy );
@@ -378,7 +379,7 @@ public class EnemyTracker
                int maxframeagetoshow = 30 *
                   playerObjects.getConfig().getMaxTimeToConserveMobileEnemyOnThreatMapGameSeconds();
                if( frameage < maxframeagetoshow ) {
-                  drawingUtils.DrawUnit("ARMSAM", dynamicpos, 0.0f, 1, aicallback.getTeamId(), true, true);
+                  drawingUtils.DrawUnit("ARMSAM", dynamicpos, 0.0f, 1, aicallback.getSkirmishAI().getTeamId(), true, true);
                   drawingUtils.drawText( dynamicpos, "" + enemy.getUnitId() );
                   dynamicenemieswithpos++;
                }
@@ -394,7 +395,7 @@ public class EnemyTracker
       //      for( Unit enemy : EnemyUnits ) {
       //         Float3 pos = Float3.fromAIFloat3( enemy.getPos() );
       //         if (pos != null && pos != new Float3() ) {
-      //            drawingUtils.DrawUnit("ARMSAM", pos, 0.0f, 50, aicallback.getTeamId(), true, true);
+      //            drawingUtils.DrawUnit("ARMSAM", pos, 0.0f, 50, aicallback.getSkirmishAI().getTeamId(), true, true);
       //         }
       //      }
       //  logfile.WriteLine( "Number enemies: " + EnemyUnitDefByDeployedId.Count );

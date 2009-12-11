@@ -23,6 +23,7 @@ package hughai;
 
 import com.springrts.ai.*;
 import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 // Use this to register a game listener with csai
 public interface GameListener {

@@ -13,12 +13,12 @@
 	set(myJavaPkgFirstPart       "${firstSrcSubDir}")
 
 	# Check if the user wants to compile the AI
-	if    (BUILD_Java_AIINTERFACE)
+	if    (BUILD_Java_AIINTERFACE AND NOT myName MATCHES "${AI_EXCLUDE_REGEX}")
 		set(BUILD_THIS_SKIRMISHAI TRUE)
-	else  (BUILD_Java_AIINTERFACE)
+	else  (BUILD_Java_AIINTERFACE AND NOT myName MATCHES "${AI_EXCLUDE_REGEX}")
 		set(BUILD_THIS_SKIRMISHAI FALSE)
 		message("warning: ${myName} Skirmish AI will not be built!")
-	endif (BUILD_Java_AIINTERFACE)
+	endif (BUILD_Java_AIINTERFACE AND NOT myName MATCHES "${AI_EXCLUDE_REGEX}")
 
 
 	# Compile and install
@@ -29,7 +29,7 @@
 		set(myAiTarget        "${myName}-AI")
 		set(myLoaderSourceTarget  "${myLoaderTarget}-SRC")
 		set(myAiSourceTarget  "${myAiTarget}-SRC")
-		set(myDataDir       "${SKIRMISH_DATA}/${myName}/${myVersion}")
+		set(myDataDir       "${SKIRMISH_AI_DATA}/${myName}/${myVersion}")
 		# CMAKE_CURRENT_BINARY_DIR: .../spring-build-dir/AI/Skirmish/${myName}
 		set(myBuildDir      "${CMAKE_CURRENT_BINARY_DIR}")
 		set(myJavaLoaderBuildDir  "${myBuildDir}/classes/loader")
@@ -46,7 +46,7 @@
 
 		# Create our full Java class-path
 		CreateClasspath(myJavaLibs ${myJLibDir})
-		ConcatClasspaths(myClassPath "${CLASSPATH_Java_AIINTERFACE}" "${myJavaLibs}" ${myAiSourceDir} ${myLoaderSourceDir})
+		ConcatClasspaths(myClassPath "${CLASSPATH_Java_AIINTERFACE}" "${myJavaLibs}" ${myAiSourceDir} ${myLoaderSourceDir} ${JavaOO_AIWRAPPER_JAR_CLASSPATH})
 
 		# Create a list of all the AIs source files
 		file(GLOB_RECURSE myLoaderSources RELATIVE "${myLoaderSourceDir}" FOLLOW_SYMLINKS "${myLoaderSourceDir}/*.java")
@@ -100,6 +100,10 @@
 			WORKING_DIRECTORY "${myAiSourceDir}"
 			COMMENT "  Creating sources archive ${myAiSrcJarFile}" VERBATIM)
 
+		add_custom_target(HughAI
+			COMMENT "  Doing all of HughAI" VERBATIM)
+		add_dependencies(HughAI ${myLoaderTarget} ${myAiTarget} ${myLoaderSourceTarget} ${myAiSourceTarget})
+
 		# Install the data files
 		install(DIRECTORY "${myDir}/data/"                DESTINATION ${myDataDir})
 		# Install the library
@@ -110,5 +114,7 @@
 		install (FILES    "${myBuildDir}/${myLoaderSrcJarFile}" DESTINATION ${myDataDir}/jlib)
 		# Install the sources archive
 		install (FILES    "${myBuildDir}/${myAiSrcJarFile}" DESTINATION ${myDataDir}/jlib)
+		# Install the Java OO Wrapper library
+		install(FILES "${JavaOO_AIWRAPPER_JAR_BIN}" DESTINATION ${myDataDir}/jlib)
 	endif (BUILD_THIS_SKIRMISHAI)
 

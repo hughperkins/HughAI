@@ -26,7 +26,7 @@ package hughai.unitdata;
 import java.util.*;
 
 import com.springrts.ai.*;
-import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.CSAI;
 import hughai.PlayerObjects;

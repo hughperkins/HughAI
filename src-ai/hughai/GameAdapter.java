@@ -21,10 +21,10 @@
 
 package hughai;
 
-import com.springrts.ai.AIFloat3;
-import com.springrts.ai.oo.Unit;
-import com.springrts.ai.oo.UnitDef;
-import com.springrts.ai.oo.WeaponDef;
+import com.springrts.ai.oo.AIFloat3;
+import com.springrts.ai.oo.clb.Unit;
+import com.springrts.ai.oo.clb.UnitDef;
+import com.springrts.ai.oo.clb.WeaponDef;
 
 // use this to register a listener with csai
 public class GameAdapter implements GameListener {
