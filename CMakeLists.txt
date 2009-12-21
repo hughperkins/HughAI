@@ -1,4 +1,4 @@
-### Generic Java Skirmish AI config
+### HughAI config
 #
 
 # ConfigureJavaSkirmishAI()
@@ -6,41 +6,42 @@
 	set(myDir                    "${CMAKE_CURRENT_SOURCE_DIR}")
 	GetLastPathPart(dirName ${myDir})
 	set(myName                   "${dirName}")
-	set(myLoaderSourceDir              "${myDir}/src-loader")
-	set(myAiSourceDir              "${myDir}/src-ai")
+	set(myLoaderSourceDir        "${myDir}/src-loader")
+	set(myAiSourceDir            "${myDir}/src-ai")
 	# If main Java package is "my.ai.pkg", this has to be set to "my".
 	GetFirstSubDirName(firstSrcSubDir ${myLoaderSourceDir})
 	set(myJavaPkgFirstPart       "${firstSrcSubDir}")
 
 	# Check if the user wants to compile the AI
-	if    (BUILD_Java_AIINTERFACE)
+	if    (BUILD_Java_AIINTERFACE AND NOT myName MATCHES "${AI_EXCLUDE_REGEX}")
 		set(BUILD_THIS_SKIRMISHAI TRUE)
-	else  (BUILD_Java_AIINTERFACE)
+	else  (BUILD_Java_AIINTERFACE AND NOT myName MATCHES "${AI_EXCLUDE_REGEX}")
 		set(BUILD_THIS_SKIRMISHAI FALSE)
 		message("warning: ${myName} Skirmish AI will not be built!")
-	endif (BUILD_Java_AIINTERFACE)
+	endif (BUILD_Java_AIINTERFACE AND NOT myName MATCHES "${AI_EXCLUDE_REGEX}")
 
 
 	# Compile and install
 	if    (BUILD_THIS_SKIRMISHAI)
 		# Assemble meta data
 		GetVersionFromFile(myVersion "${myDir}/VERSION")
-		set(myLoaderTarget        "${myName}-LOADER")
-		set(myAiTarget        "${myName}-AI")
-		set(myLoaderSourceTarget  "${myLoaderTarget}-SRC")
-		set(myAiSourceTarget  "${myAiTarget}-SRC")
-		set(myDataDir       "${SKIRMISH_DATA}/${myName}/${myVersion}")
+		set(myLoaderTarget       "${myName}-LOADER")
+		set(myAiTarget           "${myName}-AI")
+		set(myLoaderSourceTarget "${myLoaderTarget}-SRC")
+		set(myAiSourceTarget     "${myAiTarget}-SRC")
+		set(myInstLibsDir        "${SKIRMISH_AI_LIBS}/${myName}/${myVersion}")
+		set(myInstDataDir        "${SKIRMISH_AI_DATA}/${myName}/${myVersion}")
 		# CMAKE_CURRENT_BINARY_DIR: .../spring-build-dir/AI/Skirmish/${myName}
-		set(myBuildDir      "${CMAKE_CURRENT_BINARY_DIR}")
-		set(myJavaLoaderBuildDir  "${myBuildDir}/classes/loader")
-		set(myJavaAiBuildDir  "${myBuildDir}/classes/ai")
-		set(myLoaderJarFile       "SkirmishAI")
-		set(myAiJarFile       "UnderlyingAI")
-		set(myLoaderBinJarFile    "${myLoaderJarFile}.jar")
-		set(myAiBinJarFile    "${myAiJarFile}.jar")
-		set(myLoaderSrcJarFile    "${myLoaderJarFile}-src.jar")
-		set(myAiSrcJarFile    "${myAiJarFile}-src.jar")
-		set(myJLibDir       "${myDir}/data/jlib")
+		set(myBuildDir           "${CMAKE_CURRENT_BINARY_DIR}")
+		set(myJavaLoaderBuildDir "${myBuildDir}/classes/loader")
+		set(myJavaAiBuildDir     "${myBuildDir}/classes/ai")
+		set(myLoaderJarFile      "SkirmishAI")
+		set(myAiJarFile          "UnderlyingAI")
+		set(myLoaderBinJarFile   "${myLoaderJarFile}.jar")
+		set(myAiBinJarFile       "${myAiJarFile}.jar")
+		set(myLoaderSrcJarFile   "${myLoaderJarFile}-src.jar")
+		set(myAiSrcJarFile       "${myAiJarFile}-src.jar")
+		set(myJLibDir            "${myDir}/data/jlib")
 
 		SkirmishAIMessage(STATUS "Found Skirmish AI: ${myName} ${myVersion}")
 
@@ -101,14 +102,14 @@
 			COMMENT "  Creating sources archive ${myAiSrcJarFile}" VERBATIM)
 
 		# Install the data files
-		install(DIRECTORY "${myDir}/data/"                DESTINATION ${myDataDir})
+		install(DIRECTORY "${myDir}/data/"                      DESTINATION ${myInstDataDir})
 		# Install the library
-		install (FILES    "${myBuildDir}/${myLoaderBinJarFile}" DESTINATION ${myDataDir})
+		install (FILES    "${myBuildDir}/${myLoaderBinJarFile}" DESTINATION ${myInstDataDir})
 		# Install the library
-		install (FILES    "${myBuildDir}/${myAiBinJarFile}" DESTINATION ${myDataDir})
+		install (FILES    "${myBuildDir}/${myAiBinJarFile}"     DESTINATION ${myInstDataDir})
 		# Install the sources archive
-		install (FILES    "${myBuildDir}/${myLoaderSrcJarFile}" DESTINATION ${myDataDir}/jlib)
+		install (FILES    "${myBuildDir}/${myLoaderSrcJarFile}" DESTINATION ${myInstDataDir}/jlib)
 		# Install the sources archive
-		install (FILES    "${myBuildDir}/${myAiSrcJarFile}" DESTINATION ${myDataDir}/jlib)
+		install (FILES    "${myBuildDir}/${myAiSrcJarFile}"     DESTINATION ${myInstDataDir}/jlib)
 	endif (BUILD_THIS_SKIRMISHAI)
 
