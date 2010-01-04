@@ -201,6 +201,16 @@ public class CSAI extends AbstractOOAI implements IHughAI
                " " + Formatting.exceptionToStackTrace( e ));
          SendTextMsg( "Exception: " + e.toString() );
          playerObjects.getExceptionList().reportException( e );
+         Shutdown();
+         return 23;
+      }
+      catch( Throwable t )
+      {
+         t.printStackTrace();
+         logfile.WriteLine( "Throwable: " + t.toString() + 
+               " " + Formatting.throwableToStackTrace( t ));
+         Shutdown();
+         return 24;
       }
       return 0;
    }
@@ -248,8 +258,14 @@ public class CSAI extends AbstractOOAI implements IHughAI
          for( ShutdownHandler handler : shutdownHandlers ) {
             handler.shutdown();
          }
-         playerObjects.dispose();
-         logfile.Shutdown();
+         if (playerObjects != null) {
+            playerObjects.dispose();
+            playerObjects = null;
+         }
+         if (logfile != null) {
+            logfile.Shutdown();
+            logfile = null;
+         }
       } catch( Exception e ) {
          logfile.WriteLine( "Exception: " + e.toString() + 
                " " + Formatting.exceptionToStackTrace( e ));

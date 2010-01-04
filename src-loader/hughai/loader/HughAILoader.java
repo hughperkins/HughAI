@@ -74,28 +74,40 @@ public class HughAILoader extends AbstractOOAI implements AI {
       this.skirmishId = skirmishId;
       this.callback = callback;
 
+      int ret = 0;
+
       try {
          loadUnderlyingAI();
          //((StorageUser)underlyingAI).setStorage( TransLoadStorage.getInstance() );
 
          if( underlyingAI != null ) {
-            underlyingAI.init( skirmishId, callback );
+            ret = underlyingAI.init( skirmishId, callback );
          }
-      } catch( Exception e ) {
-         System.out.println("exception on init:");
-         e.printStackTrace();
+      } catch( Throwable t ) {
+         System.err.println("exception on init:");
+         t.printStackTrace();
+         release(22);
+         ret = 22;
       }
 
-      return 0;
+      return ret;
    }
    
    @Override
    public int release( int reason ) {
-      underlyingAI.Shutdown();
-      underlyingAI = null;
-      System.runFinalization();
-      System.gc();
-      System.gc();
+      try {
+         if( underlyingAI != null ) {
+            underlyingAI.Shutdown();
+         }
+         underlyingAI = null;
+         System.runFinalization();
+         System.gc();
+         System.gc();
+      } catch( Throwable t ) {
+         System.err.println("exception on release:");
+         t.printStackTrace();
+         return 21;
+      }
       return 0;
    }
 
@@ -132,12 +144,12 @@ public class HughAILoader extends AbstractOOAI implements AI {
       underlyingAI = hughai.loader.utils.Loader.loadOOAI(locations, underlyingClassNameToLoad );
       underlyingAI.setHughAILoader( this );
    }
-   
+
    String longToMeg( long value ) {
       float valueasmeg = value / 1024f / 1024f;
       return "" + valueasmeg + "MB";
    }
-   
+
    void dumpSystemStats() {
       Runtime runtime = Runtime.getRuntime();
       System.out.println( "total: " + longToMeg(runtime.totalMemory() ) +
@@ -177,7 +189,7 @@ public class HughAILoader extends AbstractOOAI implements AI {
       }
       return 0;
    }
-   
+
    class ReloadAIThread implements Runnable {
       @Override
       public void run() {
