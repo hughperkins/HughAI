@@ -25,10 +25,11 @@
 	if    (BUILD_THIS_SKIRMISHAI)
 		# Assemble meta data
 		GetVersionFromFile(myVersion "${myDir}/VERSION")
-		set(myLoaderTarget        "${myName}-LOADER")
-		set(myAiTarget        "${myName}-AI")
-		set(myLoaderSourceTarget  "${myLoaderTarget}-SRC")
-		set(myAiSourceTarget  "${myAiTarget}-SRC")
+		set(myTarget             "${myName}")
+		set(myLoaderTarget       "${myTarget}-Loader")
+		set(myAiTarget           "${myTarget}-AI")
+		set(myLoaderSourceTarget "${myLoaderTarget}-Source")
+		set(myAiSourceTarget     "${myAiTarget}-Source")
 		set(myDataDir       "${SKIRMISH_AI_DATA}/${myName}/${myVersion}")
 		# CMAKE_CURRENT_BINARY_DIR: .../spring-build-dir/AI/Skirmish/${myName}
 		set(myBuildDir      "${CMAKE_CURRENT_BINARY_DIR}")
@@ -56,7 +57,7 @@
 		# needed by javac
 		file(MAKE_DIRECTORY "${myJavaLoaderBuildDir}")
 		add_custom_target(${myLoaderTarget} ALL
-			DEPENDS ${Java_AIINTERFACE_TARGET}
+			#OUTPUT "${myBuildDir}/${myLoaderBinJarFile}"
 			COMMAND "${JAVA_COMPILE}"
 				"${JAVA_COMPILE_FLAG_CONDITIONAL}"
 				"-cp" "${myClassPath}"
@@ -66,13 +67,14 @@
 				"cmf" "${myDir}/manifest.mf" "${myBuildDir}/${myLoaderBinJarFile}"
 				"-C" "${myJavaLoaderBuildDir}" "${myJavaPkgFirstPart}"
 			WORKING_DIRECTORY "${myLoaderSourceDir}"
-			COMMENT "  Creating library ${myLoaderBinJarFile}" VERBATIM)
+			COMMENT "  ${myTarget}: Creating library ${myLoaderBinJarFile}" VERBATIM)
+		add_dependencies(${myLoaderTarget} ${Java_AIINTERFACE_TARGET} ${JavaOO_AIWRAPPER_TARGET})
 
 		# Compile the ai library
 		# needed by javac
 		file(MAKE_DIRECTORY "${myJavaAiBuildDir}")
 		add_custom_target(${myAiTarget} ALL
-			DEPENDS ${Java_AIINTERFACE_TARGET}
+			#OUTPUT "${myBuildDir}/${myAiBinJarFile}"
 			COMMAND "${JAVA_COMPILE}"
 				"${JAVA_COMPILE_FLAG_CONDITIONAL}"
 				"-cp" "${myClassPath}"
@@ -82,27 +84,29 @@
 				"cmf" "${myDir}/manifest.mf" "${myBuildDir}/${myAiBinJarFile}"
 				"-C" "${myJavaAiBuildDir}" "${myJavaPkgFirstPart}"
 			WORKING_DIRECTORY "${myAiSourceDir}"
-			COMMENT "  Creating library ${myAiBinJarFile}" VERBATIM)
+			COMMENT "  ${myTarget}: Creating library ${myAiBinJarFile}" VERBATIM)
+		add_dependencies(${myAiTarget} ${Java_AIINTERFACE_TARGET} ${JavaOO_AIWRAPPER_TARGET})
 
 		# Pack the sources
 		add_custom_target(${myLoaderSourceTarget} ALL
+			#OUTPUT "${myBuildDir}/${myLoaderSrcJarFile}"
 			COMMAND "${JAVA_ARCHIVE}"
 				"cf" "${myBuildDir}/${myLoaderSrcJarFile}"
 				"-C" "${myLoaderSourceDir}" "${myJavaPkgFirstPart}"
 			WORKING_DIRECTORY "${myLoaderSourceDir}"
-			COMMENT "  Creating sources archive ${myLoaderSrcJarFile}" VERBATIM)
+			COMMENT "  ${myTarget}: Creating sources archive ${myLoaderSrcJarFile}" VERBATIM)
 
 		# Pack the sources
 		add_custom_target(${myAiSourceTarget} ALL
+			#OUTPUT "${myBuildDir}/${myAiSrcJarFile}"
 			COMMAND "${JAVA_ARCHIVE}"
 				"cf" "${myBuildDir}/${myAiSrcJarFile}"
 				"-C" "${myAiSourceDir}" "${myJavaPkgFirstPart}"
 			WORKING_DIRECTORY "${myAiSourceDir}"
-			COMMENT "  Creating sources archive ${myAiSrcJarFile}" VERBATIM)
+			COMMENT "  ${myTarget}: Creating sources archive ${myAiSrcJarFile}" VERBATIM)
 
-		add_custom_target(HughAI
-			COMMENT "  Doing all of HughAI" VERBATIM)
-		add_dependencies(HughAI ${myLoaderTarget} ${myAiTarget} ${myLoaderSourceTarget} ${myAiSourceTarget})
+		add_custom_target(${myTarget} ALL)
+		add_dependencies(${myTarget} ${myLoaderTarget} ${myAiTarget} ${myLoaderSourceTarget} ${myAiSourceTarget})
 
 		# Install the data files
 		install(DIRECTORY "${myDir}/data/"                DESTINATION ${myDataDir})
@@ -114,7 +118,11 @@
 		install (FILES    "${myBuildDir}/${myLoaderSrcJarFile}" DESTINATION ${myDataDir}/jlib)
 		# Install the sources archive
 		install (FILES    "${myBuildDir}/${myAiSrcJarFile}" DESTINATION ${myDataDir}/jlib)
-		# Install the Java OO Wrapper library
+		# Install the Java OO Wrapper libraries
 		install(FILES "${JavaOO_AIWRAPPER_JAR_BIN}" DESTINATION ${myDataDir}/jlib)
+		set(wrapperJLibDir "${CMAKE_SOURCE_DIR}/AI/Wrappers/JavaOO/jlib")
+		if    (EXISTS ${wrapperJLibDir})
+			install(DIRECTORY "${wrapperJLibDir}/" DESTINATION ${myDataDir}/jlib)
+		endif (EXISTS ${wrapperJLibDir})
 	endif (BUILD_THIS_SKIRMISHAI)
 
