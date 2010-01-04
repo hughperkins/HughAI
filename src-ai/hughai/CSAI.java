@@ -42,6 +42,7 @@ import hughai.test.*;
 public class CSAI extends AbstractOOAI implements IHughAI
 {
    // make these available for public access to other classes, though we can get them directly through GetInstance too
+   public int skirmishAIId;
    public OOAICallback aicallback;
    //public LogFile logfile;
 
@@ -126,28 +127,29 @@ public class CSAI extends AbstractOOAI implements IHughAI
    }
 
    @Override
-   public int init( int team, OOAICallback aicallback )
+   public int init( int skirmishAIId, OOAICallback aicallback )
    {
+      this.skirmishAIId = skirmishAIId;
       this.aicallback = aicallback;
 
       try{
-         sendTextMessage("ai " + team + " initing..");
-         this.Team = team;
+         sendTextMessage("ai " + skirmishAIId + " initing..");
+         this.Team = aicallback.getSkirmishAI().getTeamId();
          //logfile = new LogFile();
 
          playerObjects = new PlayerObjects( this );
 
          logfile = playerObjects.getLogFile();
-         logfile.Init( getAIDirectoryPath() + "team" + team + ".log" );
+         logfile.Init( getAIDirectoryPath() + "team" + this.Team + ".log" );
          logfile.writeLine( "Opening log" );
-         logfile.WriteLine( "Hugh AI started v" + AIVersion + ", team " + team + 
+         logfile.WriteLine( "Hugh AI started v" + AIVersion + ", team " + this.Team +
                " map " + aicallback.getMap().getName() + " mod " + aicallback.getMod().getHumanName() );
 
          //         if( new File( getAIDirectoryPath() + File.separator + "debug.flg" ).exists() ) // if this file exists, activate debug mode; saves manually changing this for releases
          config = playerObjects.getConfig();
-         
+
          playerObjects.getOptionsFromStartScript();
-         
+
          if( config.isDebug() ) {
             logfile.WriteLine( "Toggling debug on" );
             DebugOn = true;
@@ -161,25 +163,25 @@ public class CSAI extends AbstractOOAI implements IHughAI
          InitCache();
 
          logfile.WriteLine("Is game paused? : " + aicallback.getGame().isPaused());
-         
+
          playerObjects.getFrameController().Init();
 
          drawingUtils = playerObjects.getDrawingUtils();
          drawingUtils.CleanDrawing();
          timeHelper = playerObjects.getTimeHelper();
-         
+
          playerObjects.getMainUI();
          playerObjects.getConfigDialog();
 //         playerObjects.getWorkflowUI();
          playerObjects.getConsoleJava();
          playerObjects.getConsoleEcma();
-                  
+
          playerObjects.getWelcomeMessages();
          
          playerObjects.getUnitController();
          playerObjects.getEnemyTracker();
          playerObjects.getMaps();
-         
+
          playerObjects.getBuildEconomy();
 
          if( DebugOn ) {
@@ -190,7 +192,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
          RegisterVoiceCommand( "unpauseai", new VoiceUnpauseAI() );
          playerObjects.getMainUI().registerButton( "Reload AI", new ReloadAIButton() );
 
-         SendTextMsg("Hugh AI initialized v" + AIVersion + ", team " + team);
+         SendTextMsg("Hugh AI initialized v" + AIVersion + ", team " + this.Team);
       }
       catch( Exception e )
       {
