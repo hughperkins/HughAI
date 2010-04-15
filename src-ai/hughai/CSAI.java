@@ -201,8 +201,13 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( "Exception: " + e.toString() + 
                " " + Formatting.exceptionToStackTrace( e ));
          SendTextMsg( "Exception: " + e.toString() );
-         playerObjects.getExceptionList().reportException( e );
+         if ((playerObjects != null) && (playerObjects.getExceptionList() != null)) {
+            playerObjects.getExceptionList().reportException( e );
+         }
+		 release(0);
+         return 1;
       }
+
       return 0;
    }
 
@@ -225,11 +230,6 @@ public class CSAI extends AbstractOOAI implements IHughAI
          sendTextMessage( "unpausing AI" );
          aistopped = false;
       }
-   }
-
-   @Override
-   protected void finalize() {
-      System.out.println( this.getClass().getSimpleName() + ".finalize()");
    }
 
    public interface ShutdownHandler {
@@ -303,11 +303,15 @@ public class CSAI extends AbstractOOAI implements IHughAI
                " " + Formatting.exceptionToStackTrace( e ));
 //       logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         playerObjects.getExceptionList().reportException( e );
+         if ((playerObjects != null) && (playerObjects.getExceptionList() != null)) {
+            playerObjects.getExceptionList().reportException( e );
+         }
+         return 1;
       }
       unitcreatedtime.add( 
             timeHelper.CompareRealTimePoint( 
                   timeHelper.GetRealTimePoint(), start ) );
+
       return 0;
    }
 
@@ -329,11 +333,15 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( "Exception in csai.unitfinished: " + e.toString() );
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //       logfile.WriteLine( "Exception: " + e.toString() );
-         playerObjects.getExceptionList().reportException( e );
+         if ((playerObjects != null) && (playerObjects.getExceptionList() != null)) {
+            playerObjects.getExceptionList().reportException( e );
+         }
+         return 1;
       }
       unitfinishedtime.add( 
             timeHelper.CompareRealTimePoint( 
                   timeHelper.GetRealTimePoint(), start ) );
+
       return 0;
    }
 
@@ -352,7 +360,10 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //         logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         playerObjects.getExceptionList().reportException( e );
+         if ((playerObjects != null) && (playerObjects.getExceptionList() != null)) {
+            playerObjects.getExceptionList().reportException( e );
+         }
+         return 1;
       }
       unitdestroyedtime.add( 
             timeHelper.CompareRealTimePoint( 
@@ -375,7 +386,10 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //         logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         playerObjects.getExceptionList().reportException( e );
+         if ((playerObjects != null) && (playerObjects.getExceptionList() != null)) {
+            playerObjects.getExceptionList().reportException( e );
+         }
+         return 1;
       }
       unitidletime.add( 
             timeHelper.CompareRealTimePoint( 
@@ -397,7 +411,10 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
          //logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         playerObjects.getExceptionList().reportException( e );
+         if ((playerObjects != null) && (playerObjects.getExceptionList() != null)) {
+            playerObjects.getExceptionList().reportException( e );
+         }
+         return 1;
       }
       return 0;
    }       
@@ -433,7 +450,10 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
        //  logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         playerObjects.getExceptionList().reportException( e );
+         if ((playerObjects != null) && (playerObjects.getExceptionList() != null)) {
+            playerObjects.getExceptionList().reportException( e );
+         }
+         return 1;
       }
       return 0;
    }       
@@ -452,7 +472,10 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //       logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         playerObjects.getExceptionList().reportException( e );
+         if ((playerObjects != null) && (playerObjects.getExceptionList() != null)) {
+            playerObjects.getExceptionList().reportException( e );
+         }
+         return 1;
       }
       return 0;
    }
@@ -471,7 +494,10 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //       logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         playerObjects.getExceptionList().reportException( e );
+         if ((playerObjects != null) && (playerObjects.getExceptionList() != null)) {
+            playerObjects.getExceptionList().reportException( e );
+         }
+         return 1;
       }
       return 0;
    }
@@ -492,7 +518,10 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //       logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         playerObjects.getExceptionList().reportException( e );
+         if ((playerObjects != null) && (playerObjects.getExceptionList() != null)) {
+            playerObjects.getExceptionList().reportException( e );
+         }
+         return 1;
       }
       return 0;
    }
@@ -511,7 +540,10 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
 //       logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         playerObjects.getExceptionList().reportException( e );
+         if ((playerObjects != null) && (playerObjects.getExceptionList() != null)) {
+            playerObjects.getExceptionList().reportException( e );
+         }
+         return 1;
       }
       return 0;
    }
@@ -537,7 +569,10 @@ public class CSAI extends AbstractOOAI implements IHughAI
 //         logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
   //       aistopped = false;
-         playerObjects.getExceptionList().reportException( e );
+         if ((playerObjects != null) && (playerObjects.getExceptionList() != null)) {
+            playerObjects.getExceptionList().reportException( e );
+         }
+         return 1;
       }
       return 0;
    }
@@ -584,8 +619,11 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
          logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         playerObjects.getExceptionList().reportException( e );
+         if ((playerObjects != null) && (playerObjects.getExceptionList() != null)) {
+            playerObjects.getExceptionList().reportException( e );
+         }
 //         aistopped = false;
+         return 1;
       }
       return 0;
    }
@@ -667,11 +705,14 @@ public class CSAI extends AbstractOOAI implements IHughAI
          logfile.WriteLine( Formatting.exceptionToStackTrace( e ) );
          logfile.WriteLine( "Exception: " + e.toString() );
          SendTextMsg("Exception: " + e.toString());
-         playerObjects.getExceptionList().reportException( e );
+         if ((playerObjects != null) && (playerObjects.getExceptionList() != null)) {
+            playerObjects.getExceptionList().reportException( e );
+         }
 //         if( config.isDebug() ) {
 //            aistopped = true;
 //            SendTextMsg("AI updates halted.  Say '.hughai unpauseai' to unhalt them." );
 //         }
+         return 1;
       }
       return 0;
    }    

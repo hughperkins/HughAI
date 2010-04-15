@@ -86,8 +86,9 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
             underlyingAI.init( teamId, callback );
          }
       } catch( Exception e ) {
-         System.out.println("exception on init:");
          e.printStackTrace();
+		 release(0);
+		 return 2;
       }
 
       return 0;
@@ -95,16 +96,26 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
    
    @Override
    public int release( int reason ) {
-      underlyingAI.Shutdown();
-      underlyingAI = null;
-      System.runFinalization();
-      System.gc();
-      System.gc();
+
+      try {
+         if( underlyingAI != null ) {
+            underlyingAI.Shutdown();
+		 }
+         underlyingAI = null;
+         System.runFinalization();
+         System.gc();
+         System.gc();
+      } catch( Exception e ) {
+         e.printStackTrace();
+		 return 2;
+      }
+
       return 0;
    }
 
    @Override
    public int update(int frame) {
+
       try {
 //         if( doReloadAI ) {
 //            doReloadAI();
@@ -115,8 +126,8 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
             }
 //         }
       } catch( Exception e ) {
-         System.out.println("exception on update:");
          e.printStackTrace();
+		 return 2;
       }
       return 0;
    }
@@ -173,8 +184,8 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
             underlyingAI.message( player, message );
          }
       } catch( Exception e ) {
-         System.out.println("exception on message:");
          e.printStackTrace();
+		 return 2;
       }
       if( message.equals(".exception")) {
          throw new RuntimeException("generated exception"); 
@@ -212,8 +223,8 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
             return underlyingAI.unitCreated( unit, builder );
          }
       } catch( Exception e ) {
-         System.out.println("exception on unitCreated:");
          e.printStackTrace();
+		 return 2;
       }
       return 0;
    }
@@ -225,8 +236,8 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
             return underlyingAI.unitFinished( unit );
          }
       } catch( Exception e ) {
-         System.out.println("exception on unitFinished:");
          e.printStackTrace();
+		 return 2;
       }
       return 0;
    }
@@ -238,8 +249,8 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
             return underlyingAI.unitIdle( unit );
          }
       } catch( Exception e ) {
-         System.out.println("exception on unitIdle:");
          e.printStackTrace();
+		 return 2;
       }
       return 0;
    }
@@ -251,8 +262,8 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
             return underlyingAI.unitMoveFailed( unit );
          }
       } catch( Exception e ) {
-         System.out.println("exception on unitMoveFailed:");
          e.printStackTrace();
+		 return 2;
       }
       return 0;
    }
@@ -264,8 +275,8 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
             return underlyingAI.unitDamaged( unit, attacker, damage, dir, weaponDef, paralyzer );
          }
       } catch( Exception e ) {
-         System.out.println("exception on unitDamaged:");
          e.printStackTrace();
+		 return 2;
       }
       return 0;
    }
@@ -277,8 +288,8 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
             return underlyingAI.unitDestroyed( unit, attacker );
          }
       } catch( Exception e ) {
-         System.out.println("exception on unitDestroyed:");
          e.printStackTrace();
+		 return 2;
       }
       return 0;
    }
@@ -290,8 +301,8 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
             return underlyingAI.unitGiven( unit, oldTeamId, newTeamId );
          }
       } catch( Exception e ) {
-         System.out.println("exception on unitGiven:");
          e.printStackTrace();
+		 return 2;
       }
       return 0;
    }
@@ -303,8 +314,8 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
             return underlyingAI.unitCaptured( unit, oldTeamId, newTeamId );
          }
       } catch( Exception e ) {
-         System.out.println("exception on unitCaptured:");
          e.printStackTrace();
+		 return 2;
       }
       return 0;
    }
@@ -316,8 +327,8 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
             return underlyingAI.enemyEnterLOS( enemy );
          }
       } catch( Exception e ) {
-         System.out.println("exception on enemyEnterLOS:");
          e.printStackTrace();
+		 return 2;
       }
       return 0;
    }
@@ -359,8 +370,8 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
             return underlyingAI.playerCommand( units, command, playerId );
          }
       } catch( Exception e ) {
-         System.out.println("exception on playerCommand:");
          e.printStackTrace();
+		 return 2;
       }
       return 0;
    }
@@ -372,8 +383,8 @@ public class HughAILoader extends AbstractOOAI implements OOAI {
             return underlyingAI.commandFinished( unit, commandId, commandTopicId );
          }
       } catch( Exception e ) {
-         System.out.println("exception on commandFinished:");
          e.printStackTrace();
+		 return 2;
       }
       return 0;
    }
