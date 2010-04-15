@@ -89,9 +89,9 @@ public class Workflows {
       this.config = playerObjects.getConfig();
 
       this.modname = aicallback.getMod().getShortName().toLowerCase();
-      String side = playerObjects.getSideManager().getSide();
-      this.workflowdirectory = csai.getAIDirectoryPath() + aicallback.getMod().getShortName() + "_" + side + "_workflows" 
-         + File.separator;
+      this.workflowdirectory = csai.getAIDirectoryPath() + "workflows" +
+			  File.separator + aicallback.getMod().getShortName() +
+			  File.separator;
       new File( workflowdirectory ).mkdirs();
       Init();
    }
