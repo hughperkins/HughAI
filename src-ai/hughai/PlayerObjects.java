@@ -217,17 +217,6 @@ public class PlayerObjects {
       System.out.println("optionsFromStartScript constructed ok");
       return optionsFromStartScript;
    }
-   
-   SideManager sideManager;
-   public synchronized SideManager getSideManager() {
-      if( sideManager != null ) {
-         return sideManager;
-      }
-      debug("instantiating sidemanager... ");
-      sideManager = new SideManager( this );
-      debug(" ... sidemanager instantiated ");
-      return sideManager;
-   }
 
    WorkflowUI workflowUI;
    public synchronized WorkflowUI getWorkflowUI() {

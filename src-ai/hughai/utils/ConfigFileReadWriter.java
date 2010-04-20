@@ -97,8 +97,7 @@ public class ConfigFileReadWriter<T> implements ConfigSourceReadWriter<T> {
    String getConfigPath() {
       debug("getconfigpath()");
       String configPath = playerObjects.getCSAI().getAIDirectoryPath() + playerObjects.getAicallback()
-         .getMod().getShortName() + "_" + 
-         playerObjects.getSideManager().getSide() + ".xml";
+         .getMod().getShortName() + ".xml";
       debug( "Config path: " + configPath );
       return configPath;
    }

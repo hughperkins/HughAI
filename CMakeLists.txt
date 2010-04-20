@@ -1,4 +1,4 @@
-### Generic Java Skirmish AI config
+### HughAI config
 #
 
 # ConfigureJavaSkirmishAI()
@@ -30,18 +30,18 @@
 		set(myAiTarget           "${myTarget}-AI")
 		set(myLoaderSourceTarget "${myLoaderTarget}-Source")
 		set(myAiSourceTarget     "${myAiTarget}-Source")
-		set(myDataDir       "${SKIRMISH_AI_DATA}/${myName}/${myVersion}")
+		set(myDataDir            "${SKIRMISH_AI_DATA}/${myName}/${myVersion}")
 		# CMAKE_CURRENT_BINARY_DIR: .../spring-build-dir/AI/Skirmish/${myName}
-		set(myBuildDir      "${CMAKE_CURRENT_BINARY_DIR}")
-		set(myJavaLoaderBuildDir  "${myBuildDir}/classes/loader")
-		set(myJavaAiBuildDir  "${myBuildDir}/classes/ai")
-		set(myLoaderJarFile       "SkirmishAI")
-		set(myAiJarFile       "UnderlyingAI")
-		set(myLoaderBinJarFile    "${myLoaderJarFile}.jar")
-		set(myAiBinJarFile    "${myAiJarFile}.jar")
-		set(myLoaderSrcJarFile    "${myLoaderJarFile}-src.jar")
-		set(myAiSrcJarFile    "${myAiJarFile}-src.jar")
-		set(myJLibDir       "${myDir}/data/jlib")
+		set(myBuildDir           "${CMAKE_CURRENT_BINARY_DIR}")
+		set(myJavaLoaderBuildDir "${myBuildDir}/classes/loader")
+		set(myJavaAiBuildDir     "${myBuildDir}/classes/ai")
+		set(myLoaderJarFile      "SkirmishAI")
+		set(myAiJarFile          "UnderlyingAI")
+		set(myLoaderBinJarFile   "${myLoaderJarFile}.jar")
+		set(myAiBinJarFile       "${myAiJarFile}.jar")
+		set(myLoaderSrcJarFile   "${myLoaderJarFile}-src.jar")
+		set(myAiSrcJarFile       "${myAiJarFile}-src.jar")
+		set(myJLibDir            "${myDir}/data/jlib")
 
 		SkirmishAIMessage(STATUS "Found Skirmish AI: ${myName} ${myVersion}")
 
