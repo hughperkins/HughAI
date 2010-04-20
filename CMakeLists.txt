@@ -6,25 +6,25 @@
 	set(myDir                    "${CMAKE_CURRENT_SOURCE_DIR}")
 	GetLastPathPart(dirName ${myDir})
 	set(myName                   "${dirName}")
-	set(myLoaderSourceDir              "${myDir}/src-loader")
-	set(myAiSourceDir              "${myDir}/src-ai")
+	set(myLoaderSourceDir        "${myDir}/src-loader")
+	set(myAiSourceDir            "${myDir}/src-ai")
 	# If main Java package is "my.ai.pkg", this has to be set to "my".
 	GetFirstSubDirName(firstSrcSubDir ${myLoaderSourceDir})
 	set(myJavaPkgFirstPart       "${firstSrcSubDir}")
 
 	# Check if the user wants to compile the AI
-	if    (BUILD_Java_AIINTERFACE AND NOT myName MATCHES "${AI_EXCLUDE_REGEX}")
+	if    (BUILD_Java_AIINTERFACE AND NOT myName MATCHES "${AI_EXCLUDE_REGEX}" AND CUSTOM_TARGET_SOURCES_SUPPORT)
 		set(BUILD_THIS_SKIRMISHAI TRUE)
-	else  (BUILD_Java_AIINTERFACE AND NOT myName MATCHES "${AI_EXCLUDE_REGEX}")
+	else  (BUILD_Java_AIINTERFACE AND NOT myName MATCHES "${AI_EXCLUDE_REGEX}" AND CUSTOM_TARGET_SOURCES_SUPPORT)
 		set(BUILD_THIS_SKIRMISHAI FALSE)
 		message("warning: ${myName} Skirmish AI will not be built!")
-	endif (BUILD_Java_AIINTERFACE AND NOT myName MATCHES "${AI_EXCLUDE_REGEX}")
+	endif (BUILD_Java_AIINTERFACE AND NOT myName MATCHES "${AI_EXCLUDE_REGEX}" AND CUSTOM_TARGET_SOURCES_SUPPORT)
 
 
 	# Compile and install
 	if    (BUILD_THIS_SKIRMISHAI)
 		# Assemble meta data
-		GetVersionFromFile(myVersion "${myDir}/VERSION")
+		GetVersionPlusDepFile(myVersion myVersionDepFile)
 		set(myTarget             "${myName}")
 		set(myLoaderTarget       "${myTarget}-Loader")
 		set(myAiTarget           "${myTarget}-AI")
@@ -75,7 +75,7 @@
 		add_custom_target(${myAiSourceTarget}     SOURCES ${myBuildDir}/${myAiSrcJarFile})
 		set_source_files_properties(${myBuildDir}/${myAiSrcJarFile} PROPERTIES GENERATED TRUE)
 
-		add_custom_target(${myTarget} ALL)
+		add_custom_target(${myTarget} ALL SOURCES ${myVersionDepFile})
 		add_dependencies(${myTarget} ${myLoaderTarget} ${myAiTarget} ${myLoaderSourceTarget} ${myAiSourceTarget})
 
 		# Compile the loader library
