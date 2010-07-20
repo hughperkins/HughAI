@@ -25,8 +25,9 @@
 	if    (BUILD_THIS_SKIRMISHAI)
 		# Assemble meta data
 		GetVersionFromFile(myVersion "${myDir}/VERSION")
-		set(myLoaderTarget       "${myName}-LOADER")
-		set(myAiTarget           "${myName}-AI")
+		set(myTarget               "${myName}")
+		set(myLoaderTarget       "${myTarget}-LOADER")
+		set(myAiTarget           "${myTarget}-AI")
 		set(myLoaderSourceTarget "${myLoaderTarget}-SRC")
 		set(myAiSourceTarget     "${myAiTarget}-SRC")
 		set(myInstLibsDir        "${SKIRMISH_AI_LIBS}/${myName}/${myVersion}")
@@ -53,10 +54,15 @@
 		file(GLOB_RECURSE myLoaderSources RELATIVE "${myLoaderSourceDir}" FOLLOW_SYMLINKS "${myLoaderSourceDir}/*.java")
 		file(GLOB_RECURSE myAiSources RELATIVE "${myAiSourceDir}" FOLLOW_SYMLINKS "${myAiSourceDir}/*.java")
 
+		# common parent target
+		add_custom_target(${myTarget} ALL
+			WORKING_DIRECTORY "${myAiSourceDir}"
+			COMMENT "  Processing all AI targets for: ${myName}" VERBATIM)
+
 		# Compile the loader library
 		# needed by javac
 		file(MAKE_DIRECTORY "${myJavaLoaderBuildDir}")
-		add_custom_target(${myLoaderTarget} ALL
+		add_custom_command(TARGET ${myTarget}
 			DEPENDS ${Java_AIINTERFACE_TARGET}
 			COMMAND "${JAVA_COMPILE}"
 				"${JAVA_COMPILE_FLAG_CONDITIONAL}"
@@ -72,7 +78,7 @@
 		# Compile the ai library
 		# needed by javac
 		file(MAKE_DIRECTORY "${myJavaAiBuildDir}")
-		add_custom_target(${myAiTarget} ALL
+		add_custom_command(TARGET ${myTarget}
 			DEPENDS ${Java_AIINTERFACE_TARGET}
 			COMMAND "${JAVA_COMPILE}"
 				"${JAVA_COMPILE_FLAG_CONDITIONAL}"
@@ -86,7 +92,7 @@
 			COMMENT "  Creating library ${myAiBinJarFile}" VERBATIM)
 
 		# Pack the sources
-		add_custom_target(${myLoaderSourceTarget} ALL
+		add_custom_command(TARGET ${myTarget}
 			COMMAND "${JAVA_ARCHIVE}"
 				"cf" "${myBuildDir}/${myLoaderSrcJarFile}"
 				"-C" "${myLoaderSourceDir}" "${myJavaPkgFirstPart}"
@@ -94,7 +100,7 @@
 			COMMENT "  Creating sources archive ${myLoaderSrcJarFile}" VERBATIM)
 
 		# Pack the sources
-		add_custom_target(${myAiSourceTarget} ALL
+		add_custom_command(TARGET ${myTarget}
 			COMMAND "${JAVA_ARCHIVE}"
 				"cf" "${myBuildDir}/${myAiSrcJarFile}"
 				"-C" "${myAiSourceDir}" "${myJavaPkgFirstPart}"
