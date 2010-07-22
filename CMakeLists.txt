@@ -25,7 +25,7 @@
 	if    (BUILD_THIS_SKIRMISHAI)
 		# Assemble meta data
 		GetVersionFromFile(myVersion "${myDir}/VERSION")
-		set(myTarget               "${myName}")
+		set(myTarget             "${myName}")
 		set(myLoaderTarget       "${myTarget}-LOADER")
 		set(myAiTarget           "${myTarget}-AI")
 		set(myLoaderSourceTarget "${myLoaderTarget}-SRC")
@@ -56,6 +56,7 @@
 
 		# common parent target
 		add_custom_target(${myTarget} ALL
+			DEPENDS ${Java_AIINTERFACE_TARGET}
 			WORKING_DIRECTORY "${myAiSourceDir}"
 			COMMENT "  Processing all AI targets for: ${myName}" VERBATIM)
 
