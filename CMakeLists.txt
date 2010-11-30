@@ -42,6 +42,8 @@
 		set(myLoaderSrcJarFile   "${myLoaderJarFile}-src.jar")
 		set(myAiSrcJarFile       "${myAiJarFile}-src.jar")
 		set(myJLibDir            "${myDir}/data/jlib")
+		set(mySrcInfoFile        "${myDir}/data/AIInfo.lua")
+		set(myBinInfoFile        "${myBuildDir}/AIInfo.lua")
 
 		SkirmishAIMessage(STATUS "Found Skirmish AI: ${myName} ${myVersion}")
 
@@ -75,8 +77,10 @@
 		add_custom_target(${myAiSourceTarget}     SOURCES ${myBuildDir}/${myAiSrcJarFile})
 		set_source_files_properties(${myBuildDir}/${myAiSrcJarFile} PROPERTIES GENERATED TRUE)
 
-		add_custom_target(${myTarget} ALL SOURCES ${myVersionDepFile})
+		PrepareInfoFile("${mySrcInfoFile}" "${myBinInfoFile}" "${myTarget}")
+		add_custom_target(${myTarget} ALL SOURCES "${myVersionDepFile}" "${myBinInfoFile}")
 		add_dependencies(${myTarget} ${myLoaderTarget} ${myAiTarget} ${myLoaderSourceTarget} ${myAiSourceTarget})
+		add_dependencies(${myTarget} checksums-ai)
 
 		# Compile the loader library
 		add_custom_command(
@@ -155,7 +159,8 @@
 			)
 
 		# Install the data files
-		install(DIRECTORY "${myDir}/data/"                      DESTINATION ${myDataDir})
+		install(FILES     "${myBinInfoFile}"                    DESTINATION ${myDataDir})
+		install(DIRECTORY "${myDir}/data/"                      DESTINATION ${myDataDir} FILES_MATCHING PATTERN REGEX "AIInfo\\.lua$" EXCLUDE PATTERN "*")
 		# Install the library
 		install (FILES    "${myBuildDir}/${myLoaderBinJarFile}" DESTINATION ${myDataDir})
 		# Install the library
