@@ -13,12 +13,12 @@
 	set(myJavaPkgFirstPart       "${firstSrcSubDir}")
 
 	# Check if the user wants to compile the AI
-	if    (BUILD_Java_AIINTERFACE AND NOT myName MATCHES "${AI_EXCLUDE_REGEX}" AND CUSTOM_TARGET_SOURCES_SUPPORT)
+	if    (BUILD_Java_AIINTERFACE AND NOT myName MATCHES "${AI_EXCLUDE_REGEX}")
 		set(BUILD_THIS_SKIRMISHAI TRUE)
-	else  (BUILD_Java_AIINTERFACE AND NOT myName MATCHES "${AI_EXCLUDE_REGEX}" AND CUSTOM_TARGET_SOURCES_SUPPORT)
+	else  (BUILD_Java_AIINTERFACE AND NOT myName MATCHES "${AI_EXCLUDE_REGEX}")
 		set(BUILD_THIS_SKIRMISHAI FALSE)
 		message("warning: ${myName} Skirmish AI will not be built!")
-	endif (BUILD_Java_AIINTERFACE AND NOT myName MATCHES "${AI_EXCLUDE_REGEX}" AND CUSTOM_TARGET_SOURCES_SUPPORT)
+	endif (BUILD_Java_AIINTERFACE AND NOT myName MATCHES "${AI_EXCLUDE_REGEX}")
 
 
 	# Compile and install
@@ -61,21 +61,21 @@
 		set(myDependLibFiles "${Java_AIINTERFACE_JAR_BIN}" "${JavaOO_AIWRAPPER_JAR_BIN}")
 		set_source_files_properties(${myDependLibFiles} PROPERTIES GENERATED TRUE)
 
-		add_custom_target(${myLoaderTarget}       SOURCES ${myBuildDir}/${myLoaderBinJarFile})
+		add_custom_target(${myLoaderTarget}       DEPENDS ${myBuildDir}/${myLoaderBinJarFile})
 		set_source_files_properties(${myBuildDir}/${myLoaderBinJarFile} PROPERTIES GENERATED TRUE)
 		add_dependencies(${myLoaderTarget} ${myDependTargets})
 
-		add_custom_target(${myLoaderSourceTarget} SOURCES ${myBuildDir}/${myLoaderSrcJarFile})
+		add_custom_target(${myLoaderSourceTarget} DEPENDS ${myBuildDir}/${myLoaderSrcJarFile})
 		set_source_files_properties(${myBuildDir}/${myLoaderSrcJarFile} PROPERTIES GENERATED TRUE)
 
-		add_custom_target(${myAiTarget}           SOURCES ${myBuildDir}/${myAiBinJarFile})
+		add_custom_target(${myAiTarget}           DEPENDS ${myBuildDir}/${myAiBinJarFile})
 		set_source_files_properties(${myBuildDir}/${myAiBinJarFile} PROPERTIES GENERATED TRUE)
 		add_dependencies(${myAiTarget} ${myDependTargets})
 
-		add_custom_target(${myAiSourceTarget}     SOURCES ${myBuildDir}/${myAiSrcJarFile})
+		add_custom_target(${myAiSourceTarget}     DEPENDS ${myBuildDir}/${myAiSrcJarFile})
 		set_source_files_properties(${myBuildDir}/${myAiSrcJarFile} PROPERTIES GENERATED TRUE)
 
-		add_custom_target(${myTarget} ALL SOURCES ${myVersionDepFile})
+		add_custom_target(${myTarget} ALL DEPENDS ${myVersionDepFile})
 		add_dependencies(${myTarget} ${myLoaderTarget} ${myAiTarget} ${myLoaderSourceTarget} ${myAiSourceTarget})
 
 		# Compile the loader library
