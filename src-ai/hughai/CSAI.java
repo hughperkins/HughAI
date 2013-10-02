@@ -27,8 +27,8 @@ import java.util.*;
 import java.io.*;
 
 import com.springrts.ai.*;
-import com.springrts.ai.command.*;
 import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.ui.MainUI;
 import hughai.utils.*;
@@ -42,6 +42,7 @@ import hughai.test.*;
 public class CSAI extends AbstractOOAI implements IHughAI
 {
    // make these available for public access to other classes, though we can get them directly through GetInstance too
+   public int skirmishAIId;
    public OOAICallback aicallback;
    //public LogFile logfile;
 
@@ -76,16 +77,13 @@ public class CSAI extends AbstractOOAI implements IHughAI
 
    private static final int DEFAULT_ZONE = 0;
 
-   public int handleEngineCommand(AICommand command) {
-      return aicallback.getEngine().handleCommand(
-            com.springrts.ai.AICommandWrapper.COMMAND_TO_ID_ENGINE,
-            -1, command);
-   }
    public void sendTextMessage(String msg) {
 
-      SendTextMessageAICommand msgCmd
-      = new SendTextMessageAICommand(msg, DEFAULT_ZONE);
-      handleEngineCommand(msgCmd);
+      try {
+         aicallback.getGame().sendTextMessage(msg, 0);
+      } catch (Exception ex) {
+         ex.printStackTrace();
+      }
    }
 
    public int Team;
@@ -129,28 +127,29 @@ public class CSAI extends AbstractOOAI implements IHughAI
    }
 
    @Override
-   public int init( int team, OOAICallback aicallback )
+   public int init( int skirmishAIId, OOAICallback aicallback )
    {
+      this.skirmishAIId = skirmishAIId;
       this.aicallback = aicallback;
 
       try{
-         sendTextMessage("ai " + team + " initing..");
-         this.Team = team;
+         sendTextMessage("ai " + skirmishAIId + " initing..");
+         this.Team = aicallback.getSkirmishAI().getTeamId();
          //logfile = new LogFile();
 
          playerObjects = new PlayerObjects( this );
 
          logfile = playerObjects.getLogFile();
-         logfile.Init( getAIDirectoryPath() + "team" + team + ".log" );
+         logfile.Init( getAIDirectoryPath() + "team" + this.Team + ".log" );
          logfile.writeLine( "Opening log" );
-         logfile.WriteLine( "Hugh AI started v" + AIVersion + ", team " + team + 
+         logfile.WriteLine( "Hugh AI started v" + AIVersion + ", team " + this.Team +
                " map " + aicallback.getMap().getName() + " mod " + aicallback.getMod().getHumanName() );
 
          //         if( new File( getAIDirectoryPath() + File.separator + "debug.flg" ).exists() ) // if this file exists, activate debug mode; saves manually changing this for releases
          config = playerObjects.getConfig();
-         
+
          playerObjects.getOptionsFromStartScript();
-         
+
          if( config.isDebug() ) {
             logfile.WriteLine( "Toggling debug on" );
             DebugOn = true;
@@ -164,25 +163,25 @@ public class CSAI extends AbstractOOAI implements IHughAI
          InitCache();
 
          logfile.WriteLine("Is game paused? : " + aicallback.getGame().isPaused());
-         
+
          playerObjects.getFrameController().Init();
 
          drawingUtils = playerObjects.getDrawingUtils();
          drawingUtils.CleanDrawing();
          timeHelper = playerObjects.getTimeHelper();
-         
+
          playerObjects.getMainUI();
          playerObjects.getConfigDialog();
 //         playerObjects.getWorkflowUI();
          playerObjects.getConsoleJava();
          playerObjects.getConsoleEcma();
-                  
+
          playerObjects.getWelcomeMessages();
          
          playerObjects.getUnitController();
          playerObjects.getEnemyTracker();
          playerObjects.getMaps();
-         
+
          playerObjects.getBuildEconomy();
 
          if( DebugOn ) {
@@ -193,7 +192,7 @@ public class CSAI extends AbstractOOAI implements IHughAI
          RegisterVoiceCommand( "unpauseai", new VoiceUnpauseAI() );
          playerObjects.getMainUI().registerButton( "Reload AI", new ReloadAIButton() );
 
-         SendTextMsg("Hugh AI initialized v" + AIVersion + ", team " + team);
+         SendTextMsg("Hugh AI initialized v" + AIVersion + ", team " + this.Team);
       }
       catch( Exception e )
       {
@@ -204,8 +203,16 @@ public class CSAI extends AbstractOOAI implements IHughAI
          if ((playerObjects != null) && (playerObjects.getExceptionList() != null)) {
             playerObjects.getExceptionList().reportException( e );
          }
-		 release(0);
-         return 1;
+         release(23);
+         return 23;
+      }
+      catch( Throwable t )
+      {
+         t.printStackTrace();
+         logfile.WriteLine( "Throwable: " + t.toString() + 
+               " " + Formatting.throwableToStackTrace( t ));
+         release(24);
+         return 24;
       }
 
       return 0;
@@ -249,8 +256,14 @@ public class CSAI extends AbstractOOAI implements IHughAI
          for( ShutdownHandler handler : shutdownHandlers ) {
             handler.shutdown();
          }
-         playerObjects.dispose();
-         logfile.Shutdown();
+         if (playerObjects != null) {
+            playerObjects.dispose();
+            playerObjects = null;
+         }
+         if (logfile != null) {
+            logfile.Shutdown();
+            logfile = null;
+         }
       } catch( Exception e ) {
          logfile.WriteLine( "Exception: " + e.toString() + 
                " " + Formatting.exceptionToStackTrace( e ));

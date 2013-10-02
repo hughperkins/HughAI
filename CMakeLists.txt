@@ -24,14 +24,13 @@
 	# Compile and install
 	if    (BUILD_THIS_SKIRMISHAI)
 		# Assemble meta data
-		GetVersionFromFile(myVersion "${myDir}/VERSION")
+		GetVersionPlusDepFile(myVersion myVersionDepFile)
 		set(myTarget             "${myName}")
-		set(myLoaderTarget       "${myTarget}-LOADER")
+		set(myLoaderTarget       "${myTarget}-Loader")
 		set(myAiTarget           "${myTarget}-AI")
-		set(myLoaderSourceTarget "${myLoaderTarget}-SRC")
-		set(myAiSourceTarget     "${myAiTarget}-SRC")
-		set(myInstLibsDir        "${SKIRMISH_AI_LIBS}/${myName}/${myVersion}")
-		set(myInstDataDir        "${SKIRMISH_AI_DATA}/${myName}/${myVersion}")
+		set(myLoaderSourceTarget "${myLoaderTarget}-Source")
+		set(myAiSourceTarget     "${myAiTarget}-Source")
+		set(myDataDir            "${SKIRMISH_AI_DATA}/${myName}/${myVersion}")
 		# CMAKE_CURRENT_BINARY_DIR: .../spring-build-dir/AI/Skirmish/${myName}
 		set(myBuildDir           "${CMAKE_CURRENT_BINARY_DIR}")
 		set(myJavaLoaderBuildDir "${myBuildDir}/classes/loader")
@@ -48,23 +47,43 @@
 
 		# Create our full Java class-path
 		CreateClasspath(myJavaLibs ${myJLibDir})
-		ConcatClasspaths(myClassPath "${CLASSPATH_Java_AIINTERFACE}" "${myJavaLibs}" ${myAiSourceDir} ${myLoaderSourceDir})
+		ConcatClasspaths(myClassPath "${CLASSPATH_Java_AIINTERFACE}" "${myJavaLibs}" ${myAiSourceDir} ${myLoaderSourceDir} ${JavaOO_AIWRAPPER_JAR_CLASSPATH})
 
-		# Create a list of all the AIs source files
+		# Create a list of all the AIs source files (for compiling)
 		file(GLOB_RECURSE myLoaderSources RELATIVE "${myLoaderSourceDir}" FOLLOW_SYMLINKS "${myLoaderSourceDir}/*.java")
-		file(GLOB_RECURSE myAiSources RELATIVE "${myAiSourceDir}" FOLLOW_SYMLINKS "${myAiSourceDir}/*.java")
+		file(GLOB_RECURSE myAiSources     RELATIVE "${myAiSourceDir}"     FOLLOW_SYMLINKS "${myAiSourceDir}/*.java")
+		# Create a list of all the AIs source files (for dependency tracking)
+		file(GLOB_RECURSE myLoaderSourcesDep FOLLOW_SYMLINKS "${myLoaderSourceDir}/*.java")
+		file(GLOB_RECURSE myAiSourcesDep     FOLLOW_SYMLINKS "${myAiSourceDir}/*.java")
 
-		# common parent target
-		add_custom_target(${myTarget} ALL
-			DEPENDS ${Java_AIINTERFACE_TARGET}
-			WORKING_DIRECTORY "${myAiSourceDir}"
-			COMMENT "  Processing all AI targets for: ${myName}" VERBATIM)
+		# Assemble project generated libraries we depend on
+		set(myDependTargets  "${Java_AIINTERFACE_TARGET}"  "${JavaOO_AIWRAPPER_TARGET}")
+		set(myDependLibFiles "${Java_AIINTERFACE_JAR_BIN}" "${JavaOO_AIWRAPPER_JAR_BIN}")
+		set_source_files_properties(${myDependLibFiles} PROPERTIES GENERATED TRUE)
+
+		add_custom_target(${myLoaderTarget}       DEPENDS ${myBuildDir}/${myLoaderBinJarFile})
+		set_source_files_properties(${myBuildDir}/${myLoaderBinJarFile} PROPERTIES GENERATED TRUE)
+		add_dependencies(${myLoaderTarget} ${myDependTargets})
+
+		add_custom_target(${myLoaderSourceTarget} DEPENDS ${myBuildDir}/${myLoaderSrcJarFile})
+		set_source_files_properties(${myBuildDir}/${myLoaderSrcJarFile} PROPERTIES GENERATED TRUE)
+
+		add_custom_target(${myAiTarget}           DEPENDS ${myBuildDir}/${myAiBinJarFile})
+		set_source_files_properties(${myBuildDir}/${myAiBinJarFile} PROPERTIES GENERATED TRUE)
+		add_dependencies(${myAiTarget} ${myDependTargets})
+
+		add_custom_target(${myAiSourceTarget}     DEPENDS ${myBuildDir}/${myAiSrcJarFile})
+		set_source_files_properties(${myBuildDir}/${myAiSrcJarFile} PROPERTIES GENERATED TRUE)
+
+		add_custom_target(${myTarget} ALL DEPENDS ${myVersionDepFile})
+		add_dependencies(${myTarget} ${myLoaderTarget} ${myAiTarget} ${myLoaderSourceTarget} ${myAiSourceTarget})
 
 		# Compile the loader library
-		# needed by javac
-		file(MAKE_DIRECTORY "${myJavaLoaderBuildDir}")
-		add_custom_command(TARGET ${myTarget}
-			DEPENDS ${Java_AIINTERFACE_TARGET}
+		add_custom_command(
+			OUTPUT
+				"${myBuildDir}/${myLoaderBinJarFile}"
+			COMMAND "${CMAKE_COMMAND}"
+				"-E" "make_directory" "${myJavaLoaderBuildDir}"
 			COMMAND "${JAVA_COMPILE}"
 				"${JAVA_COMPILE_FLAG_CONDITIONAL}"
 				"-cp" "${myClassPath}"
@@ -73,14 +92,21 @@
 			COMMAND "${JAVA_ARCHIVE}"
 				"cmf" "${myDir}/manifest.mf" "${myBuildDir}/${myLoaderBinJarFile}"
 				"-C" "${myJavaLoaderBuildDir}" "${myJavaPkgFirstPart}"
-			WORKING_DIRECTORY "${myLoaderSourceDir}"
-			COMMENT "  Creating library ${myLoaderBinJarFile}" VERBATIM)
+			DEPENDS
+				${myDependLibFiles}
+				${myLoaderSourcesDep}
+			WORKING_DIRECTORY
+				"${myLoaderSourceDir}"
+			COMMENT
+				"  ${myTarget}: Creating library ${myLoaderBinJarFile}" VERBATIM
+			)
 
-		# Compile the ai library
-		# needed by javac
-		file(MAKE_DIRECTORY "${myJavaAiBuildDir}")
-		add_custom_command(TARGET ${myTarget}
-			DEPENDS ${Java_AIINTERFACE_TARGET}
+		# Compile the AI library
+		add_custom_command(
+			OUTPUT
+				"${myBuildDir}/${myAiBinJarFile}"
+			COMMAND "${CMAKE_COMMAND}"
+				"-E" "make_directory" "${myJavaAiBuildDir}"
 			COMMAND "${JAVA_COMPILE}"
 				"${JAVA_COMPILE_FLAG_CONDITIONAL}"
 				"-cp" "${myClassPath}"
@@ -89,34 +115,60 @@
 			COMMAND "${JAVA_ARCHIVE}"
 				"cmf" "${myDir}/manifest.mf" "${myBuildDir}/${myAiBinJarFile}"
 				"-C" "${myJavaAiBuildDir}" "${myJavaPkgFirstPart}"
-			WORKING_DIRECTORY "${myAiSourceDir}"
-			COMMENT "  Creating library ${myAiBinJarFile}" VERBATIM)
+			DEPENDS
+				${myDependLibFiles}
+				${myAiSourcesDep}
+			WORKING_DIRECTORY
+				"${myAiSourceDir}"
+			COMMENT
+				"  ${myTarget}: Creating library ${myAiBinJarFile}" VERBATIM
+			)
 
-		# Pack the sources
-		add_custom_command(TARGET ${myTarget}
+		# Pack the loader sources
+		add_custom_command(
+			OUTPUT
+				"${myBuildDir}/${myLoaderSrcJarFile}"
 			COMMAND "${JAVA_ARCHIVE}"
 				"cf" "${myBuildDir}/${myLoaderSrcJarFile}"
 				"-C" "${myLoaderSourceDir}" "${myJavaPkgFirstPart}"
-			WORKING_DIRECTORY "${myLoaderSourceDir}"
-			COMMENT "  Creating sources archive ${myLoaderSrcJarFile}" VERBATIM)
+			DEPENDS
+				${myLoaderSourcesDep}
+			WORKING_DIRECTORY
+				"${myLoaderSourceDir}"
+			COMMENT
+				"  ${myTarget}: Creating sources archive ${myLoaderSrcJarFile}" VERBATIM
+			)
 
-		# Pack the sources
-		add_custom_command(TARGET ${myTarget}
+		# Pack the AI sources
+		add_custom_command(
+			OUTPUT
+				"${myBuildDir}/${myAiSrcJarFile}"
 			COMMAND "${JAVA_ARCHIVE}"
 				"cf" "${myBuildDir}/${myAiSrcJarFile}"
 				"-C" "${myAiSourceDir}" "${myJavaPkgFirstPart}"
-			WORKING_DIRECTORY "${myAiSourceDir}"
-			COMMENT "  Creating sources archive ${myAiSrcJarFile}" VERBATIM)
+			DEPENDS
+				${myAiSourcesDep}
+			WORKING_DIRECTORY
+				"${myAiSourceDir}"
+			COMMENT
+				"  ${myTarget}: Creating sources archive ${myAiSrcJarFile}" VERBATIM
+			)
 
 		# Install the data files
-		install(DIRECTORY "${myDir}/data/"                      DESTINATION ${myInstDataDir})
+		install(DIRECTORY "${myDir}/data/"                      DESTINATION ${myDataDir})
 		# Install the library
-		install (FILES    "${myBuildDir}/${myLoaderBinJarFile}" DESTINATION ${myInstDataDir})
+		install (FILES    "${myBuildDir}/${myLoaderBinJarFile}" DESTINATION ${myDataDir})
 		# Install the library
-		install (FILES    "${myBuildDir}/${myAiBinJarFile}"     DESTINATION ${myInstDataDir})
+		install (FILES    "${myBuildDir}/${myAiBinJarFile}"     DESTINATION ${myDataDir})
 		# Install the sources archive
-		install (FILES    "${myBuildDir}/${myLoaderSrcJarFile}" DESTINATION ${myInstDataDir}/jlib)
+		install (FILES    "${myBuildDir}/${myLoaderSrcJarFile}" DESTINATION ${myDataDir}/jlib)
 		# Install the sources archive
-		install (FILES    "${myBuildDir}/${myAiSrcJarFile}"     DESTINATION ${myInstDataDir}/jlib)
+		install (FILES    "${myBuildDir}/${myAiSrcJarFile}"     DESTINATION ${myDataDir}/jlib)
+		# Install the Java OO Wrapper libraries
+		install(FILES "${JavaOO_AIWRAPPER_JAR_BIN}"             DESTINATION ${myDataDir}/jlib)
+		set(wrapperJLibDir "${CMAKE_SOURCE_DIR}/AI/Wrappers/JavaOO/jlib")
+		if    (EXISTS ${wrapperJLibDir})
+			install(DIRECTORY "${wrapperJLibDir}/"              DESTINATION ${myDataDir}/jlib)
+		endif (EXISTS ${wrapperJLibDir})
 	endif (BUILD_THIS_SKIRMISHAI)
 

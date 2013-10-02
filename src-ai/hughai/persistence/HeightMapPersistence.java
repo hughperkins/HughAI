@@ -28,7 +28,7 @@ import java.io.*;
 import javax.imageio.ImageIO;
 
 import com.springrts.ai.*;
-import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.CSAI;
 import hughai.PlayerObjects;

@@ -35,7 +35,7 @@ local infos = {
 	},
 	{
 		key    = 'className',
-		value  = 'hughai.loader.HughAILoaderFactory',
+		value  = 'hughai.loader.HughAILoader',
 		desc   = 'fully qualified name of a class that implements interface com.clan_sy.spring.ai.AI',
 	},
 	{

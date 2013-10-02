@@ -8,11 +8,14 @@ public class Formatting {
       float valueasmeg = value / 1024f / 1024f;
       return "" + valueasmeg + "MB";
    }
-   
-   public static String exceptionToStackTrace( Exception e ) {
+
+   public static String throwableToStackTrace( Throwable t ) {
       StringWriter stringWriter = new StringWriter();
       PrintWriter printWriter = new PrintWriter( stringWriter );
-      e.printStackTrace( printWriter );
+      t.printStackTrace( printWriter );
       return stringWriter.toString();
+   }
+   public static String exceptionToStackTrace( Exception e ) {
+      return throwableToStackTrace(e);
    }
 }

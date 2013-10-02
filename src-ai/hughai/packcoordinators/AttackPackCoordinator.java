@@ -26,8 +26,7 @@ package hughai.packcoordinators;
 import java.util.*;
 
 import com.springrts.ai.*;
-import com.springrts.ai.oo.*;
-import com.springrts.ai.oo.Map;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.*;
 import hughai.utils.*;
@@ -165,7 +164,7 @@ public class AttackPackCoordinator extends PackCoordinator
       // check whether we really need to do anything or if order is roughly same as last one
       if( csai.DebugOn )
       {
-         drawingUtils.DrawUnit("ARMSOLAR", pos, 0.0f, 50, aicallback.getTeamId(), true, true);
+         drawingUtils.DrawUnit("ARMSOLAR", pos, 0.0f, 50, aicallback.getSkirmishAI().getTeamId(), true, true);
       }
       if( restartedfrompause || 
             pos.GetSquaredDistance( lasttargetpos )

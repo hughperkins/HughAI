@@ -21,8 +21,8 @@
 package hughai.basictypes;
 
 import com.springrts.ai.*;
-import com.springrts.ai.command.*;
 import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.unitdata.UnitController;
 
@@ -85,9 +85,8 @@ public class OOPCommands {
 		{
 			this.UnitToReceiveOrder = unittoreceiveorder;
 		}
-		public AICommand ToSpringCommand()
+		public void execute() throws CallbackAIException
 		{
-			return null;
 		}
 		@Override
 		public String toString()
@@ -117,18 +116,16 @@ public class OOPCommands {
 			this.unitdefhumanname = unitdefhumanname;
 		}
 		@Override
-		public AICommand ToSpringCommand()
+		public void execute() throws CallbackAIException
 		{
 			if (pos == null)
 			{
-				return new BuildUnitAICommand( UnitToReceiveOrder.getUnitId(), -1, 0, -1,
-				      unitdeftobuild.getUnitDefId(), new AIFloat3(), 0 );
+				UnitToReceiveOrder.build(unitdeftobuild, new AIFloat3(), 0, (short)0, Integer.MAX_VALUE );
 //						- idtobuild, new double[] { });
 			}
 			else
 			{
-				return new BuildUnitAICommand( UnitToReceiveOrder.getUnitId(), -1, 0, -1, 
-				      unitdeftobuild.getUnitDefId(), pos.toAIFloat3(), 0 );
+				UnitToReceiveOrder.build(unitdeftobuild, pos.toAIFloat3(), 0, (short)0, Integer.MAX_VALUE );
 //				return new Command( -idtobuild, pos.ToDoubleArray());
 			}
 		}
@@ -157,12 +154,12 @@ public class OOPCommands {
 			this.target = target;
 		}
 		@Override
-		public AICommand ToSpringCommand()
+		public void execute() throws CallbackAIException
 		{
 			if( target.getClass() == UnitTarget.class){
-				return new AttackUnitAICommand(UnitToReceiveOrder.getUnitId(), -1, 0, -1, ((UnitTarget)target).target.getUnitId());
+				UnitToReceiveOrder.attack(((UnitTarget)target).target, (short)0, Integer.MAX_VALUE );
 			} else if ( target.getClass() == PositionTarget .class){
-				return new AttackAreaUnitAICommand(UnitToReceiveOrder.getUnitId(), -1, 0, -1, ((PositionTarget)target).targetpos.toAIFloat3(), 100 );
+				UnitToReceiveOrder.attackArea(((PositionTarget)target).targetpos.toAIFloat3(), 100, (short)0, Integer.MAX_VALUE );
 			}
 			throw new RuntimeException("Invalid target");
 		}
@@ -182,13 +179,9 @@ public class OOPCommands {
 			this.targetpos = pos;
 		}
 		@Override
-		public AICommand ToSpringCommand()
+		public void execute() throws CallbackAIException
 		{
-			return new MoveUnitAICommand(UnitToReceiveOrder.getUnitId(),
-					-1, 
-					0,
-					-1,
-					targetpos.toAIFloat3());
+			UnitToReceiveOrder.moveTo(targetpos.toAIFloat3(), (short)0, Integer.MAX_VALUE );
 		}
 		@Override
 		public String toString()
@@ -212,9 +205,9 @@ public class OOPCommands {
 			this.unittobeguarded = unittobeguarded;
 		}
 		@Override
-		public AICommand ToSpringCommand()
+		public void execute() throws CallbackAIException
 		{
-			return new GuardUnitAICommand(UnitToReceiveOrder.getUnitId(), -1, 0, -1, unittobeguarded.getUnitId());
+			UnitToReceiveOrder.guard(unittobeguarded, (short)0, Integer.MAX_VALUE );
 			//return new Command(Command.CMD_GUARD, new double[] { targetid } );
 		}
 	}
@@ -230,14 +223,9 @@ public class OOPCommands {
 			this.radius = radius;
 		}
 		@Override
-		public AICommand ToSpringCommand()
+		public void execute() throws CallbackAIException
 		{
-			return new ReclaimAreaUnitAICommand(UnitToReceiveOrder.getUnitId(),
-					-1,
-					0,
-					-1,
-					pos.toAIFloat3(),
-					(float)radius); 
+			UnitToReceiveOrder.reclaimInArea(pos.toAIFloat3(), (float)radius, (short)0, Integer.MAX_VALUE );
 			//Command(Command.CMD_RECLAIM, new double[] { pos.x, pos.y, pos.z, radius });
 		}
 	}
@@ -249,12 +237,9 @@ public class OOPCommands {
 			this.UnitToReceiveOrder = unit;
 		}
 		@Override
-		public AICommand ToSpringCommand()
+		public void execute() throws CallbackAIException
 		{
-			return new SelfDestroyUnitAICommand(UnitToReceiveOrder.getUnitId(),
-					-1,
-					0,
-					-1 );
+			UnitToReceiveOrder.selfDestruct((short)0, Integer.MAX_VALUE );
 			// return new Command(Command.CMD_SELFD, new double[] {});
 		}
 	}
@@ -266,10 +251,9 @@ public class OOPCommands {
 			this.UnitToReceiveOrder = unit;
 		}
 		@Override
-		public AICommand ToSpringCommand()
+		public void execute() throws CallbackAIException
 		{
-			return new StopUnitAICommand(UnitToReceiveOrder.getUnitId(),
-					-1, 0, -1 );
+			UnitToReceiveOrder.stop((short)0, Integer.MAX_VALUE );
 			// return new Command(Command.CMD_STOP, new double[] { });
 		}
 	}

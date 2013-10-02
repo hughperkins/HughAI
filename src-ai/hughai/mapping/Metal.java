@@ -23,13 +23,15 @@
 
 package hughai.mapping;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import org.w3c.dom.*;
 import java.io.*;
 
 import com.springrts.ai.*;
 import com.springrts.ai.oo.*;
-import com.springrts.ai.oo.Map;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.basictypes.*;
 import hughai.*;
@@ -301,13 +303,13 @@ public class Metal
          for( MetalSpot metalspot : MetalSpots )
          {
             logfile.WriteLine("drawing spot at " + metalspot.Pos );
-            drawingUtils.DrawUnit(metalspotunitname, metalspot.Pos, 0.0f, 1, aicallback.getTeamId(), true, true);
+            drawingUtils.DrawUnit(metalspotunitname, metalspot.Pos, 0.0f, 1, aicallback.getSkirmishAI().getTeamId(), true, true);
             drawingUtils.drawText(metalspot.Pos, "" + metalspot.Pos );
          }
          for( MetalSpot metalspot : MetalSpotsUsed )
          {
             logfile.WriteLine("drawing usedspot at " + metalspot.Pos );
-            drawingUtils.DrawUnit(metalspotusedunit, metalspot.Pos, 0.0f, 1, aicallback.getTeamId(), true, true);
+            drawingUtils.DrawUnit(metalspotusedunit, metalspot.Pos, 0.0f, 1, aicallback.getSkirmishAI().getTeamId(), true, true);
             drawingUtils.drawText(metalspot.Pos, "" + metalspot.Pos );
          }
       }
@@ -475,7 +477,7 @@ public class Metal
 
       logfile.WriteLine( "mapwidth: " + mapwidth + " mapheight " + mapheight + " maxmetal:" + mapmaxmetal );
 
-      List<Byte> metalmap = map.getResourceMapRaw(resourceManager.getMetalResource()); // original metal map
+      List<Short> metalmap = map.getResourceMapRaw(resourceManager.getMetalResource()); // original metal map
       int[][] metalremaining = new int[ mapwidth][ mapheight ];  // actual metal available at that point. we remove metal from this as we add spots to MetalSpots
       int[][] SpotAvailableMetal = new int [ mapwidth][ mapheight ]; // amount of metal an extractor on this spot could make
       int[][] NormalizedSpotAvailableMetal = new int [ mapwidth][ mapheight ]; // SpotAvailableMetal, normalized to 0-255 range

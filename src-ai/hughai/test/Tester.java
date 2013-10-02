@@ -23,12 +23,11 @@
 
 package hughai.test;
 
-import java.util.*;
+import java.util.List;
 
 import com.springrts.ai.*;
 import com.springrts.ai.oo.*;
-import com.springrts.ai.command.*;
-import com.springrts.ai.oo.Map;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.*;
 import hughai.unitdata.*;
@@ -85,16 +84,13 @@ public class Tester {
    // This will crash spring, at least with Java interface 0.1,
    // running against Spring 0.80.02 :
    void drawlineTests2() {
-      CSAI csai = playerObjects.getCSAI();
-      csai.handleEngineCommand(
-            new CreateLineFigureDrawerAICommand(
-                  new AIFloat3( 0,100,0 ),
-                  new AIFloat3( 100, 100 , 0 ),
-                  1,
-                  false,
-                  200,
-                  0,
-                  0 ) );
+      aicallback.getMap().getDrawer().getFigure().drawLine(
+          new AIFloat3( 0,100,0 ),
+          new AIFloat3( 100, 100 , 0 ),
+          1,
+          false,
+          200,
+          0 );
       //      AIFloat3 pos1, AIFloat3 pos2, float width, 
       //      boolean arrow, int lifeTime, int figureGroupId, 
       //      int ret_newFigureGroupId)

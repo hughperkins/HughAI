@@ -23,12 +23,11 @@
 
 package hughai.mapping;
 
-import java.util.*;
 import java.io.*;
 
 import com.springrts.ai.*;
 import com.springrts.ai.oo.*;
-import com.springrts.ai.oo.Map;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.basictypes.*;
 import hughai.*;

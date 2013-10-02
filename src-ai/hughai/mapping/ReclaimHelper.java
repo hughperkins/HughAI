@@ -24,7 +24,7 @@ package hughai.mapping;
 import java.util.*;
 
 import com.springrts.ai.*;
-import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.CSAI;
 import hughai.PlayerObjects;
@@ -119,7 +119,7 @@ public class ReclaimHelper
          logfile.WriteLine( "Reclaim found, pos " + reclaimpos.toString() );
          if( csai.DebugOn )
          {
-            drawingUtils.DrawUnit( "ARMMEX", reclaimpos, 0.0f, 200, aicallback.getTeamId(), true, true);
+            drawingUtils.DrawUnit( "ARMMEX", reclaimpos, 0.0f, 200, aicallback.getSkirmishAI().getTeamId(), true, true);
          }
          return reclaimpos;
          //aicallback.GiveOrder( constructorid, new Command( Command.CMD_RECLAIM, 

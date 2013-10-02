@@ -26,7 +26,7 @@ package hughai.unitdata;
 import java.util.*;
 import java.io.*;
 
-import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.*;
 import hughai.utils.*;
@@ -105,7 +105,7 @@ public class BuildTable
             if( movedata != null )
             {
                logline += " maxSlope: " + movedata.getMaxSlope() + " depth " + movedata.getDepth() + " slopeMod " + movedata.getSlopeMod() +
-               " depthMod: " + movedata.getDepthMod() + " movefamily: " + movedata.getMoveFamily();
+               " depthMod: " + movedata.getDepthMod() + " movefamily: " + movedata.getSpeedModClass();
             }
             printWriter.println(  logline );
 

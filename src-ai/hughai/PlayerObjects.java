@@ -24,7 +24,7 @@ package hughai;
 import java.util.*;
 import java.lang.reflect.*;
 
-import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.building.BuildEconomy;
 import hughai.mapping.*;

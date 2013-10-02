@@ -35,7 +35,7 @@ import java.util.Map;
 import java.lang.annotation.*;
 
 import com.springrts.ai.*;
-import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.*;
 import hughai.EnemyTracker.EnemyAdapter;

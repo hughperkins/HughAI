@@ -1,6 +1,6 @@
 package hughai.basictypes;
 
-import com.springrts.ai.AIFloat3;
+import com.springrts.ai.oo.AIFloat3;
 
 // terrainpos represents a pos on the terrain itself,
 // ie multiplied by squaresize, eg from (0,0,0) to (4000,0,4000) typically

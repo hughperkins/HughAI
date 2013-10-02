@@ -34,7 +34,7 @@ import java.util.Map;
 import java.lang.annotation.*;
 
 import com.springrts.ai.*;
-import com.springrts.ai.oo.*;
+import com.springrts.ai.oo.clb.*;
 
 import hughai.*;
 import hughai.EnemyTracker.EnemyAdapter;
@@ -72,7 +72,7 @@ public class MainUI {
    }
    
    public void Init() {
-      frame = new JFrame( "HughAI " + playerObjects.getAicallback().getTeamId() );
+      frame = new JFrame( "HughAI " + playerObjects.getAicallback().getSkirmishAI().getTeamId() );
       frame.setSize( 200, 500 );
       frame.setVisible( true );
 
